@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>img</key>
+			<string>boot_logo2_text</string>
+			<key>title</key>
+			<string>手指触控对焦</string>
+			<key>desc</key>
+			<string>Easily focus your iphone by finger touch</string>
+			<key>bg</key>
+			<string>intro_1-min.png</string>
+		</dict>
+		<dict>
+			<key>img</key>
+			<string>boot_logo3_text</string>
+			<key>title</key>
+			<string>支持无线对焦手轮</string>
+			<key>desc</key>
+			<string>Wireless focus with APP</string>
+			<key>bg</key>
+			<string>intro_2-min.png</string>
+		</dict>
+		<dict>
+			<key>img</key>
+			<string>boot_logo4_text</string>
+			<key>title</key>
+			<string>不再依赖传统摄像机</string>
+			<key>desc</key>
+			<string>No more reliance on traditional DV</string>
+			<key>bg</key>
+			<string>intro_3-min.png</string>
+		</dict>
+		<dict>
+			<key>img</key>
+			<string>boot_logo5_text</string>
+			<key>title</key>
+			<string>随时随地拍大片</string>
+			<key>desc</key>
+			<string>Shoot movie any time and any where</string>
+			<key>bg</key>
+			<string>intro_4-min.png</string>
+		</dict>
+	</array>
+</dict>
+</plist>
