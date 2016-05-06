@@ -71,4 +71,8 @@
 
 @property (strong, nonatomic) UIScrollView *scrollView;
 
+@property (assign, nonatomic) BOOL handBool;
+
+@property (assign, nonatomic) BOOL isHidden;
+
 @end

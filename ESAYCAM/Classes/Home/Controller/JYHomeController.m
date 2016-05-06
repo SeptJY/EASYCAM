@@ -18,6 +18,7 @@
 #import "JYBlueManager.h"
 #import "JYCoreBlueView.h"
 #import "JYWebViewController.h"
+#import "JYInfoLogView.h"
 
 static const float kExposureMinimumDuration = 1.0/1000;
 static const float kExposureDurationPower = 5;
@@ -78,6 +79,8 @@ static const float kExposureDurationPower = 5;
 
 @property (assign, nonatomic) BOOL isHidden;
 
+@property (strong, nonatomic) JYInfoLogView *logView;
+
 @end
 
 @implementation JYHomeController
@@ -101,6 +104,8 @@ static const float kExposureDurationPower = 5;
     self.sizeOk = NSLocalizedString(@"好的", nil);
     
     self.lensMesage = NSLocalizedString(@"是否安装了其他镜头", nil);
+    
+    self.direction = NSLocalizedString(@"蓝牙设备未连接", nil);
 
     
     [self homeOfFirstConnectPeripheral];
@@ -140,6 +145,8 @@ static const float kExposureDurationPower = 5;
     self.sizeOk = [[JYLanguageTool bundle] localizedStringForKey:@"好的" value:nil table:@"Localizable"];
     
     self.lensMesage = [[JYLanguageTool bundle] localizedStringForKey:@"是否安装了其他镜头" value:nil table:@"Localizable"];
+    
+    self.direction = [[JYLanguageTool bundle] localizedStringForKey:@"蓝牙设备未连接" value:nil table:@"Localizable"];
 }
 
 #pragma mark -------------------------> 相机操作
@@ -689,8 +696,10 @@ static const float kExposureDurationPower = 5;
             [self.videoCamera cameraManagerVideoZoom:(-y + SHOW_Y) / (screenH - 30)];
         }else
         {
+            self.logView.myText.text = [NSString stringWithFormat:@"%f", (0.5 - (-y + SHOW_Y) / (screenH - 30))];
             // 2.1 30是showView的高度   -- 调节微距
             [self.videoCamera cameraManagerChangeFoucus:(1 - (-y + SHOW_Y) / (screenH - 30))];
+            self.logView.camereText.text = [NSString stringWithFormat:@"%f", self.videoCamera.inputCamera.lensPosition];
             
             // 2.2显示放大的View和sliderView
             if (self.enlargeBtn.selected == YES) {
@@ -746,10 +755,20 @@ static const float kExposureDurationPower = 5;
             
             [self.coreBlueView.tableView reloadData];
             break;
-        case 53:  // 手轮方向调节
-            
+        case 53:   // 手轮方向
+            if (self.blueManager.connectPeripheral == nil) {
+                [self resetVideoAndHandwheelAlert];
+            } else {
+                self.myContentView.handBool = YES;
+            }
             break;
-            
+        case 56:   // 自动重复
+            if (self.blueManager.connectPeripheral == nil) {
+                [self resetVideoAndHandwheelAlert];
+            }else {
+                self.myContentView.handBool = YES;
+            }
+            break;
         default:
             break;
     }
@@ -1027,27 +1046,51 @@ static const float kExposureDurationPower = 5;
     [self presentViewController:alertCtl animated:YES completion:nil];
 }
 
+/** 设置自动重复模式 */
 - (void)contentViewResetVideo:(UIButton *)btn
 {
-    switch (btn.tag) {
-        case 80:
-            self.blueManager.videoType = JYResetVideoTypeTwo;
-            break;
-        case 81:
-            self.blueManager.videoType = JYResetVideoTypeOne;
-            break;
+    if (self.blueManager.connectPeripheral != nil) {
+        switch (btn.tag) {
+            case 80:
+                self.blueManager.videoType = JYResetVideoTypeTwo;
+                break;
+            case 81:
+                self.blueManager.videoType = JYResetVideoTypeOne;
+                break;
+        }
+        [self.myContentView contenViewSetDirectionBtnTitle:btn.currentTitle andTag:86];
+    }else {
+        [self resetVideoAndHandwheelAlert];
     }
 }
 
+- (void)resetVideoAndHandwheelAlert
+{
+    UIAlertController *alertCtl = [UIAlertController alertControllerWithTitle:self.sizeTitle message:self.direction preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *OKAction = [UIAlertAction actionWithTitle:self.sizeOk style:UIAlertActionStyleCancel handler:nil];
+    
+    [alertCtl addAction:OKAction];
+    
+    [self presentViewController:alertCtl animated:YES completion:nil];
+}
+
+/** 设置手轮方向 */
 - (void)contentViewHandwheelOnClick:(UIButton *)btn
 {
-    switch (btn.tag) {
-        case 80:
-            self.blueManager.derection = CoreBlueDerectionClockwise;
-            break;
-        case 81:
-            self.blueManager.derection = CoreBlueDerectionAntiClockwise;
-            break;
+    if (self.blueManager.connectPeripheral != nil) {
+        switch (btn.tag) {
+            case 80:
+                self.blueManager.derection = CoreBlueDerectionClockwise;
+                break;
+            case 81:
+                self.blueManager.derection = CoreBlueDerectionAntiClockwise;
+                break;
+        }
+        // 选中成功则显示当前选中的名称
+        [self.myContentView contenViewSetDirectionBtnTitle:btn.currentTitle andTag:84];
+    }else {
+        [self resetVideoAndHandwheelAlert];
     }
 }
 
@@ -1114,6 +1157,7 @@ static const float kExposureDurationPower = 5;
         }
             break;
         case 24:
+            self.logView.hidden = !self.logView.hidden;
             break;
     }
 }
@@ -1171,8 +1215,12 @@ static const float kExposureDurationPower = 5;
         case 11:
             if (self.coreBlueView.hidden == NO) {
                 self.coreBlueView.hidden = YES;
+                self.myContentView.isHidden = NO;
+            } else
+            {
+                self.myContentView.hidden = !btn.selected;
             }
-            self.myContentView.hidden = !btn.selected;
+            
             break;
             
         default:
@@ -1467,7 +1515,7 @@ static const float kExposureDurationPower = 5;
     
     self.coreBlueView.frame = CGRectMake(self.myContentView.x + 10, screenH - self.myContentView.height + 60, self.myContentView.width - 20, self.myContentView.height - 60);
     
-    
+    self.logView.frame = self.myContentView.frame;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -1632,5 +1680,16 @@ static const float kExposureDurationPower = 5;
     }
 }
 
+- (JYInfoLogView *)logView
+{
+    if (!_logView) {
+        
+        _logView = [[JYInfoLogView alloc] init];
+        _logView.hidden = YES;
+        
+        [self.subView addSubview:_logView];
+    }
+    return _logView;
+}
 
 @end

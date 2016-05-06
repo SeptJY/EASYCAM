@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B11491A1CDB1B6A00F7E8F1 /* JYInfoLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1149191CDB1B6900F7E8F1 /* JYInfoLogView.m */; };
+		5B11491C1CDB1B8900F7E8F1 /* JYInfoLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */; };
 		5BB7396C1CD82D920084C624 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7396B1CD82D920084C624 /* main.m */; };
 		5BB7396F1CD82D920084C624 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7396E1CD82D920084C624 /* AppDelegate.m */; };
 		5BB739771CD82D920084C624 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BB739761CD82D920084C624 /* Assets.xcassets */; };
@@ -82,6 +84,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5B1149181CDB1B6900F7E8F1 /* JYInfoLogView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYInfoLogView.h; sourceTree = "<group>"; };
+		5B1149191CDB1B6900F7E8F1 /* JYInfoLogView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYInfoLogView.m; sourceTree = "<group>"; };
+		5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JYInfoLogView.xib; sourceTree = "<group>"; };
 		5BB739671CD82D910084C624 /* ESAYCAM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ESAYCAM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BB7396B1CD82D920084C624 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BB7396D1CD82D920084C624 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -360,6 +365,9 @@
 		5BB739B21CD82FF40084C624 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				5B1149181CDB1B6900F7E8F1 /* JYInfoLogView.h */,
+				5B1149191CDB1B6900F7E8F1 /* JYInfoLogView.m */,
+				5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */,
 				5BB739B31CD82FF40084C624 /* DWBubbleMenuButton.h */,
 				5BB739B41CD82FF40084C624 /* DWBubbleMenuButton.m */,
 				5BB739B51CD82FF40084C624 /* JYBalanceView.h */,
@@ -676,6 +684,7 @@
 				5BB73A161CD82FF40084C624 /* JYTabBarView.xib in Resources */,
 				5BB739771CD82D920084C624 /* Assets.xcassets in Resources */,
 				5BB73A421CD8301E0084C624 /* JYNewFeturnData.plist in Resources */,
+				5B11491C1CDB1B8900F7E8F1 /* JYInfoLogView.xib in Resources */,
 				5BB73A0C1CD82FF40084C624 /* JYSliderImageView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -787,6 +796,7 @@
 				5BB73A3D1CD82FFE0084C624 /* JQIndicatorView.m in Sources */,
 				5BB73A121CD82FF40084C624 /* JYNewFetureViewCtl.m in Sources */,
 				5BB73A0D1CD82FF40084C624 /* JYSupportView.m in Sources */,
+				5B11491A1CDB1B6A00F7E8F1 /* JYInfoLogView.m in Sources */,
 				5BB73A041CD82FF40084C624 /* JYLeftTopView.m in Sources */,
 				5BB73A101CD82FF40084C624 /* JYVideoTimeView.m in Sources */,
 				5BB73A3F1CD82FFE0084C624 /* JYLanguageTool.m in Sources */,

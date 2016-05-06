@@ -63,4 +63,6 @@ typedef NS_ENUM(NSUInteger, JYPhotoImgModel) {
 
 @property (copy, nonatomic) NSString *lensMesage;
 
+@property (copy, nonatomic) NSString *direction;
+
 @end

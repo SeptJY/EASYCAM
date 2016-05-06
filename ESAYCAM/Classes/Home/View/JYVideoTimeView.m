@@ -56,7 +56,7 @@ static void *JYSHOWVIEW_FRAME = &JYSHOWVIEW_FRAME;
             self.showView.backgroundColor = [UIColor redColor];
         } else if (self.showView.width > 3.80)
         {
-            self.showView.backgroundColor = [UIColor whiteColor];
+            self.showView.backgroundColor = [UIColor yellowColor];
         }
     }
 }
@@ -126,7 +126,7 @@ static void *JYSHOWVIEW_FRAME = &JYSHOWVIEW_FRAME;
 {
     if (!_iRlectricityView) {
         
-        _iRlectricityView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_dianliang_icon"]];
+        _iRlectricityView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"batter"]];
         
         [self addSubview:_iRlectricityView];
     }
@@ -151,7 +151,7 @@ static void *JYSHOWVIEW_FRAME = &JYSHOWVIEW_FRAME;
         
         _showView = [[UIView alloc] init];
         
-        _showView.backgroundColor = [UIColor whiteColor];
+        _showView.backgroundColor = [UIColor yellowColor];
         
         [self.iRlectricityView addSubview:_showView];
     }

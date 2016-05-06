@@ -226,7 +226,6 @@ static NSString *ID = @"fenbinalv";
     if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewResetVideo:)]) {
         [self.delegate contentViewResetVideo:btn];
     }
-    [self.settingView setDirectionBtnTitle:btn.currentTitle andTag:86];
     
     self.resetView.hidden = YES;
     self.scrollView.hidden = NO;
@@ -355,6 +354,12 @@ static NSString *ID = @"fenbinalv";
     self.scrollView.hidden = NO;
 }
 
+- (void)setIsHidden:(BOOL)isHidden
+{
+    _isHidden = isHidden;
+    self.scrollView.hidden = isHidden;
+}
+
 #pragma ============== JYHandwheelViewDelegte
 - (void)handwheelDirectionCellBtnOnClick:(UIButton *)btn
 {
@@ -362,7 +367,7 @@ static NSString *ID = @"fenbinalv";
         [self.delegate contentViewHandwheelOnClick:btn];
     }
     
-    [self.settingView setDirectionBtnTitle:btn.currentTitle andTag:84];
+//    [self.settingView setDirectionBtnTitle:btn.currentTitle andTag:84];
     
     // 1.点击选择 -- 掩藏分辨率的View  显示scrollView
     self.handView.hidden = YES;
@@ -374,25 +379,37 @@ static NSString *ID = @"fenbinalv";
     if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewLabelDirectionBtnOnClick:)]) {
         [self.delegate contentViewLabelDirectionBtnOnClick:btn];
     }
-    self.scrollView.hidden = YES;
+    
     switch (btn.tag) {
         case 51:
+            self.scrollView.hidden = YES;
             self.resolutionView.hidden = NO;
             break;
         case 52:
+            self.scrollView.hidden = YES;
             self.languageView.hidden = NO;
             break;
         case 53:
-            self.handView.hidden = NO;
+            if (self.handBool == YES) {
+                self.scrollView.hidden = YES;
+                self.handView.hidden = NO;
+                self.handBool = NO;
+            }
             break;
         case 54:
+            self.scrollView.hidden = YES;
             self.supportView.hidden = NO;
             break;
         case 55:
+            self.scrollView.hidden = YES;
             self.lensView.hidden = NO;
             break;
         case 56:
-            self.resetView.hidden = NO;
+            if (self.handBool == YES) {
+                self.scrollView.hidden = YES;
+                self.resetView.hidden = NO;
+                self.handBool = NO;
+            }
             break;
             
         default:
