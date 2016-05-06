@@ -81,6 +81,8 @@ static const float kExposureDurationPower = 5;
 
 @property (strong, nonatomic) JYInfoLogView *logView;
 
+@property (nonatomic) dispatch_queue_t sessionQueue;
+
 @end
 
 @implementation JYHomeController
@@ -88,6 +90,7 @@ static const float kExposureDurationPower = 5;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL);
     self.navigationController.navigationBarHidden = YES;
     
     self.connectSucces = NSLocalizedString(@"连接成功", nil);
@@ -519,7 +522,7 @@ static const float kExposureDurationPower = 5;
     animation.delegate = self;
     animation.keyPath = @"transform.scale";
     // 动画选项设定
-    animation.duration = 1.0; // 动画持续时间
+    animation.duration = 0.3; // 动画持续时间
     animation.repeatCount = 1; // 重复次数
     //    animation.autoreverses = YES; // 动画结束时执行逆动画
     
@@ -541,7 +544,7 @@ static const float kExposureDurationPower = 5;
         self.isHidden = NO;
     } else
     {
-        [self performSelector:@selector(sliderViewHidden) withObject:self afterDelay:slider_view_hidden_time];
+        self.timeNum = 250;
     }
 }
 
@@ -669,13 +672,14 @@ static const float kExposureDurationPower = 5;
 
 - (void)animationWith:(CGFloat)value layer:(CALayer *)layer
 {
+    
     CABasicAnimation *anima=[CABasicAnimation animation];
     
     //1.1告诉系统要执行什么样的动画
     anima.keyPath=@"position";
     //设置通过动画，将layer从哪儿移动到哪儿
     anima.toValue = [NSValue valueWithCGPoint:CGPointMake(25, value + 15)];
-//    NSLog(@"%@", anima.toValue);
+    //    NSLog(@"%@", anima.toValue);
     
     //1.2设置动画执行完毕之后不删除动画
     anima.removedOnCompletion=NO;
@@ -683,6 +687,7 @@ static const float kExposureDurationPower = 5;
     anima.fillMode=kCAFillModeForwards;
     //2.添加核心动画到layer
     [layer addAnimation:anima forKey:nil];
+    
 }
 
 - (void)timerClickView:(CALayer *)clickView type:(NSInteger)type translation:(CGFloat)y
@@ -692,36 +697,42 @@ static const float kExposureDurationPower = 5;
         [self animationWith:y layer:clickView];
         
         if (type == 0) {
+            dispatch_async(self.sessionQueue, ^{
+                [self.videoCamera cameraManagerVideoZoom:(-y + SHOW_Y) / (screenH - 30)];
+            });
             
-            [self.videoCamera cameraManagerVideoZoom:(-y + SHOW_Y) / (screenH - 30)];
         }else
         {
-            self.logView.myText.text = [NSString stringWithFormat:@"%f", (0.5 - (-y + SHOW_Y) / (screenH - 30))];
-            // 2.1 30是showView的高度   -- 调节微距
-            [self.videoCamera cameraManagerChangeFoucus:(1 - (-y + SHOW_Y) / (screenH - 30))];
-            self.logView.camereText.text = [NSString stringWithFormat:@"%f", self.videoCamera.inputCamera.lensPosition];
-            
-            // 2.2显示放大的View和sliderView
-            if (self.enlargeBtn.selected == YES) {
-                self.bottomPreview.hidden = NO;
-                self.timeNum = 250;
-            }
-            
+//            dispatch_async(self.sessionQueue, ^{
+                self.logView.myText.text = [NSString stringWithFormat:@"%f", (0.5 - (-y + SHOW_Y) / (screenH - 30))];
+                // 2.1 30是showView的高度   -- 调节微距
+                
+                    [self.videoCamera cameraManagerChangeFoucus:(1 - (-y + SHOW_Y) / (screenH - 30))];
+                    
+                self.logView.camereText.text = [NSString stringWithFormat:@"%f", self.videoCamera.inputCamera.lensPosition];
+                
+                // 2.2显示放大的View和sliderView
+                if (self.enlargeBtn.selected == YES) {
+                    self.bottomPreview.hidden = NO;
+                    self.timeNum = 250;
+                }
+//            });
+        
         }
         self.saveNum = y;
     }
     // 3.控制放大view的显示与掩藏
     self.timeNum--;
-    
-    if (self.timeNum == 0) {
-        self.bottomPreview.hidden = YES;
-        self.timeNum = 0;
-    }
+//    dispatch_async(self.sessionQueue, ^{
+        if (self.timeNum == 0) {
+            self.bottomPreview.hidden = YES;
+            self.timeNum = 0;
+        }
+//    });
 }
 
 - (CGFloat)blueManagerType:(CGFloat)type andNum:(CGFloat)num qubie:(NSInteger)qubie
 {
-//    NSLog(@"xianweu : %f", type);
     if (type <= 0) {
         type = 0;
     }
@@ -737,8 +748,6 @@ static const float kExposureDurationPower = 5;
 //                NSLog(@"videoZoom = %f", self.blueManager.videoZoom);
     }
     CGFloat realNum = type + num;
-    
-    
     return realNum;
 }
 
@@ -1302,12 +1311,12 @@ static const float kExposureDurationPower = 5;
     }
 }
 
-- (void)sliderViewHidden
-{
-    if (self.bottomPreview.hidden == NO) {
-        self.bottomPreview.hidden = YES;
-    }
-}
+//- (void)sliderViewHidden
+//{
+//    if (self.bottomPreview.hidden == NO) {
+//        self.bottomPreview.hidden = YES;
+//    }
+//}
 
 - (DWBubbleMenuButton *)menuBtn
 {
@@ -1583,13 +1592,8 @@ static const float kExposureDurationPower = 5;
 #pragma mark KVO and Notifications
 - (void)addObservers
 {
-    // 1.监听会话是否开启
-    [self.videoCamera.captureSession addObserver:self forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:SessionRunningContext];
     // 实时监听白平衡的变化
     [self.videoCamera.inputCamera addObserver:self forKeyPath:@"deviceWhiteBalanceGains" options:NSKeyValueObservingOptionNew context:DeviceWhiteBalanceGains];
-    
-    // 实时监听对焦值的变化
-//    [self.videoCamera.inputCamera addObserver:self forKeyPath:@"lensPosition" options:NSKeyValueObservingOptionNew context:CaptureLensPositionContext];
     
     // 实时监听曝光偏移的变化exposureTargetOffset
     [self.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureTargetOffset" options:NSKeyValueObservingOptionNew context:DeviceExposureOffset];
@@ -1599,8 +1603,6 @@ static const float kExposureDurationPower = 5;
     
     // 实时监听曝光时间的变化
     [self.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureDuration" options:NSKeyValueObservingOptionNew context:DeviceExposureDuration];
-    
-//    [self addObserver:self forKeyPath:@"saveVideoZoom" options:NSKeyValueObservingOptionNew context:FoucsChange];
 }
 
 #pragma KVO监听事件
@@ -1609,19 +1611,7 @@ static const float kExposureDurationPower = 5;
     //    id oldValue = change[NSKeyValueChangeOldKey];
     id newValue = change[NSKeyValueChangeNewKey];
     
-    // 2.监听捕捉图片
-    if ( context == CapturingStillImageContext ) {
-        BOOL isCapturingStillImage = [change[NSKeyValueChangeNewKey] boolValue];
-        
-        if ( isCapturingStillImage ) {
-            dispatch_async( dispatch_get_main_queue(), ^{
-                //                self.previewView.layer.opacity = 0.0;
-                //                [UIView animateWithDuration:0.25 animations:^{
-                //                    self.previewView.layer.opacity = 1.0;
-                //                }];
-            } );
-        }
-    } else if (context == DeviceWhiteBalanceGains) {  // 白平衡
+    if (context == DeviceWhiteBalanceGains) {  // 白平衡
         if (self.tempAuto == 0 && self.tintAuto == 0) {
             AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTintValues = [self.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:self.videoCamera.inputCamera.deviceWhiteBalanceGains];
             self.tint = temperatureAndTintValues.tint;
@@ -1646,7 +1636,6 @@ static const float kExposureDurationPower = 5;
             [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.inputCamera.ISO andCustomSliderTag:61 classType:0];
         }
     }
-    
     else if (context == DeviceExposureOffset) {   // 曝光偏移
         [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.inputCamera.exposureTargetOffset andCustomSliderTag:60 classType:0];
     }
@@ -1662,18 +1651,6 @@ static const float kExposureDurationPower = 5;
                 [self.myContentView contentViewSetCustomSliderValue:pow( p, 1 / kExposureDurationPower ) andCustomSliderTag:62 classType:0];
             }
         }
-    }
-    
-    // 1.监听会话是否开启
-    else if ( context == SessionRunningContext ) {
-        //        BOOL isSessionRunning = [change[NSKeyValueChangeNewKey] boolValue];
-        
-        dispatch_async( dispatch_get_main_queue(), ^{
-            // 只有当设备有多个摄像头时才有能力改变相机
-            //            self.cameraButton.enabled = isSessionRunning && ( [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count > 1 );
-            //            self.recordButton.enabled = isSessionRunning;
-            //            self.stillButton.enabled = isSessionRunning;
-        } );
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
