@@ -34,7 +34,7 @@
 
 - (void)changeLanguage
 {
-    self.oneCell.title = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x1" value:nil table:@"Localizable"];
+    self.oneCell.title = [[JYLanguageTool bundle] localizedStringForKey:@"无镜头" value:nil table:@"Localizable"];
     
     self.twoCell.title = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x2" value:nil table:@"Localizable"];
     
@@ -45,7 +45,7 @@
 {
     if (!_oneCell) {
         
-        _oneCell = [[JYDirectionCell alloc] initWithTitle:[NSString titleChinese:@"增距镜x1" english:@"Lensx1"]];
+        _oneCell = [[JYDirectionCell alloc] initWithTitle:[NSString titleChinese:@"无镜头" english:@"No Lens"]];
         _oneCell.btnTag = 80;
         _oneCell.delegate = self;
         _oneCell.tag = 90;

@@ -42,8 +42,8 @@
         
         self.window.rootViewController = navCtl;
         // 存储新版本
-//        [[NSUserDefaults standardUserDefaults] setObject:currentVersion forKey:@"CFBundleShortVersionString"];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
+        [[NSUserDefaults standardUserDefaults] setObject:currentVersion forKey:@"CFBundleShortVersionString"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
     [self.window makeKeyAndVisible];

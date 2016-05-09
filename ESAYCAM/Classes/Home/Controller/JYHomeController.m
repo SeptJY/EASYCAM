@@ -174,6 +174,7 @@ static const float kExposureDurationPower = 5;
     if (!_videoCamera) {
         _videoCamera = [[JYCameraManager alloc] initWithFrame:self.view.bounds superview:self.view];
         _videoCamera.cameraDelegate = self;
+        [_videoCamera flashModel:AVCaptureFlashModeAuto];
         [self.bottomPreview addSubview:_videoCamera.subPreview];
     }
     return _videoCamera;
@@ -644,23 +645,25 @@ static const float kExposureDurationPower = 5;
 
 - (void)coreBlueViewDidSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.blueManager.peripherals) {
-        
-        if (self.blueManager.connectPeripheral == nil) {
-            // 2.2 连接选中的蓝牙
-            [self.blueManager connect:self.blueManager.peripherals[indexPath.row]];
-        } else
-        {
-            if (self.blueManager.connectPeripheral != self.blueManager.peripherals[indexPath.row]) {
-                // 2.1 断开当前连接的设备
-                [self.blueManager disconnect:self.blueManager.connectPeripheral];
-                
+    if (self.coreBlueView.perArrays.count > 0) {
+        if (self.blueManager.peripherals) {
+            
+            if (self.blueManager.connectPeripheral == nil) {
                 // 2.2 连接选中的蓝牙
                 [self.blueManager connect:self.blueManager.peripherals[indexPath.row]];
+            } else
+            {
+                if (self.blueManager.connectPeripheral != self.blueManager.peripherals[indexPath.row]) {
+                    // 2.1 断开当前连接的设备
+                    [self.blueManager disconnect:self.blueManager.connectPeripheral];
+                    
+                    // 2.2 连接选中的蓝牙
+                    [self.blueManager connect:self.blueManager.peripherals[indexPath.row]];
+                }
             }
+            // 保存当前连接的蓝牙名称，
+            [JYSeptManager sharedManager].perName = self.blueManager.connectPeripheral.name;
         }
-        // 保存当前连接的蓝牙名称，
-        [JYSeptManager sharedManager].perName = self.blueManager.connectPeripheral.name;
     }
     
     self.coreBlueView.hidden = YES;
@@ -802,8 +805,6 @@ static const float kExposureDurationPower = 5;
                 // 2.1 30是showView的高度   -- 调节微距
                 
                     [self.videoCamera cameraManagerChangeFoucus:(1 - (-y + SHOW_Y) / (screenH - 30))];
-                    
-                self.logView.camereText.text = [NSString stringWithFormat:@"%f", self.videoCamera.inputCamera.lensPosition];
                 
                 // 2.2显示放大的View和sliderView
                 if (self.enlargeBtn.selected == YES) {
@@ -815,6 +816,7 @@ static const float kExposureDurationPower = 5;
         }
         self.saveNum = y;
     }
+    self.logView.camereText.text = [NSString stringWithFormat:@"%f", self.videoCamera.inputCamera.lensPosition];
     // 3.控制放大view的显示与掩藏
     self.timeNum--;
 //    dispatch_async(self.sessionQueue, ^{
@@ -881,8 +883,8 @@ static const float kExposureDurationPower = 5;
 - (void)contentViewSwitchOnClick:(UISwitch *)mSwitch
 {
     switch (mSwitch.tag) {
-        case 42:    // 闪光灯
-            self.videoCamera.enableFlash = mSwitch.on;
+        case 42:    // 前置录像灯
+            self.blueManager.isFalsh = mSwitch.on;
             break;
         case 41:    // 九宫格
             self.grladView.hidden = !mSwitch.on;
@@ -1078,7 +1080,17 @@ static const float kExposureDurationPower = 5;
 /** 设置闪光灯的开和自动 */
 - (void)contentViewFlashViewOnClick:(UIButton *)btn
 {
-    
+    switch (btn.tag) {
+        case 100:
+            [self.videoCamera flashModel:AVCaptureFlashModeAuto];
+            break;
+        case 101:
+            [self.videoCamera flashModel:AVCaptureFlashModeOn];
+            break;
+        case 102:
+            [self.videoCamera flashModel:AVCaptureFlashModeOff];
+            break;
+    }
 }
 
 /** 曝光自动和手动的监听事件 */
@@ -1626,7 +1638,7 @@ static const float kExposureDurationPower = 5;
     
     self.coreBlueView.frame = CGRectMake(self.myContentView.x + 10, screenH - self.myContentView.height + 60, self.myContentView.width - 20, self.myContentView.height - 60);
     
-    self.logView.frame = self.myContentView.frame;
+    self.logView.frame = CGRectMake(0, screenH - 60, screenW - 100, 60);
 }
 
 - (void)didReceiveMemoryWarning {

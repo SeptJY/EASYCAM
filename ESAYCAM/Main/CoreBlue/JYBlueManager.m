@@ -407,6 +407,13 @@ static void * MINUS_ZOOM_MINUS = &MINUS_ZOOM_MINUS;
         case 503:   // 查询录像时间
             [self blueManagerOthersCommandWith:503];
             break;
+        case 504:   // 查询前置录像灯
+            if (self.isFalsh == YES) {
+                [self blueToolWriteValue:@"a05040001b"];
+            } else {
+                [self blueToolWriteValue:@"a05040000b"];
+            }
+            break;
         case 502:   // 查询相机状态
             [self blueManagerOthersCommandWith:502];
             break;

@@ -77,6 +77,8 @@ typedef enum{
 /** 跟焦器手轮转动速度 */
 @property (assign, nonatomic) CGFloat speed;
 
+@property (assign, nonatomic) BOOL isFalsh;
+
 /** 附加镜头倍率 */
 @property (assign, nonatomic) JYBlueManagerLens managerLens;
 

@@ -93,7 +93,7 @@ static void * HardSoftVersion = &HardSoftVersion;
         
         [_imgBtn addTarget:self action:@selector(pushEsaycamWebView) forControlEvents:UIControlEventTouchUpInside];
 //        _imgBtn.backgroundColor = [UIColor cyanColor];
-        [_imgBtn setImage:[UIImage imageNamed:@"home_suporrt_icon"] forState:UIControlStateNormal];
+        [_imgBtn setImage:[UIImage imageWithImage:[UIImage imageNamed:@"home_suporrt_icon"] scaledToWidth:self.width * 0.5 - 30] forState:UIControlStateNormal];
         
         [self addSubview:_imgBtn];
     }

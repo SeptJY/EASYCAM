@@ -32,6 +32,8 @@
         [superview addSubview:self.cameraScreen];
         
         self.videoSize = CGSizeMake(1920.0, 1080.0);
+        
+        
     }
     return self;
 }
@@ -283,6 +285,25 @@ static const float kExposureDurationPower = 5;
     } else
     {
         NSLog(@"设置曝光失败");
+    }
+}
+
+- (void)flashModel:(AVCaptureFlashMode)flashModel
+{
+    NSError *error = nil;
+    AVCaptureDevice *currentVideoDevice = videoInput.device;
+    
+    if ([currentVideoDevice lockForConfiguration:&error]) {
+        
+        if ([currentVideoDevice isFlashModeSupported:flashModel] ) {
+            currentVideoDevice.flashMode = flashModel;
+        }
+        
+        [currentVideoDevice unlockForConfiguration];
+        
+    } else
+    {
+        NSLog(@"设置闪关灯失败");
     }
 }
 

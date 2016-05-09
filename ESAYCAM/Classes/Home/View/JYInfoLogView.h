@@ -15,4 +15,6 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *tempText;
 @property (weak, nonatomic) IBOutlet UITextField *tintText;
+@property (weak, nonatomic) IBOutlet UITextField *shoudong;
+@property (weak, nonatomic) IBOutlet UITextField *xiangji;
 @end

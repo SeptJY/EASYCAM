@@ -73,4 +73,6 @@ typedef void(^JYLableText)(NSString *text);
 
 - (void)setExposureDurationWith:(CGFloat)value withBlock:(JYLableText)text;
 
+- (void)flashModel:(AVCaptureFlashMode)flashModel;
+
 @end

@@ -152,28 +152,30 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    self.peripheral = self.perArrays[indexPath.row];
-    
-    [[NSKeyedUnarchiver unarchiveObjectWithFile:path_encode] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//    NSLog(@"%lu", (unsigned long)self.perArrays.count);
+    if (self.perArrays.count > 0) {
+        self.peripheral = self.perArrays[indexPath.row];
         
-        JYPeripheral *mPer = obj;
-        // 判断保存数据库中是否存在当前选中选中的蓝牙设备
-        if ([mPer.identifier isEqualToString:self.peripheral.identifier]) {
-            self.isSave = YES;
+        [[NSKeyedUnarchiver unarchiveObjectWithFile:path_encode] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            JYPeripheral *mPer = obj;
+            // 判断保存数据库中是否存在当前选中选中的蓝牙设备
+            if ([mPer.identifier isEqualToString:self.peripheral.identifier]) {
+                self.isSave = YES;
+            }
+        }];
+        
+        if (self.isSave == NO && self.perArrays != nil) {
+            [[JYSeptManager sharedManager] saveCoreBlueWith:self.peripheral];
         }
-    }];
-    
-    if (self.isSave == NO && self.perArrays != nil) {
-        [[JYSeptManager sharedManager] saveCoreBlueWith:self.peripheral];
+        
+        // 保存当前选中的值
+        [[NSUserDefaults standardUserDefaults] setValue:self.peripheral.identifier forKey:@"Checkmark"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        [self.tableView reloadData];
     }
-    
     [self coreBlueViewDidSelectRowAtIndexPath:(NSIndexPath *)indexPath];
-    
-    // 保存当前选中的值
-    [[NSUserDefaults standardUserDefaults] setValue:self.peripheral.identifier forKey:@"Checkmark"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    [self.tableView reloadData];
 }
 
 - (void)coreBlueViewDidSelectRowAtIndexPath:(NSIndexPath *)indexPath

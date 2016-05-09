@@ -86,7 +86,7 @@
                 <outlet property="tempText" destination="N1E-Ao-Eo9" id="VMe-HA-fJd"/>
                 <outlet property="tintText" destination="biA-Va-mvh" id="Uso-Sw-PMr"/>
             </connections>
-            <point key="canvasLocation" x="339" y="372"/>
+            <point key="canvasLocation" x="383" y="161"/>
         </view>
     </objects>
 </document>

@@ -122,8 +122,8 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 //        self.lastVideo.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"两点" value:nil table:@"Localizable"];
 //    }
     
-    if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x1"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx1"]) {
-        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x1" value:nil table:@"Localizable"];
+    if ([self.chooseDirection.titleBtn isEqualToString:@"无镜头"] || [self.chooseDirection.titleBtn isEqualToString:@"No Lens"]) {
+        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"无镜头" value:nil table:@"Localizable"];
     }
     
     if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x2"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx2"]) {
@@ -258,7 +258,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
         _chooseDirection.btnTag = 55;
         _chooseDirection.delegate = self;
         _chooseDirection.tag = 85;
-        _chooseDirection.titleBtn = [NSString titleChinese:@"增距镜x1" english:@"Lensx1"];
+        _chooseDirection.titleBtn = [NSString titleChinese:@"无镜头" english:@"No Lens"];
         
         [self addSubview:_chooseDirection];
     }
