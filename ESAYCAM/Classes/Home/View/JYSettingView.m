@@ -13,7 +13,7 @@
 #import "JYCustomSliderView.h"
 
 #define DIRECTION_SIZE_LABEL @"Auto Repeat"
-#define SWITCH_SIZE_LABEL @"Position"
+#define SWITCH_SIZE_LABEL @"VideoFlash"
 
 static void *COREBLUE_NAME = &COREBLUE_NAME;
 
@@ -29,7 +29,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 
 @property (strong, nonatomic) JYLabelSwitch *girldSwitch;
 
-@property (strong, nonatomic) JYLabelSwitch *flashSwitch;
+@property (strong, nonatomic) JYLabelSwitch *videoFalshView;
 
 @property (strong, nonatomic) JYCustomSliderView *alphaSlide;
 
@@ -40,6 +40,8 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 @property (strong, nonatomic) JYLabelDirection *chooseDirection;
 
 @property (strong, nonatomic) JYLabelDirection *lastVideo;
+
+@property (strong, nonatomic) JYLabelDirection *flasView;
 
 /** 恢复默认设置 */
 @property (strong, nonatomic) UIButton *resetBtn;
@@ -71,6 +73,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 {
     if (context == COREBLUE_NAME) {    // 设置连接蓝牙的显示名称
         self.blueDirection.titleBtn = [JYSeptManager sharedManager].perName;
+        self.videoFalshView.switchEnlenble = YES;
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
@@ -108,14 +111,16 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     self.chooseDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"附加镜头" value:nil table:@"Localizable"];
     
     self.lastVideo.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"自动重复" value:nil table:@"Localizable"];
+    [self.lastVideo.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:self.lastVideo.btn.currentTitle value:nil table:@"Localizable"] forState:UIControlStateNormal];
     
-    if ([self.lastVideo.titleBtn isEqualToString:@"实时"] || [self.lastVideo.titleBtn isEqualToString:@"RealTime"]) {
-        self.lastVideo.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"实时" value:nil table:@"Localizable"];
-    }
     
-    if ([self.lastVideo.titleBtn isEqualToString:@"两点"] || [self.lastVideo.titleBtn isEqualToString:@"Linear"]) {
-        self.lastVideo.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"两点" value:nil table:@"Localizable"];
-    }
+//    if ([self.lastVideo.titleBtn isEqualToString:@"实时"] || [self.lastVideo.titleBtn isEqualToString:@"RealTime"]) {
+//        self.lastVideo.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"实时" value:nil table:@"Localizable"];
+//    }
+//    
+//    if ([self.lastVideo.titleBtn isEqualToString:@"两点"] || [self.lastVideo.titleBtn isEqualToString:@"Linear"]) {
+//        self.lastVideo.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"两点" value:nil table:@"Localizable"];
+//    }
     
     if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x1"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx1"]) {
         self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x1" value:nil table:@"Localizable"];
@@ -133,7 +138,10 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     
 //    self.positionSwitch.title = [[JYLanguageTool bundle] localizedStringForKey:@"摄像头" value:nil table:@"Localizable"];
     
-    self.flashSwitch.title = [[JYLanguageTool bundle] localizedStringForKey:@"闪光灯" value:nil table:@"Localizable"];
+    self.videoFalshView.title = [[JYLanguageTool bundle] localizedStringForKey:@"录像灯" value:nil table:@"Localizable"];
+    
+    self.flasView.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"闪光灯" value:nil table:@"Localizable"];
+    [self.flasView.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:self.flasView.btn.currentTitle value:nil table:@"Localizable"] forState:UIControlStateNormal];
     
     self.girldSwitch.title = [[JYLanguageTool bundle] localizedStringForKey:@"九宫格" value:nil table:@"Localizable"];
     
@@ -257,7 +265,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     return _chooseDirection;
 }
 
-/** 附加镜头 */
+/** 自动重复 */
 - (JYLabelDirection *)lastVideo
 {
     if (!_lastVideo) {
@@ -272,6 +280,23 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
         [self addSubview:_lastVideo];
     }
     return _lastVideo;
+}
+
+/** 闪光灯 */
+- (JYLabelDirection *)flasView
+{
+    if (!_flasView) {
+        
+        _flasView = [[JYLabelDirection alloc] initWithTitle:DIRECTION_SIZE_LABEL];
+        _flasView.titleLabel = [NSString titleChinese:@"闪光灯" english:@"Flash"];
+        _flasView.btnTag = 57;
+        _flasView.delegate = self;
+        _flasView.tag = 87;
+        _flasView.titleBtn = [NSString titleChinese:@"自动" english:@"Auto"];
+        
+        [self addSubview:_flasView];
+    }
+    return _flasView;
 }
 
 - (void)setDirectionBtnTitle:(NSString *)title andTag:(NSInteger)tag
@@ -306,6 +331,9 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
             break;
         case 84:   // 手轮方向
             self.direction.titleBtn = title;
+            break;
+        case 87:   // 闪光灯
+            self.flasView.titleBtn = title;
             break;
             
         default:
@@ -345,19 +373,19 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 }
 
 /** 闪光灯 */
-- (JYLabelSwitch *)flashSwitch
+- (JYLabelSwitch *)videoFalshView
 {
-    if (!_flashSwitch) {
+    if (!_videoFalshView) {
         
-        _flashSwitch = [[JYLabelSwitch alloc] initWithTitle:SWITCH_SIZE_LABEL];
-        _flashSwitch.switchTag = 42;
-        _flashSwitch.delegate = self;
-        _flashSwitch.title = [NSString titleChinese:@"闪光灯" english:@"Flash"];
-        _flashSwitch.switchEnlenble = NO;
+        _videoFalshView = [[JYLabelSwitch alloc] initWithTitle:SWITCH_SIZE_LABEL];
+        _videoFalshView.switchTag = 42;
+        _videoFalshView.delegate = self;
+        _videoFalshView.title = [NSString titleChinese:@"录像灯" english:@"VideoFlash"];
+        _videoFalshView.switchEnlenble = NO;
         
-        [self addSubview:_flashSwitch];
+        [self addSubview:_videoFalshView];
     }
-    return _flashSwitch;
+    return _videoFalshView;
 }
 
 /** 对比度 */
@@ -400,7 +428,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 {
     _mSwitch = mSwitch;
     
-    self.flashSwitch.switchEnlenble = mSwitch;
+    self.videoFalshView.switchEnlenble = mSwitch;
 }
 
 /** 恢复所有的默认设置 */
@@ -472,15 +500,17 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     
     self.suportDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 6, viewW, JYCortrolWidth);
     
-    self.flashSwitch.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 7, viewW, JYCortrolWidth);
+    self.flasView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 7, viewW, JYCortrolWidth);
     
-    self.girldSwitch.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 8, viewW, JYCortrolWidth);
+    self.videoFalshView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 8, viewW, JYCortrolWidth);
     
-    self.alphaSlide.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 9, viewW, JYCortrolWidth);
+    self.girldSwitch.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 9, viewW, JYCortrolWidth);
     
-    self.lineView.frame = CGRectMake(JYSpaceWidth, (JYCortrolWidth * 10) -1, viewW, 1);
+    self.alphaSlide.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 10, viewW, JYCortrolWidth);
     
-    self.resetBtn.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 10, viewW, JYCortrolWidth);
+    self.lineView.frame = CGRectMake(JYSpaceWidth, (JYCortrolWidth * 11) -1, viewW, 1);
+    
+    self.resetBtn.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 11, viewW, JYCortrolWidth);
 }
 
 - (void)dealloc

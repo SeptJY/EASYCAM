@@ -57,6 +57,11 @@
     [self reloadPages];
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
 - (UIScrollView *)scrollView
 {
     if (!_scrollView) {
@@ -225,7 +230,8 @@
         _loginBtn = [[UIButton alloc] initWithFrame:CGRectMake((screenW - 80) * 0.5, screenH - 50, 80, 30)];
         _loginBtn.layer.cornerRadius = 5;
         _loginBtn.hidden = YES;
-        _loginBtn.backgroundColor = [UIColor redColor];
+        [_loginBtn setBackgroundImage:[UIImage imageNamed:@"new_btn_off"] forState:UIControlStateNormal];
+        [_loginBtn setBackgroundImage:[UIImage imageNamed:@"new_btn_on"] forState:UIControlStateHighlighted];
         _loginBtn.titleLabel.font = setBoldFont(15);
         [_loginBtn setTitle:@"进入" forState:UIControlStateNormal];
         

@@ -83,6 +83,8 @@ static const float kExposureDurationPower = 5;
 
 @property (nonatomic) dispatch_queue_t sessionQueue;
 
+@property (copy, nonatomic) NSString *perName;
+
 @end
 
 @implementation JYHomeController
@@ -109,6 +111,10 @@ static const float kExposureDurationPower = 5;
     self.lensMesage = NSLocalizedString(@"是否安装了其他镜头", nil);
     
     self.direction = NSLocalizedString(@"蓝牙设备未连接", nil);
+    
+    self.changeName = NSLocalizedString(@"修改名称", nil);
+    self.nameMsg = NSLocalizedString(@"请输入你要修改的名字, 不支持中文名字", nil);
+    self.nameplace = NSLocalizedString(@"修改名称", nil);
 
     
     [self homeOfFirstConnectPeripheral];
@@ -197,12 +203,12 @@ static const float kExposureDurationPower = 5;
 //                        NSLog(@"解挡数组  %@", [NSKeyedUnarchiver unarchiveObjectWithFile:path_encode]);
             
             JYPeripheral *codePer = obj;
-//            NSLog(@"%@", codePer.identifier);
+            NSLog(@"codePer = %@", codePer.identifier);
 //            NSLog(@"%@", self.blueManager.peripherals);
             // 3.遍历蓝牙数据中的数据
             for (CBPeripheral *isPer in self.blueManager.peripherals) {
                 JYPeripheral *mPer = [[JYPeripheral alloc] initWithPeripheral:isPer];
-//                                NSLog(@"蓝牙数组中 %@", mPer.identifier);
+                                NSLog(@"蓝牙数组中 %@", mPer.identifier);
                 // 3.1判断是否相同
                 if ([codePer.identifier isEqualToString:mPer.identifier]) {
                     // 3.2相同的话说明之前连接过此蓝牙  直接连接
@@ -211,7 +217,7 @@ static const float kExposureDurationPower = 5;
                         self.blueManager.connectPeripheral = isPer;
                     }
                     // 3.3保存当前连接的蓝牙名称
-                    [JYSeptManager sharedManager].perName = isPer.name;
+                    [JYSeptManager sharedManager].perName = codePer.name;
                 }
             }
         }];
@@ -544,11 +550,98 @@ static const float kExposureDurationPower = 5;
         self.isHidden = NO;
     } else
     {
-        self.timeNum = 250;
+        self.timeNum = 100;
     }
 }
 
 #pragma mark -------------------------> JYCoreBlueViewDelegate
+- (void)handleTextFieldTextDidChangeNotification:(NSNotification *)notification
+{
+    UITextField *textField = notification.object;
+    
+    NSString *toBeString = textField.text;
+    NSArray *currentar = [UITextInputMode activeInputModes];
+    UITextInputMode *current = [currentar firstObject];
+    
+    //下面的方法是iOS7被废弃的，注释
+    //    NSString *lang = [[UITextInputMode currentInputMode] primaryLanguage]; // 键盘输入模式
+    
+    if ([current.primaryLanguage isEqualToString:@"zh-Hans"]) { // 简体中文输入，包括简体拼音，健体五笔，简体手写
+        UITextRange *selectedRange = [textField markedTextRange];
+        //获取高亮部分
+        UITextPosition *position = [textField positionFromPosition:selectedRange.start offset:0];
+        // 没有高亮选择的字，则对已输入的文字进行字数统计和限制
+        if (!position) {
+            if (toBeString.length > 12) {
+                textField.text = [toBeString substringToIndex:12];
+            }
+        }
+        // 有高亮选择的字符串，则暂不对文字进行统计和限制
+        else{
+            
+        }
+    }
+    // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
+    else{
+        if (toBeString.length > 12) {
+            textField.text = [toBeString substringToIndex:12];
+        }
+    }
+    self.perName = textField.text;
+}
+
+- (void)coreBlueViewChangePerName:(JYPeripheral *)per
+{
+    UIAlertController *alertCtl = [UIAlertController alertControllerWithTitle:self.changeName message:self.nameMsg preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertCtl addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = self.nameplace;
+//        [textField markedTextRange];
+        textField.keyboardType = UIKeyboardTypeASCIICapable;
+        
+        [textField positionFromPosition:[textField markedTextRange].start offset:0];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleTextFieldTextDidChangeNotification:) name:UITextFieldTextDidChangeNotification object:textField];
+    }];
+    
+    UIAlertAction *okAciton = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        // 显示当前修改的名字
+        [JYSeptManager sharedManager].perName = self.perName;
+        // 遍历数组中的数据，把相同identifier的名字替换掉
+        for (JYPeripheral *mPer in self.coreBlueView.perArrays) {
+            
+            if ([mPer.identifier isEqualToString:per.identifier]) {
+                mPer.name = [JYSeptManager sharedManager].perName;
+            }
+        }
+        
+        [[JYSeptManager sharedManager] saveCoreBlueWith:per];
+        
+        [self.coreBlueView.tableView reloadData];
+    }];
+    
+    UIAlertAction *cancleAciton = [UIAlertAction actionWithTitle:@"Cancle" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:alertCtl.textFields.firstObject];
+    }];
+    
+    [alertCtl addAction:okAciton];
+    [alertCtl addAction:cancleAciton];
+    
+    [self presentViewController:alertCtl animated:YES completion:nil];
+}
+
+- (BOOL)IsChinese:(NSString *)str
+{
+    for(int i=0; i< [str length];i++) {
+        int a = [str characterAtIndex:i];
+        if( a > 0x4e00 && a < 0x9fff) {
+            return YES;
+        }
+    } return NO;
+}
+
 - (void)coreBlueViewDidSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.blueManager.peripherals) {
@@ -579,7 +672,8 @@ static const float kExposureDurationPower = 5;
 {
     if (!_coreBlueView) {
         
-        _coreBlueView = [[JYCoreBlueView alloc] initWithPeripherals:self.blueManager.peripherals];
+        _coreBlueView = [[JYCoreBlueView alloc] init];
+        _coreBlueView.peripherals = self.blueManager.peripherals;
         _coreBlueView.hidden = YES;
         _coreBlueView.delegate = self;
         
@@ -714,7 +808,7 @@ static const float kExposureDurationPower = 5;
                 // 2.2显示放大的View和sliderView
                 if (self.enlargeBtn.selected == YES) {
                     self.bottomPreview.hidden = NO;
-                    self.timeNum = 250;
+                    self.timeNum = 50;
                 }
 //            });
         
@@ -872,6 +966,7 @@ static const float kExposureDurationPower = 5;
         case 50:     // 色温
         {
             self.temp = slider.value;
+            self.logView.tempText.text = [NSString stringWithFormat:@"%f", self.temp];
             AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTint = {
                 .temperature = self.temp,
                 .tint = self.tint,
@@ -882,6 +977,7 @@ static const float kExposureDurationPower = 5;
         case 51:     // 色调
         {
             self.tint = slider.value;
+            self.logView.tintText.text = [NSString stringWithFormat:@"%f", self.tint];
             AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTint = {
                 .temperature = self.temp,
                 .tint = self.tint,
@@ -977,6 +1073,12 @@ static const float kExposureDurationPower = 5;
         default:
             break;
     }
+}
+
+/** 设置闪光灯的开和自动 */
+- (void)contentViewFlashViewOnClick:(UIButton *)btn
+{
+    
 }
 
 /** 曝光自动和手动的监听事件 */

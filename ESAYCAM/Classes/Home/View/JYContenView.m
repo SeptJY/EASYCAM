@@ -19,12 +19,13 @@
 #import "JYCameraLensView.h"
 #import "JYResetVideoView.h"
 #import "JYHandwheelView.h"
+#import "JYFlashView.h"
 
-#define scrollView_contentSize 550
+#define scrollView_contentSize 600
 
 static NSString *ID = @"fenbinalv";
 
-@interface JYContenView() <JYThreeBtnViewDelegate, JYSettingViewDelegate, JYBalanceViewDelegate, JYExpsureViewDelegate, JYResolutionViewDelegate, JYLanguageViewDelegate, JYSupportViewDelegate, JYCameraLensViewDelegate, JYResetVideoViewDelegate, JYHandwheelViewDelegte>
+@interface JYContenView() <JYThreeBtnViewDelegate, JYSettingViewDelegate, JYBalanceViewDelegate, JYExpsureViewDelegate, JYResolutionViewDelegate, JYLanguageViewDelegate, JYSupportViewDelegate, JYCameraLensViewDelegate, JYResetVideoViewDelegate, JYHandwheelViewDelegte, JYFlashViewDelegate>
 
 @property (strong, nonatomic) JYThreeBtnView *threeBtnView;
 
@@ -46,6 +47,8 @@ static NSString *ID = @"fenbinalv";
 @property (strong, nonatomic) JYResetVideoView *resetView;
 
 @property (strong, nonatomic) JYHandwheelView *handView;
+
+@property (strong, nonatomic) JYFlashView *flashView;
 
 @end
 
@@ -220,12 +223,42 @@ static NSString *ID = @"fenbinalv";
     return _handView;
 }
 
+/** 闪光灯 */
+- (JYFlashView *)flashView
+{
+    if (!_flashView) {
+        
+        _flashView = [[JYFlashView alloc] init];
+        
+        _flashView.hidden = YES;
+        _flashView.delegate = self;
+        
+        [self addSubview:_flashView];
+    }
+    return _flashView;
+}
+
+#pragma mark -------------------------> JYFlashViewDelegate
+- (void)flashViewCellBtnOnClick:(UIButton *)btn
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewFlashViewOnClick:)]) {
+        [self.delegate contentViewFlashViewOnClick:btn];
+    }
+    [self.settingView setDirectionBtnTitle:btn.currentTitle andTag:87];
+    
+    // 1.点击选择 -- 掩藏分辨率的View  显示scrollView
+    self.flashView.hidden = YES;
+    self.scrollView.hidden = NO;
+}
+
 #pragma mark -------------------------> JYResetVideoViewDelegate
 - (void)resetVideoDirectionCellBtnOnClick:(UIButton *)btn
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewResetVideo:)]) {
         [self.delegate contentViewResetVideo:btn];
     }
+    
+    [self.settingView setDirectionBtnTitle:btn.currentTitle andTag:86];
     
     self.resetView.hidden = YES;
     self.scrollView.hidden = NO;
@@ -265,6 +298,7 @@ static NSString *ID = @"fenbinalv";
     self.supportView.hidden = YES;
     self.resetView.hidden = YES;
     self.handView.hidden = YES;
+    self.flashView.hidden = YES;
 }
 
 /** JYSettingViewDelegate  */
@@ -379,7 +413,6 @@ static NSString *ID = @"fenbinalv";
     if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewLabelDirectionBtnOnClick:)]) {
         [self.delegate contentViewLabelDirectionBtnOnClick:btn];
     }
-    
     switch (btn.tag) {
         case 51:
             self.scrollView.hidden = YES;
@@ -410,6 +443,10 @@ static NSString *ID = @"fenbinalv";
                 self.resetView.hidden = NO;
                 self.handBool = NO;
             }
+            break;
+        case 57:
+            self.scrollView.hidden = YES;
+            self.flashView.hidden = NO;
             break;
             
         default:
@@ -508,6 +545,8 @@ static NSString *ID = @"fenbinalv";
     self.lensView.frame = CGRectMake(self.scrollView.x, self.scrollView.y, self.scrollView.width, self.scrollView.height - 10);
     
     self.handView.frame = self.lensView.frame;
+    
+    self.flashView.frame = self.lensView.frame;
 }
 
 - (void)dealloc

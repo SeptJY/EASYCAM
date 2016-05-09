@@ -27,6 +27,8 @@
 
 @property (weak, nonatomic) id<JYLabelDirectionDelegate>delegate;
 
+@property (strong, nonatomic) UIButton *btn;
+
 
 
 @end

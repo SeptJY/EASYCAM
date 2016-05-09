@@ -51,6 +51,8 @@
 
 - (void)threeViewButtonOnClick:(UIButton *)sender;
 
+- (void)contentViewFlashViewOnClick:(UIButton *)btn;
+
 @end
 
 @interface JYContenView : UIView

@@ -7,33 +7,47 @@
 //
 
 #import "JYCoreBlueView.h"
-
+#import "JYCustomCell.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 
 #define headViewHeight 25   // 标题高度
 
-@interface JYCoreBlueView() <UITableViewDataSource, UITableViewDelegate>
+@interface JYCoreBlueView() <UITableViewDataSource, UITableViewDelegate, JYCustomCellDelegate>
 
-@property (strong, nonatomic) CBPeripheral *peripheral;
+@property (strong, nonatomic) JYPeripheral *peripheral;
 
 @property (strong, nonatomic) UIView *headView;
 
 @property (assign, nonatomic) BOOL isSave;   // 判断蓝牙是否需要保存
 
+@property (strong, nonatomic) JYPeripheral *seletedPer;
+
+
+
 @end
 
 @implementation JYCoreBlueView
 
-- (instancetype)initWithPeripherals:(NSMutableArray *)peripherals
+- (instancetype)init
 {
     self = [super init];
     if (self) {
         
-        self.peripherals = peripherals;
-        
+        self.perArrays = [NSMutableArray array];
         self.tableView.rowHeight = JYCortrolWidth;
+        
+        [self.tableView registerNib:[UINib nibWithNibName:@"JYCustomCell" bundle:nil] forCellReuseIdentifier:@"cell"];
     }
     return self;
+}
+
+- (void)setPeripherals:(NSMutableArray *)peripherals
+{
+    [self.perArrays removeAllObjects];
+    for (CBPeripheral *per in peripherals) {
+        JYPeripheral *mPer = [[JYPeripheral alloc] initWithPeripheral:per];
+        [self.perArrays addObject:mPer];
+    }
 }
 
 - (UIView *)headView
@@ -83,46 +97,54 @@
     return _tableView;
 }
 
+#pragma mark -------------------------> JYCustomCellDelegate
+- (void)customCellAlertBtnClick:(UIButton *)btn
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(coreBlueViewChangePerName:)]) {
+        [self.delegate coreBlueViewChangePerName:self.seletedPer];
+    }
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return (self.peripherals.count) ? self.peripherals.count : 1;
+//    NSLog(@"%@", self.perArrays); 
+    return (self.perArrays.count) ? self.perArrays.count : 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *ID = @"test";
+    JYCustomCell *cell = [JYCustomCell cellWithTableView:tableView];
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
-    
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
-        cell.backgroundColor = [UIColor clearColor];
-        cell.textLabel.textColor = [UIColor yellowColor];
-        cell.textLabel.font = [UIFont systemFontOfSize:15];
-        cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
-//        cell.selectedBackgroundView.backgroundColor = setColor(230, 230, 230);
-//        cell.selectedBackgroundView.alpha = 0.4;
+    cell.delegate = self;
+    cell.backgroundColor = [UIColor clearColor];
+    cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
+    if (self.perArrays.count > 0) {
+        JYPeripheral *peripheral = self.perArrays[indexPath.row];
         
-//        cell.textLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
-    }
-    
-    if (self.peripherals.count > 0) {
-        CBPeripheral *peripheral = self.peripherals[indexPath.row];
-        cell.textLabel.text = peripheral.name;
-        
-        JYPeripheral *mPer = [[JYPeripheral alloc] initWithPeripheral:peripheral];
-        if ([mPer.identifier isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"Checkmark"]]) {
+        if ([NSKeyedUnarchiver unarchiveObjectWithFile:path_encode] == nil) {
+            cell.title = peripheral.name;
+        } else {
+            [[NSKeyedUnarchiver unarchiveObjectWithFile:path_encode] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                
+                JYPeripheral *mPer = obj;
+                // 判断保存数据库中是否存在当前选中选中的蓝牙设备
+                if ([mPer.identifier isEqualToString:peripheral.identifier]) {
+                    cell.title = mPer.name;
+                }else {
+                    cell.title = peripheral.name;
+                }
+            }];
+        }
+        if ([peripheral.identifier isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"Checkmark"]]) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             cell.tintColor = [UIColor yellowColor];
-        } else
-        {
+            cell.isHidden = NO;
+            self.seletedPer = peripheral;
+        } else {
             cell.accessoryType = UITableViewCellAccessoryNone;
-            
         }
-        
-    } else
-    {
-        cell.textLabel.text = @"未搜索到周围的服务";
+    } else {
+        cell.title = @"未搜索到周围的服务";
     }
     
     return cell;
@@ -130,26 +152,25 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    self.peripheral = self.peripherals[indexPath.row];
-    JYPeripheral *selectPer = [[JYPeripheral alloc] initWithPeripheral:self.peripheral];
+    self.peripheral = self.perArrays[indexPath.row];
     
     [[NSKeyedUnarchiver unarchiveObjectWithFile:path_encode] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         JYPeripheral *mPer = obj;
         // 判断保存数据库中是否存在当前选中选中的蓝牙设备
-        if ([mPer.identifier isEqualToString:selectPer.identifier]) {
+        if ([mPer.identifier isEqualToString:self.peripheral.identifier]) {
             self.isSave = YES;
         }
     }];
     
-    if (self.isSave == NO && self.peripherals != nil) {
-        [[JYSeptManager sharedManager] saveCoreBlueWith:selectPer];
+    if (self.isSave == NO && self.perArrays != nil) {
+        [[JYSeptManager sharedManager] saveCoreBlueWith:self.peripheral];
     }
     
     [self coreBlueViewDidSelectRowAtIndexPath:(NSIndexPath *)indexPath];
     
     // 保存当前选中的值
-    [[NSUserDefaults standardUserDefaults] setValue:selectPer.identifier forKey:@"Checkmark"];
+    [[NSUserDefaults standardUserDefaults] setValue:self.peripheral.identifier forKey:@"Checkmark"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     [self.tableView reloadData];

@@ -12,7 +12,7 @@
 
 @property (strong, nonatomic) UILabel *label;
 
-@property (strong, nonatomic) UIButton *btn;
+//@property (strong, nonatomic) UIButton *btn;
 
 @property (strong, nonatomic) NSString *sizeText;
 

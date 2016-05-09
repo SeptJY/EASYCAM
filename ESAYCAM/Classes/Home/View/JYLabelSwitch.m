@@ -39,7 +39,7 @@
         
         _label.text = NSLocalizedString(self.title, nil);
         _label.textColor = [UIColor yellowColor];
-        _label.textAlignment = NSTextAlignmentCenter;
+        _label.textAlignment = NSTextAlignmentLeft;
         _label.font = setBoldFont(15);
         
         [self addSubview:_label];

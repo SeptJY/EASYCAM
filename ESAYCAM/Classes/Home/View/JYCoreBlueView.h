@@ -11,8 +11,9 @@
 @protocol JYCoreBlueViewDelegate <NSObject>
 
 @optional
-
 - (void)coreBlueViewDidSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+
+- (void)coreBlueViewChangePerName:(JYPeripheral *)per;
 
 @end
 
@@ -23,8 +24,9 @@
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UILabel *titleLabel;
 
-- (instancetype)initWithPeripherals:(NSMutableArray *)peripherals;
 
 @property (strong, nonatomic) NSMutableArray *peripherals;
+
+@property (strong, nonatomic) NSMutableArray *perArrays;
 
 @end

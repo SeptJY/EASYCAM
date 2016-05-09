@@ -65,4 +65,8 @@ typedef NS_ENUM(NSUInteger, JYPhotoImgModel) {
 
 @property (copy, nonatomic) NSString *direction;
 
+@property (copy, nonatomic) NSString *changeName;
+@property (copy, nonatomic) NSString *nameMsg;
+@property (copy, nonatomic) NSString *nameplace;
+
 @end

@@ -51,6 +51,18 @@
     return YES;
 }
 
+- (BOOL)application:(UIApplication *)application
+
+shouldAllowExtensionPointIdentifier:(NSString *)extensionPointIdentifier
+{
+    if ([extensionPointIdentifier isEqualToString:@"com.apple.keyboard-service"]) {
+        
+        return NO;
+    }
+    return YES;
+    
+}
+
 void fun(NSString *str)
 {
     NSString *versionStr = [str stringByReplacingOccurrencesOfString:@"." withString:@""];

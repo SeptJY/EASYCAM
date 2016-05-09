@@ -53,14 +53,15 @@ static id _instace;
             
             JYPeripheral *p = obj;
             NSLog(@"写入前遍历 = %@, %@",p.name, p.identifier);
-            // 添加到数组中
-            [mArray addObject:obj];
+            if (![pre.identifier isEqualToString:p.identifier]) {
+                // 添加到数组中
+                [mArray addObject:obj];
+            }
         }];
     }
-    
     // 把新数据放到最后
     [mArray addObject:pre];
-    NSLog(@"新数据保存前 = %@", mArray);
+    NSLog(@"新数据保存前 = %@", pre.name);
     
     //3.将自定义的对象保存到文件中
     [NSKeyedArchiver archiveRootObject:mArray toFile:path_encode];

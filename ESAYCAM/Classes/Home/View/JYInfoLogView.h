@@ -13,4 +13,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *myText;
 @property (weak, nonatomic) IBOutlet UITextField *camereText;
 
+@property (weak, nonatomic) IBOutlet UITextField *tempText;
+@property (weak, nonatomic) IBOutlet UITextField *tintText;
 @end
