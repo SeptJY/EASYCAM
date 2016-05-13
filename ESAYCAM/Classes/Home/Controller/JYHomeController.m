@@ -1411,8 +1411,10 @@ static const float kExposureDurationPower = 5;
             if (self.coreBlueView.hidden == NO) {
                 self.coreBlueView.hidden = YES;
                 self.myContentView.isHidden = NO;
-            } else
-            {
+            } else if (self.fpsView.hidden == NO) {
+                self.myContentView.isHidden = NO;
+                self.fpsView.hidden = YES;
+            } else {
                 self.myContentView.hidden = !btn.selected;
             }
             
@@ -1700,6 +1702,7 @@ static const float kExposureDurationPower = 5;
         
         if (desiredFps > 0.0) {
             [self.videoCamera switchFormatWithDesiredFPS:desiredFps];
+//            self.videoCamera.frameRate = 240;
         }
         else {
             [self.videoCamera resetFormat];

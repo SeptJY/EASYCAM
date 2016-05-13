@@ -67,45 +67,38 @@
     
     if (isRunning)  [self.captureSession stopRunning];
     
-    AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceFormat *selectedFormat = nil;
     AVFrameRateRange *frameRateRange = nil;
     
-    for (AVCaptureDeviceFormat *format in [videoDevice formats]) {
+    for (AVCaptureDeviceFormat *format in [_inputCamera formats]) {
         
         for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
             
             CMFormatDescriptionRef desc = format.formatDescription;
             CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
             int32_t width = dimensions.width;
-            //            NSLog(@"1- %d, 2- %d, 3- %d", range.minFrameRate <= desiredFPS, desiredFPS <= range.maxFrameRate, width >= maxWidth);
-            //            NSLog(@"min - %f, max - %f", range.minFrameRate, range.maxFrameRate);
             if (range.minFrameRate <= desiredFPS && width == (int)self.videoSize.width && range.maxFrameRate == desiredFPS) {
                 
                 selectedFormat = format;
                 frameRateRange = range;
-//                maxWidth = width;
-//                NSLog(@"11 = 1- %f, 2- %f, 3- %d, %d", range.minFrameRate, range.maxFrameRate, width, maxWidth);
-//            } else {
-//                NSLog(@"22 = 1- %f, 2- %f, 3- %d, %d", range.minFrameRate, range.maxFrameRate, width, maxWidth);
             }
         }
     }
     
     if (selectedFormat) {
     
-        if ([videoDevice lockForConfiguration:nil]) {
+        if ([_inputCamera lockForConfiguration:nil]) {
             
             CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(selectedFormat.formatDescription);
             self.videoSize = CGSizeMake(dimensions.width, dimensions.height);
             //            NSLog(@"%@", selectedFormat.formatDescription);
             NSLog(@"selected format:h = %d -- w = %d", dimensions.height, dimensions.width);
             
-            videoDevice.activeFormat = selectedFormat;
-            videoDevice.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
-            videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
-            [videoDevice unlockForConfiguration];
-            NSLog(@"TT %@", videoDevice.activeFormat);
+            _inputCamera.activeFormat = selectedFormat;
+            _inputCamera.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
+            _inputCamera.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
+            [_inputCamera unlockForConfiguration];
+            NSLog(@"TT %@", self.inputCamera.activeFormat);
         }
         //        NSLog(@"cc %@", self.camera.captureSession.sessionPreset);
     }
@@ -121,11 +114,11 @@
         [self.captureSession stopRunning];
     }
     
-    AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    [videoDevice lockForConfiguration:nil];
-    videoDevice.activeFormat = self.defaultFormat;
-    videoDevice.activeVideoMaxFrameDuration = defaultVideoMaxFrameDuration;
-    [videoDevice unlockForConfiguration];
+//    AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    [_inputCamera lockForConfiguration:nil];
+    _inputCamera.activeFormat = self.defaultFormat;
+    _inputCamera.activeVideoMaxFrameDuration = defaultVideoMaxFrameDuration;
+    [_inputCamera unlockForConfiguration];
     
     if (isRunning) {
         [self.captureSession startRunning];
@@ -165,7 +158,7 @@
         _camera.outputImageOrientation = UIInterfaceOrientationLandscapeRight;
         _camera.horizontallyMirrorFrontFacingCamera = NO;
         _camera.horizontallyMirrorRearFacingCamera = NO;
-        
+    
         self.filter = [[GPUImageSaturationFilter alloc] init];
         [_camera addTarget:self.filter];
         [self.filter addTarget:self.cameraScreen];

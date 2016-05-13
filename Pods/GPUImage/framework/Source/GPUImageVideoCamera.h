@@ -53,6 +53,7 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 /// This sets the frame rate of the camera (iOS 5 and above only)
 /**
  Setting this to 0 or below will set the frame rate back to the default setting for a particular preset.
+ 设置fps
  */
 @property (readwrite) int32_t frameRate;
 
