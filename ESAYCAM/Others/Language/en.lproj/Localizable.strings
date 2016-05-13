@@ -80,3 +80,8 @@
 "修改名称" = "Modify name";
 "无镜头" = "No Lens";
 "  帧   率" = "FPS";
+"编码质量" = "Coding quality";
+"低" = "Low";
+"标准" = "Standard";
+"中" = "Medium";
+"高" = "High";

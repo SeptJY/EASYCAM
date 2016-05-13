@@ -45,6 +45,8 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 
 @property (strong, nonatomic) JYLabelDirection *fpsDirection;
 
+@property (strong, nonatomic) JYLabelDirection *qualityDirection;
+
 /** 恢复默认设置 */
 @property (strong, nonatomic) UIButton *resetBtn;
 @property (strong, nonatomic) UIView *lineView;
@@ -319,6 +321,23 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     return _fpsDirection;
 }
 
+/** fps */
+- (JYLabelDirection *)qualityDirection
+{
+    if (!_qualityDirection) {
+        
+        _qualityDirection = [[JYLabelDirection alloc] initWithTitle:DIRECTION_SIZE_LABEL];
+        _qualityDirection.titleLabel = [NSString titleChinese:@"编码质量" english:@"Coding quality"];
+        _qualityDirection.btnTag = 59;
+        _qualityDirection.delegate = self;
+        _qualityDirection.tag = 89;
+        _qualityDirection.titleBtn = @"标准";
+        
+        [self addSubview:_fpsDirection];
+    }
+    return _fpsDirection;
+}
+
 - (void)setDirectionBtnTitle:(NSString *)title andTag:(NSInteger)tag
 {
     switch (tag) {
@@ -357,6 +376,9 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
             break;
         case 88:   // fps
             self.fpsDirection.titleBtn = title;
+            break;
+        case 89:   // fps
+            self.qualityDirection.titleBtn = title;
             break;
             
         default:
@@ -514,28 +536,29 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     self.resolutionDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth, viewW, JYCortrolWidth);
     
     self.fpsDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 2, viewW, JYCortrolWidth);
+    self.qualityDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 3, viewW, JYCortrolWidth);
     
-    self.languageDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 3, viewW, JYCortrolWidth);
+    self.languageDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 4, viewW, JYCortrolWidth);
     
-    self.direction.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 4, viewW, JYCortrolWidth);
+    self.direction.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 5, viewW, JYCortrolWidth);
     
-    self.lastVideo.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 5, viewW, JYCortrolWidth);
+    self.lastVideo.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 6, viewW, JYCortrolWidth);
     
-    self.chooseDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 6, viewW, JYCortrolWidth);
+    self.chooseDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 7, viewW, JYCortrolWidth);
     
-    self.suportDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 7, viewW, JYCortrolWidth);
+    self.suportDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 8, viewW, JYCortrolWidth);
     
-    self.flasView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 8, viewW, JYCortrolWidth);
+    self.flasView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 9, viewW, JYCortrolWidth);
     
-    self.videoFalshView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 9, viewW, JYCortrolWidth);
+    self.videoFalshView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 10, viewW, JYCortrolWidth);
     
-    self.girldSwitch.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 10, viewW, JYCortrolWidth);
+    self.girldSwitch.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 11, viewW, JYCortrolWidth);
     
-    self.alphaSlide.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 11, viewW, JYCortrolWidth);
+    self.alphaSlide.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 12, viewW, JYCortrolWidth);
     
-    self.lineView.frame = CGRectMake(JYSpaceWidth, (JYCortrolWidth * 12) -1, viewW, 1);
+    self.lineView.frame = CGRectMake(JYSpaceWidth, (JYCortrolWidth * 13) -1, viewW, 1);
     
-    self.resetBtn.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 12, viewW, JYCortrolWidth);
+    self.resetBtn.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 13, viewW, JYCortrolWidth);
 }
 
 - (void)dealloc

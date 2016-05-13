@@ -20,12 +20,13 @@
 #import "JYResetVideoView.h"
 #import "JYHandwheelView.h"
 #import "JYFlashView.h"
+#import "JYQualityView.h"
 
-#define scrollView_contentSize 650
+#define scrollView_contentSize 700
 
 static NSString *ID = @"fenbinalv";
 
-@interface JYContenView() <JYThreeBtnViewDelegate, JYSettingViewDelegate, JYBalanceViewDelegate, JYExpsureViewDelegate, JYResolutionViewDelegate, JYLanguageViewDelegate, JYSupportViewDelegate, JYCameraLensViewDelegate, JYResetVideoViewDelegate, JYHandwheelViewDelegte, JYFlashViewDelegate>
+@interface JYContenView() <JYThreeBtnViewDelegate, JYSettingViewDelegate, JYBalanceViewDelegate, JYExpsureViewDelegate, JYResolutionViewDelegate, JYLanguageViewDelegate, JYSupportViewDelegate, JYCameraLensViewDelegate, JYResetVideoViewDelegate, JYHandwheelViewDelegte, JYFlashViewDelegate, JYQualityViewDelegate>
 
 @property (strong, nonatomic) JYThreeBtnView *threeBtnView;
 
@@ -49,6 +50,8 @@ static NSString *ID = @"fenbinalv";
 @property (strong, nonatomic) JYHandwheelView *handView;
 
 @property (strong, nonatomic) JYFlashView *flashView;
+
+@property (strong, nonatomic) JYQualityView *qualityView;
 
 @end
 
@@ -236,6 +239,22 @@ static NSString *ID = @"fenbinalv";
         [self addSubview:_flashView];
     }
     return _flashView;
+}
+
+
+/** 闪光灯 */
+- (JYQualityView *)qualityView
+{
+    if (!_qualityView) {
+        
+        _qualityView = [[JYQualityView alloc] init];
+        
+        _qualityView.hidden = YES;
+        _qualityView.delegate = self;
+        
+        [self addSubview:_qualityView];
+    }
+    return _qualityView;
 }
 
 #pragma mark -------------------------> JYFlashViewDelegate
@@ -452,6 +471,10 @@ static NSString *ID = @"fenbinalv";
             self.scrollView.hidden = YES;
             self.flashView.hidden = NO;
             break;
+        case 59:
+            self.scrollView.hidden = YES;
+            self.qualityView.hidden = NO;
+            break;
             
         default:
             break;
@@ -461,6 +484,19 @@ static NSString *ID = @"fenbinalv";
 - (void)contenViewCameraLensViewShowOneCell
 {
     [self.lensView cameraLensViewShowOneCell];
+}
+
+#pragma mark -------------------------> JYQualityDelegte
+- (void)qualityBtnOnClick:(UIButton *)btn
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewQualityBtnOnClick:)]) {
+        [self.delegate contentViewQualityBtnOnClick:btn];
+    }
+    [self.settingView setDirectionBtnTitle:btn.currentTitle andTag:89];
+    
+    // 1.点击选择 -- 掩藏分辨率的View  显示scrollView
+    self.qualityView.hidden = YES;
+    self.scrollView.hidden = NO;
 }
 
 #pragma mark -------------------------> JYSupportViewDelegate

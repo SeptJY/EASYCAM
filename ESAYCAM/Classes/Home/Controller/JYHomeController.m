@@ -1201,6 +1201,11 @@ static const float kExposureDurationPower = 5;
     [self.navigationController pushViewController:webCtl animated:YES];
 }
 
+- (void)contentViewQualityBtnOnClick:(UIButton *)btn
+{
+    NSLog(@"%@", btn.currentTitle);
+}
+
 - (void)contentViewCameraLensViewCellBtnOnClick:(UIButton *)btn
 {
     UIAlertController *alertCtl = [UIAlertController alertControllerWithTitle:self.sizeTitle message:@"是否安装了其他镜头" preferredStyle:UIAlertControllerStyleAlert];

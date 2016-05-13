@@ -66,6 +66,7 @@
 		5BB73A3E1CD82FFE0084C624 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5BB73A311CD82FFE0084C624 /* Localizable.strings */; };
 		5BB73A3F1CD82FFE0084C624 /* JYLanguageTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB73A341CD82FFE0084C624 /* JYLanguageTool.m */; };
 		5BB73A421CD8301E0084C624 /* JYNewFeturnData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5BB73A411CD8301E0084C624 /* JYNewFeturnData.plist */; };
+		84CEC8C51CE621DC00E1573B /* JYQualityView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CEC8C41CE621DC00E1573B /* JYQualityView.m */; };
 		CF43909DBB0CA3B8AD8180F3 /* libPods-ESAYCAM.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F64AA4596C5B9F9D5BE87E4 /* libPods-ESAYCAM.a */; };
 /* End PBXBuildFile section */
 
@@ -205,6 +206,8 @@
 		5BB73A401CD830190084C624 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		5BB73A411CD8301E0084C624 /* JYNewFeturnData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = JYNewFeturnData.plist; sourceTree = "<group>"; };
 		7F64AA4596C5B9F9D5BE87E4 /* libPods-ESAYCAM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ESAYCAM.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		84CEC8C31CE621DC00E1573B /* JYQualityView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYQualityView.h; sourceTree = "<group>"; };
+		84CEC8C41CE621DC00E1573B /* JYQualityView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYQualityView.m; sourceTree = "<group>"; };
 		E4312030112DDF7F5C45AC6F /* Pods-ESAYCAM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ESAYCAM.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ESAYCAM/Pods-ESAYCAM.debug.xcconfig"; sourceTree = "<group>"; };
 		ECEA4B90065E3CD70BC08B4F /* Pods-ESAYCAM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ESAYCAM.release.xcconfig"; path = "Pods/Target Support Files/Pods-ESAYCAM/Pods-ESAYCAM.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -431,6 +434,8 @@
 				5B8F96621CDD7A9000961260 /* JYCustomCell.xib */,
 				5B8F96651CDDE25D00961260 /* JYFlashView.h */,
 				5B8F96661CDDE25D00961260 /* JYFlashView.m */,
+				84CEC8C31CE621DC00E1573B /* JYQualityView.h */,
+				84CEC8C41CE621DC00E1573B /* JYQualityView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -819,6 +824,7 @@
 				5BB73A021CD82FF40084C624 /* JYLabelSwitch.m in Sources */,
 				5BB73A111CD82FF40084C624 /* JYVideoView.m in Sources */,
 				5BB739A41CD82FED0084C624 /* JYCameraManager.m in Sources */,
+				84CEC8C51CE621DC00E1573B /* JYQualityView.m in Sources */,
 				5BB739F71CD82FF40084C624 /* JYSaveVideoData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

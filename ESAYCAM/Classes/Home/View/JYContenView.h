@@ -53,6 +53,8 @@
 
 - (void)contentViewFlashViewOnClick:(UIButton *)btn;
 
+- (void)contentViewQualityBtnOnClick:(UIButton *)btn;
+
 @end
 
 @interface JYContenView : UIView
