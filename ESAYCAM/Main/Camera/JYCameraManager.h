@@ -75,4 +75,8 @@ typedef void(^JYLableText)(NSString *text);
 
 - (void)flashModel:(AVCaptureFlashMode)flashModel;
 
+- (void)resetFormat;
+
+- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
+
 @end

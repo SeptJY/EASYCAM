@@ -16,6 +16,7 @@ static void * DeviceExposureTargetBias = &DeviceExposureTargetBias;
 static void * DeviceExposureISO = &DeviceExposureISO;
 static void * DeviceExposureDuration = &DeviceExposureDuration;
 static void * DeviceExposureOffset = &DeviceExposureOffset;
+static void * VideoSize = &VideoSize;
 
 typedef NS_ENUM(NSUInteger, CoreBlueUseModel) {
     CoreBlueUseModelFocus,

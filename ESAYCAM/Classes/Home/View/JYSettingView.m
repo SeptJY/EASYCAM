@@ -43,6 +43,8 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 
 @property (strong, nonatomic) JYLabelDirection *flasView;
 
+@property (strong, nonatomic) JYLabelDirection *fpsDirection;
+
 /** 恢复默认设置 */
 @property (strong, nonatomic) UIButton *resetBtn;
 @property (strong, nonatomic) UIView *lineView;
@@ -109,6 +111,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     self.direction.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"手轮方向" value:nil table:@"Localizable"];
     
     self.chooseDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"附加镜头" value:nil table:@"Localizable"];
+    [self.chooseDirection.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:self.chooseDirection.btn.currentTitle value:nil table:@"Localizable"] forState:UIControlStateNormal];
     
     self.lastVideo.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"自动重复" value:nil table:@"Localizable"];
     [self.lastVideo.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:self.lastVideo.btn.currentTitle value:nil table:@"Localizable"] forState:UIControlStateNormal];
@@ -122,17 +125,17 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 //        self.lastVideo.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"两点" value:nil table:@"Localizable"];
 //    }
     
-    if ([self.chooseDirection.titleBtn isEqualToString:@"无镜头"] || [self.chooseDirection.titleBtn isEqualToString:@"No Lens"]) {
-        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"无镜头" value:nil table:@"Localizable"];
-    }
-    
-    if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x2"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx2"]) {
-        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x2" value:nil table:@"Localizable"];
-    }
-    
-    if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x3"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx3"]) {
-        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x3" value:nil table:@"Localizable"];
-    }
+//    if ([self.chooseDirection.titleBtn isEqualToString:@"无镜头"] || [self.chooseDirection.titleBtn isEqualToString:@"No Lens"]) {
+//        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"无镜头" value:nil table:@"Localizable"];
+//    }
+//    
+//    if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x2"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx2"]) {
+//        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x2" value:nil table:@"Localizable"];
+//    }
+//    
+//    if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x3"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx3"]) {
+//        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x3" value:nil table:@"Localizable"];
+//    }
     
     self.suportDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"硬件支持" value:nil table:@"Localizable"];
     
@@ -299,6 +302,23 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     return _flasView;
 }
 
+/** fps */
+- (JYLabelDirection *)fpsDirection
+{
+    if (!_fpsDirection) {
+        
+        _fpsDirection = [[JYLabelDirection alloc] initWithTitle:DIRECTION_SIZE_LABEL];
+        _fpsDirection.titleLabel = [NSString titleChinese:@"  帧   率" english:@"FPS"];
+        _fpsDirection.btnTag = 58;
+        _fpsDirection.delegate = self;
+        _fpsDirection.tag = 88;
+        _fpsDirection.titleBtn = @"30";
+        
+        [self addSubview:_fpsDirection];
+    }
+    return _fpsDirection;
+}
+
 - (void)setDirectionBtnTitle:(NSString *)title andTag:(NSInteger)tag
 {
     switch (tag) {
@@ -334,6 +354,9 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
             break;
         case 87:   // 闪光灯
             self.flasView.titleBtn = title;
+            break;
+        case 88:   // fps
+            self.fpsDirection.titleBtn = title;
             break;
             
         default:
@@ -490,27 +513,29 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     
     self.resolutionDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth, viewW, JYCortrolWidth);
     
-    self.languageDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 2, viewW, JYCortrolWidth);
+    self.fpsDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 2, viewW, JYCortrolWidth);
     
-    self.direction.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 3, viewW, JYCortrolWidth);
+    self.languageDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 3, viewW, JYCortrolWidth);
     
-    self.lastVideo.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 4, viewW, JYCortrolWidth);
+    self.direction.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 4, viewW, JYCortrolWidth);
     
-    self.chooseDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 5, viewW, JYCortrolWidth);
+    self.lastVideo.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 5, viewW, JYCortrolWidth);
     
-    self.suportDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 6, viewW, JYCortrolWidth);
+    self.chooseDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 6, viewW, JYCortrolWidth);
     
-    self.flasView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 7, viewW, JYCortrolWidth);
+    self.suportDirection.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 7, viewW, JYCortrolWidth);
     
-    self.videoFalshView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 8, viewW, JYCortrolWidth);
+    self.flasView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 8, viewW, JYCortrolWidth);
     
-    self.girldSwitch.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 9, viewW, JYCortrolWidth);
+    self.videoFalshView.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 9, viewW, JYCortrolWidth);
     
-    self.alphaSlide.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 10, viewW, JYCortrolWidth);
+    self.girldSwitch.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 10, viewW, JYCortrolWidth);
     
-    self.lineView.frame = CGRectMake(JYSpaceWidth, (JYCortrolWidth * 11) -1, viewW, 1);
+    self.alphaSlide.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 11, viewW, JYCortrolWidth);
     
-    self.resetBtn.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 11, viewW, JYCortrolWidth);
+    self.lineView.frame = CGRectMake(JYSpaceWidth, (JYCortrolWidth * 12) -1, viewW, 1);
+    
+    self.resetBtn.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 12, viewW, JYCortrolWidth);
 }
 
 - (void)dealloc

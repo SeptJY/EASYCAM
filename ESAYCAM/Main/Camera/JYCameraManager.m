@@ -15,10 +15,15 @@
 {
     CGRect _frame;
     GPUImageMovieWriter *movieWriter;
+    CMTime defaultVideoMaxFrameDuration;
 }
 @property (nonatomic, unsafe_unretained) dispatch_queue_t prepareFilterQueue;
 
 @property (nonatomic , strong) GPUImageView *cameraScreen;
+
+@property (nonatomic, strong) AVCaptureDeviceFormat *defaultFormat;
+
+@property (strong, nonatomic) NSDictionary *videoSettings;
 
 @end
 
@@ -55,6 +60,78 @@
     }];
 }
 
+- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS
+{
+    NSLog(@"ff %@", self.camera.inputCamera.activeFormat);
+    BOOL isRunning = self.captureSession.isRunning;
+    
+    if (isRunning)  [self.captureSession stopRunning];
+    
+    AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDeviceFormat *selectedFormat = nil;
+    AVFrameRateRange *frameRateRange = nil;
+    
+    for (AVCaptureDeviceFormat *format in [videoDevice formats]) {
+        
+        for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
+            
+            CMFormatDescriptionRef desc = format.formatDescription;
+            CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
+            int32_t width = dimensions.width;
+            //            NSLog(@"1- %d, 2- %d, 3- %d", range.minFrameRate <= desiredFPS, desiredFPS <= range.maxFrameRate, width >= maxWidth);
+            //            NSLog(@"min - %f, max - %f", range.minFrameRate, range.maxFrameRate);
+            if (range.minFrameRate <= desiredFPS && width == (int)self.videoSize.width && range.maxFrameRate == desiredFPS) {
+                
+                selectedFormat = format;
+                frameRateRange = range;
+//                maxWidth = width;
+//                NSLog(@"11 = 1- %f, 2- %f, 3- %d, %d", range.minFrameRate, range.maxFrameRate, width, maxWidth);
+//            } else {
+//                NSLog(@"22 = 1- %f, 2- %f, 3- %d, %d", range.minFrameRate, range.maxFrameRate, width, maxWidth);
+            }
+        }
+    }
+    
+    if (selectedFormat) {
+    
+        if ([videoDevice lockForConfiguration:nil]) {
+            
+            CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(selectedFormat.formatDescription);
+            self.videoSize = CGSizeMake(dimensions.width, dimensions.height);
+            //            NSLog(@"%@", selectedFormat.formatDescription);
+            NSLog(@"selected format:h = %d -- w = %d", dimensions.height, dimensions.width);
+            
+            videoDevice.activeFormat = selectedFormat;
+            videoDevice.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
+            videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
+            [videoDevice unlockForConfiguration];
+            NSLog(@"TT %@", videoDevice.activeFormat);
+        }
+        //        NSLog(@"cc %@", self.camera.captureSession.sessionPreset);
+    }
+    
+    if (isRunning) [self.captureSession startRunning];
+}
+
+- (void)resetFormat {
+    
+    BOOL isRunning = self.captureSession.isRunning;
+    
+    if (isRunning) {
+        [self.captureSession stopRunning];
+    }
+    
+    AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    [videoDevice lockForConfiguration:nil];
+    videoDevice.activeFormat = self.defaultFormat;
+    videoDevice.activeVideoMaxFrameDuration = defaultVideoMaxFrameDuration;
+    [videoDevice unlockForConfiguration];
+    
+    if (isRunning) {
+        [self.captureSession startRunning];
+    }
+}
+
 - (GPUImageView *)cameraScreen {
     if (!_cameraScreen) {
         GPUImageView *cameraScreen = [[GPUImageView alloc] initWithFrame:_frame];
@@ -84,13 +161,12 @@
 - (GPUImageStillCamera *)camera
 {
     if (!_camera) {
-        _camera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPresetHigh cameraPosition:AVCaptureDevicePositionBack];
+        _camera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1920x1080 cameraPosition:AVCaptureDevicePositionBack];
         _camera.outputImageOrientation = UIInterfaceOrientationLandscapeRight;
         _camera.horizontallyMirrorFrontFacingCamera = NO;
         _camera.horizontallyMirrorRearFacingCamera = NO;
         
         self.filter = [[GPUImageSaturationFilter alloc] init];
-        
         [_camera addTarget:self.filter];
         [self.filter addTarget:self.cameraScreen];
         [self.filter addTarget:self.subPreview];
@@ -120,6 +196,7 @@
     [self.filter removeTarget:movieWriter];
     self.camera.audioEncodingTarget = nil;
     [movieWriter finishRecording];
+    NSLog(@"preset = %@", self.captureSession.sessionPreset);
 }
 
 - (GPUImageMovieWriter *)writer
@@ -127,15 +204,22 @@
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie.MOV"];
     unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
     NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
-    
+    NSLog(@"captureSessionPreset = %@", self.captureSession.sessionPreset);
     GPUImageMovieWriter *writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize];
-    writer.shouldPassthroughAudio = YES;
+    
+
+//    GPUImageMovieWriter *writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize fileType:AVFileTypeQuickTimeMovie outputSettings:attributes];        writer.shouldPassthroughAudio = YES;
     writer.delegate = self;
     
     [self.filter addTarget:writer];
     self.camera.audioEncodingTarget = writer;
     
     return writer;
+}
+
+- (void)movieRecordingCompleted
+{
+    NSLog(@"ABSBSBBSBSB");
 }
 
 - (void)movieRecordingvideoSaveSuccess:(NSURL *)url
@@ -385,7 +469,7 @@ static const float kExposureDurationPower = 5;
             sessionPreset = AVCaptureSessionPreset1280x720;
             break;
         case 62:
-            sessionPreset = AVCaptureSessionPresetHigh;
+            sessionPreset = AVCaptureSessionPreset1920x1080;
             break;
         case 63:
             sessionPreset = AVCaptureSessionPreset3840x2160;
@@ -396,12 +480,12 @@ static const float kExposureDurationPower = 5;
     }
     if ([self.captureSession canSetSessionPreset:sessionPreset])
     {
-        self.captureSession.sessionPreset = sessionPreset;
+        [self setCaptureSessionPreset:sessionPreset];
         
         // 2.偏好设置保存选中的分辨率
         [[NSUserDefaults standardUserDefaults] setInteger:tag forKey:@"imageViewSeleted"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        
+        NSLog(@"%@", self.captureSessionPreset);
     } else{
         canSetSessionPreset(NO);
     }

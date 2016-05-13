@@ -187,7 +187,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
         }
     }
     
-    // Set this to make sure that a functional movie is produced, even if the recording is cut off mid-stream. Only the last second should be lost in that case.
+    // Set this to make sure that a functional movie is produced, even if the recording is cut off mid-stream. Only the last second should be lost in that case. 设置此功能以确保一个功能性的电影被制作，即使记录被切断中流。在这种情况下，只有最后一秒应该被丢失。
     assetWriter.movieFragmentInterval = CMTimeMakeWithSeconds(1.0, 1000);
     
     // use default output settings if none specified
@@ -197,6 +197,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
         [settings setObject:AVVideoCodecH264 forKey:AVVideoCodecKey];
         [settings setObject:[NSNumber numberWithInt:videoSize.width] forKey:AVVideoWidthKey];
         [settings setObject:[NSNumber numberWithInt:videoSize.height] forKey:AVVideoHeightKey];
+//        [settings setObject:[NSNumber numberWithInt: 2000000] forKey:AVVideoAverageBitRateKey];
         outputSettings = settings;
     }
     // custom output settings specified
@@ -215,29 +216,34 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
         }
     }
     
-    /*
-    NSDictionary *videoCleanApertureSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                [NSNumber numberWithInt:videoSize.width], AVVideoCleanApertureWidthKey,
-                                                [NSNumber numberWithInt:videoSize.height], AVVideoCleanApertureHeightKey,
-                                                [NSNumber numberWithInt:0], AVVideoCleanApertureHorizontalOffsetKey,
-                                                [NSNumber numberWithInt:0], AVVideoCleanApertureVerticalOffsetKey,
-                                                nil];
-
-    NSDictionary *videoAspectRatioSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioHorizontalSpacingKey,
-                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioVerticalSpacingKey,
-                                              nil];
-
-    NSMutableDictionary * compressionProperties = [[NSMutableDictionary alloc] init];
-    [compressionProperties setObject:videoCleanApertureSettings forKey:AVVideoCleanApertureKey];
-    [compressionProperties setObject:videoAspectRatioSettings forKey:AVVideoPixelAspectRatioKey];
-    [compressionProperties setObject:[NSNumber numberWithInt: 2000000] forKey:AVVideoAverageBitRateKey];
-    [compressionProperties setObject:[NSNumber numberWithInt: 16] forKey:AVVideoMaxKeyFrameIntervalKey];
-    [compressionProperties setObject:AVVideoProfileLevelH264Main31 forKey:AVVideoProfileLevelKey];
     
-    [outputSettings setObject:compressionProperties forKey:AVVideoCompressionPropertiesKey];
-    */
-     
+//    NSDictionary *videoCleanApertureSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                                [NSNumber numberWithInt:videoSize.width], AVVideoCleanApertureWidthKey,
+//                                                [NSNumber numberWithInt:videoSize.height], AVVideoCleanApertureHeightKey,
+//                                                [NSNumber numberWithInt:0], AVVideoCleanApertureHorizontalOffsetKey,
+//                                                [NSNumber numberWithInt:0], AVVideoCleanApertureVerticalOffsetKey,
+//                                                nil];
+
+//    NSDictionary *videoAspectRatioSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioHorizontalSpacingKey,
+//                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioVerticalSpacingKey,
+//                                              nil];
+
+//    NSMutableDictionary * compressionProperties = [[NSMutableDictionary alloc] init];
+//    [compressionProperties setObject:AVVideoCodecH264 forKey:AVVideoCodecKey];
+//    [compressionProperties setObject:[NSNumber numberWithInt:videoSize.width] forKey:AVVideoWidthKey];
+//    [compressionProperties setObject:[NSNumber numberWithInt:videoSize.height] forKey:AVVideoHeightKey];
+//    [compressionProperties setObject:videoCleanApertureSettings forKey:AVVideoCleanApertureKey];
+//    [compressionProperties setObject:videoAspectRatioSettings forKey:AVVideoPixelAspectRatioKey];
+//    [compressionProperties setObject:[NSNumber numberWithInt: 2000000] forKey:AVVideoAverageBitRateKey];
+//    [compressionProperties setObject:[NSNumber numberWithInt: 16] forKey:AVVideoMaxKeyFrameIntervalKey];
+//    [compressionProperties setObject:AVVideoProfileLevelH264Main31 forKey:AVVideoProfileLevelKey];
+    
+//    [dict setObject:compressionProperties forKey:AVVideoCompressionPropertiesKey];
+//    outputSettings = compressionProperties;
+    
+    
+    
     assetWriterVideoInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:outputSettings];
     assetWriterVideoInput.expectsMediaDataInRealTime = _encodingLiveVideo;
     

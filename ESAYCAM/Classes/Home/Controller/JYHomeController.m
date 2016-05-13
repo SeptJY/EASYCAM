@@ -23,7 +23,7 @@
 static const float kExposureMinimumDuration = 1.0/1000;
 static const float kExposureDurationPower = 5;
 
-@interface JYHomeController () <JYCameraManagerDelegate, JYVideoViewDelegate, JYLeftTopViewDelegate, MWPhotoBrowserDelegate, DWBubbleMenuViewDelegate, JYSliderImageViewDelegate, JYContentViewDelegate, JYBlueManagerDelegate, JYCoreBlueViewDelegate, UIGestureRecognizerDelegate>
+@interface JYHomeController () <JYCameraManagerDelegate, JYVideoViewDelegate, JYLeftTopViewDelegate, MWPhotoBrowserDelegate, DWBubbleMenuViewDelegate, JYSliderImageViewDelegate, JYContentViewDelegate, JYBlueManagerDelegate, JYCoreBlueViewDelegate, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) UIView *subView;
 @property (strong, nonatomic) JYCameraManager *videoCamera;
@@ -85,6 +85,10 @@ static const float kExposureDurationPower = 5;
 
 @property (copy, nonatomic) NSString *perName;
 
+@property (strong, nonatomic) NSMutableArray *fpsArray;
+
+@property (strong, nonatomic) UITableView *fpsView;
+
 @end
 
 @implementation JYHomeController
@@ -127,6 +131,34 @@ static const float kExposureDurationPower = 5;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
     
     [self addObservers];
+    
+    [self getFpsAtNowResolution];
+}
+
+- (NSMutableArray *)fpsArray
+{
+    if (!_fpsArray) {
+        _fpsArray = [NSMutableArray array];
+        _fpsArray = [self getFpsAtNowResolution];
+    }
+    return _fpsArray;
+}
+
+- (UITableView *)fpsView
+{
+    if (!_fpsView) {
+        
+        _fpsView = [[UITableView alloc] init];
+        
+        _fpsView.backgroundColor = [UIColor clearColor];
+        _fpsView.delegate = self;
+        _fpsView.dataSource = self;
+        _fpsView.hidden = YES;
+        _fpsView.separatorColor = [UIColor yellowColor];
+        
+        [self.subView addSubview:_fpsView];
+    }
+    return _fpsView;
 }
 
 - (void)restoreDefaults
@@ -243,7 +275,7 @@ static const float kExposureDurationPower = 5;
     [self.videoTimeView stopTimer];
     [self.videoCamera stopVideo];
     self.leftTopView.imgHidden = NO;
-    [SVProgressHUD showWithStatus:self.nowSace];
+//    [SVProgressHUD showWithStatus:self.nowSace];
 }
 
 /** 蓝牙发送的指令和查询指令 */
@@ -487,6 +519,41 @@ static const float kExposureDurationPower = 5;
     if ([self.blueManager peripherals]) {
         self.blueManager.peripherals = nil;
     }
+}
+
+/** 获取当前分辨率下所支持的fps */
+- (NSMutableArray *)getFpsAtNowResolution
+{
+    NSMutableArray *fpsArr = [NSMutableArray array];
+    for (AVCaptureDeviceFormat *format in [self.videoCamera.inputCamera formats]) {
+        for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
+        
+            CMFormatDescriptionRef desc = format.formatDescription;
+            CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
+            int32_t width = dimensions.width;
+//            NSLog(@"width = %d", width);
+            if (width == (int)self.videoCamera.videoSize.width) {
+//                NSLog(@"%f", range.maxFrameRate);
+                [fpsArr addObject:[NSString stringWithFormat:@"%.f", range.maxFrameRate]];
+            }
+        }
+    }
+    
+    // 1.去掉重复的元素
+    NSArray *mArray = [[NSMutableSet setWithArray:fpsArr] allObjects];
+    // 2.通过不可变数组转换成可变数据
+    NSMutableArray *mArr = [NSMutableArray arrayWithArray:mArray];
+    // 3.冒泡排序（从小到大）
+    for (int i = 0; i < mArr.count - 1; i ++) {
+        for (int j = 0; j < mArr.count -1 - i; j ++) {
+            if ([mArr[j] intValue] > [mArr[j + 1] intValue]) {
+                NSString *temp = mArr[j];
+                mArr[j] = mArr[j + 1];
+                mArr[j + 1] = temp;
+            }
+        }
+    }
+    return mArr;
 }
 
 /** 九宫格 */
@@ -874,6 +941,10 @@ static const float kExposureDurationPower = 5;
                 self.myContentView.handBool = YES;
             }
             break;
+        case 58:   // fps
+            self.myContentView.scrollView.hidden = YES;
+            self.fpsView.hidden = NO;
+            break;
         default:
             break;
     }
@@ -1162,7 +1233,7 @@ static const float kExposureDurationPower = 5;
         [self.myContentView contenViewCameraLensViewShowOneCell];
         self.infoView.dzText = @"x1";
         
-        [self.myContentView contenViewSetDirectionBtnTitle:@"增距镜x1" andTag:85];
+        [self.myContentView contenViewSetDirectionBtnTitle:@"无镜头" andTag:85];
     }];
     [alertCtl addAction:noAction];
     
@@ -1220,6 +1291,7 @@ static const float kExposureDurationPower = 5;
 - (void)threeViewButtonOnClick:(UIButton *)sender
 {
     self.coreBlueView.hidden = YES;
+    self.fpsView.hidden = YES;
 }
 
 - (void)alertController
@@ -1594,6 +1666,50 @@ static const float kExposureDurationPower = 5;
     return _zoomView;
 }
 
+#pragma mark -------------------------> UITableViewDelegate
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    //    NSLog(@"%@", self.perArrays);
+    return self.fpsArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *ID = @"test";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
+        cell.backgroundColor = [UIColor clearColor];
+        cell.textLabel.textColor = [UIColor yellowColor];
+        cell.textLabel.font = [UIFont systemFontOfSize:15];
+        cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
+    }
+    cell.textLabel.text = self.fpsArray[indexPath.row];
+    
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGFloat desiredFps = [self.fpsArray[indexPath.row] floatValue];
+    [self.myContentView contenViewSetDirectionBtnTitle:self.fpsArray[indexPath.row] andTag:88];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^{
+        
+        if (desiredFps > 0.0) {
+            [self.videoCamera switchFormatWithDesiredFPS:desiredFps];
+        }
+        else {
+            [self.videoCamera resetFormat];
+        }
+    });
+    
+    self.fpsView.hidden = YES;
+    self.myContentView.scrollView.hidden = NO;
+}
+
 - (void)viewWillLayoutSubviews
 {
     CGFloat magin = 10;
@@ -1639,6 +1755,8 @@ static const float kExposureDurationPower = 5;
     self.coreBlueView.frame = CGRectMake(self.myContentView.x + 10, screenH - self.myContentView.height + 60, self.myContentView.width - 20, self.myContentView.height - 60);
     
     self.logView.frame = CGRectMake(0, screenH - 60, screenW - 100, 60);
+    
+    self.fpsView.frame = self.coreBlueView.frame;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -1717,6 +1835,8 @@ static const float kExposureDurationPower = 5;
     
     // 实时监听曝光时间的变化
     [self.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureDuration" options:NSKeyValueObservingOptionNew context:DeviceExposureDuration];
+    
+    [self.videoCamera addObserver:self forKeyPath:@"videoSize" options:NSKeyValueObservingOptionNew context:VideoSize];
 }
 
 #pragma KVO监听事件
@@ -1765,6 +1885,12 @@ static const float kExposureDurationPower = 5;
                 [self.myContentView contentViewSetCustomSliderValue:pow( p, 1 / kExposureDurationPower ) andCustomSliderTag:62 classType:0];
             }
         }
+    } else if (context == VideoSize) {
+        self.fpsArray = [self getFpsAtNowResolution];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.fpsView reloadData];
+        });
+//        NSLog(@"self.fpsArray = %@", self.fpsArray);
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];

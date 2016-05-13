@@ -151,7 +151,7 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
         _baisSlider.title = [NSString titleChinese:@"曝光补偿" english:@"Bias"];
         _baisSlider.sliderTag = 63;
         _baisSlider.sliderEnabled = YES;
-        _baisSlider.btnModel = CustomSliderReset;
+        _baisSlider.btnModel = CustomSliderNoTitle;
         
         [self addSubview:_baisSlider];
     }

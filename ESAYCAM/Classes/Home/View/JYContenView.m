@@ -21,7 +21,7 @@
 #import "JYHandwheelView.h"
 #import "JYFlashView.h"
 
-#define scrollView_contentSize 600
+#define scrollView_contentSize 650
 
 static NSString *ID = @"fenbinalv";
 
@@ -252,6 +252,7 @@ static NSString *ID = @"fenbinalv";
 }
 
 #pragma mark -------------------------> JYResetVideoViewDelegate
+// 自动重复
 - (void)resetVideoDirectionCellBtnOnClick:(UIButton *)btn
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewResetVideo:)]) {
@@ -352,16 +353,18 @@ static NSString *ID = @"fenbinalv";
     self.languageView.hidden = YES;
     self.scrollView.hidden = NO;
     
-    switch (btn.tag) {
-        case 80:
-            // 设置语言的名称
-            [self.settingView setDirectionBtnTitle:@"简体中文" andTag:82];
-            break;
-        case 81:
-            // 设置语言的名称
-            [self.settingView setDirectionBtnTitle:@"English" andTag:82];
-            break;
-    }
+    [self.settingView setDirectionBtnTitle:btn.currentTitle andTag:82];
+    
+//    switch (btn.tag) {
+//        case 80:
+//            // 设置语言的名称
+//            [self.settingView setDirectionBtnTitle:@"简体中文" andTag:82];
+//            break;
+//        case 81:
+//            // 设置语言的名称
+//            [self.settingView setDirectionBtnTitle:@"English" andTag:82];
+//            break;
+//    }
 }
 
 - (void)setSwitchEnlenble:(BOOL)switchEnlenble
@@ -376,6 +379,7 @@ static NSString *ID = @"fenbinalv";
     [self.settingView setDirectionBtnTitle:NSLocalizedString(title, nil) andTag:tag];
 }
 
+// 附加镜头
 - (void)cameraLensViewCellBtnOnClick:(UIButton *)btn
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewCameraLensViewCellBtnOnClick:)]) {

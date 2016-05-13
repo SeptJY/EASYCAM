@@ -120,7 +120,7 @@ void GPUImageCreateResizedSampleBuffer(CVPixelBufferRef cameraFrame, CGSize fina
 
 - (id)init;
 {
-    if (!(self = [self initWithSessionPreset:AVCaptureSessionPresetPhoto cameraPosition:AVCaptureDevicePositionBack]))
+    if (!(self = [self initWithSessionPreset:AVCaptureSessionPreset3840x2160 cameraPosition:AVCaptureDevicePositionBack]))
     {
 		return nil;
     }
