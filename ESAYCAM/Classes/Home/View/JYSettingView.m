@@ -92,14 +92,28 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     self.resolutionDirection.titleBtn = @"1920x1080";
-    // 62是1920x1080分辨率按钮的tag
-    [[NSUserDefaults standardUserDefaults] setInteger:62 forKey:@"imageViewSeleted"];
+    
+    self.girldSwitch.mSwitchOn = YES;
+    // 保存设置
+    [[NSUserDefaults standardUserDefaults] setBool:self.girldSwitch.mSwitchOn forKey:@"grladView_hidden"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    _girldSwitch.mSwitchOn = NO;
-    // 保存设置
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"grladView_hidden"];
+    // 前置录像灯
+    self.videoFalshView.mSwitchOn = NO;
+    [[NSUserDefaults standardUserDefaults] setBool:self.videoFalshView.mSwitchOn forKey:@"videoFalsh"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // 编码质量
+    self.qualityDirection.titleBtn = [NSString titleChinese:@"标准" english:@"Standard"];
+    
+    // 手轮方向
+    self.direction.titleBtn = [NSString titleChinese:@"正" english:@"Positive"];
+    
+    // 自动重复
+    self.lastVideo.titleBtn = [NSString titleChinese:@"两点" english:@"Linear"];
+    
+    // 闪关灯
+    self.flasView.titleBtn = [NSString titleChinese:@"自动" english:@"Auto"];
 }
 
 - (void)changeLanguage
@@ -128,7 +142,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     
 //    self.positionSwitch.title = [[JYLanguageTool bundle] localizedStringForKey:@"摄像头" value:nil table:@"Localizable"];
     
-    self.videoFalshView.title = [[JYLanguageTool bundle] localizedStringForKey:@"录像灯" value:nil table:@"Localizable"];
+    self.videoFalshView.title = [[JYLanguageTool bundle] localizedStringForKey:@"前置提示灯" value:nil table:@"Localizable"];
     
     self.flasView.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"闪光灯" value:nil table:@"Localizable"];
     [self.flasView.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:self.flasView.btn.currentTitle value:nil table:@"Localizable"] forState:UIControlStateNormal];
@@ -265,7 +279,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
         _lastVideo.btnTag = 56;
         _lastVideo.delegate = self;
         _lastVideo.tag = 86;
-        _lastVideo.titleBtn = [NSString titleChinese:@"两点" english:@"Linear"];
+        _lastVideo.titleBtn = ([[NSUserDefaults standardUserDefaults] integerForKey:@"ResetVideo"] == 1) ? [NSString titleChinese:@"实时" english:@"RealTime"] : [NSString titleChinese:@"两点" english:@"Linear"];
         
         [self addSubview:_lastVideo];
     }
@@ -306,7 +320,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     return _fpsDirection;
 }
 
-/** fps */
+/** 编码质量 */
 - (JYLabelDirection *)qualityDirection
 {
     if (!_qualityDirection) {
@@ -338,15 +352,6 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
             self.languageDirection.titleBtn = title;
             break;
         case 86:   // 最后一次
-//            if ([self.lastVideo.titleBtn isEqualToString:@"Linear"]) {
-//                self.lastVideo.titleBtn = @"RealTime";
-//            } else if ([self.lastVideo.titleBtn isEqualToString:@"RealTime"]) {
-//                self.lastVideo.titleBtn = @"Linear";
-//            } else if ([self.lastVideo.titleBtn isEqualToString:@"实时"]) {
-//                self.lastVideo.titleBtn = @"线性";
-//            }else if ([self.lastVideo.titleBtn isEqualToString:@"线性"]) {
-//                self.lastVideo.titleBtn = @"实时";
-//            }
             self.lastVideo.titleBtn = title;
             break;
             
@@ -395,23 +400,24 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
         _girldSwitch.switchTag = 41;
         _girldSwitch.delegate = self;
         _girldSwitch.title = [NSString titleChinese:@"九宫格" english:@"Grid"];
-        _girldSwitch.mSwitchOn = [[NSUserDefaults standardUserDefaults] boolForKey:@"grladView_hidden"];
+        _girldSwitch.mSwitchOn = YES;
         
         [self addSubview:_girldSwitch];
     }
     return _girldSwitch;
 }
 
-/** 闪光灯 */
+/** 前置录像灯 */
 - (JYLabelSwitch *)videoFalshView
 {
     if (!_videoFalshView) {
         
-        _videoFalshView = [[JYLabelSwitch alloc] initWithTitle:SWITCH_SIZE_LABEL];
+        _videoFalshView = [[JYLabelSwitch alloc] initWithTitle:@"Prompt Lamp"];
         _videoFalshView.switchTag = 42;
         _videoFalshView.delegate = self;
-        _videoFalshView.title = [NSString titleChinese:@"录像灯" english:@"VideoFlash"];
+        _videoFalshView.title = [NSString titleChinese:@"前置提示灯" english:@"Prompt Lamp"];
         _videoFalshView.switchEnlenble = NO;
+        _videoFalshView.mSwitchOn = [[NSUserDefaults standardUserDefaults] boolForKey:@"videoFalsh"];
         
         [self addSubview:_videoFalshView];
     }
@@ -454,11 +460,16 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     return _resetBtn;
 }
 
-- (void)setMSwitch:(BOOL)mSwitch
+- (void)switchHidden:(BOOL)hidden andTag:(NSInteger)tag
 {
-    _mSwitch = mSwitch;
-    
-    self.videoFalshView.switchEnlenble = mSwitch;
+    switch (tag) {
+        case 41:
+            self.girldSwitch.mSwitchOn = hidden;
+            break;
+        case 42:
+            self.videoFalshView.mSwitchOn = hidden;
+            break;
+    }
 }
 
 /** 恢复所有的默认设置 */

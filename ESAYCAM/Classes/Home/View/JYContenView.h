@@ -71,7 +71,7 @@
 
 - (void)contenViewSetDirectionBtnTitle:(NSString *)title andTag:(NSInteger)tag;
 
-@property (assign, nonatomic) BOOL switchEnlenble;
+- (void)contentViewSwitchHidden:(BOOL)hidden andTag:(NSInteger)tag;
 
 @property (strong, nonatomic) UIScrollView *scrollView;
 

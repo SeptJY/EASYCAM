@@ -164,13 +164,9 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
         btn.frame = CGRectMake(btnX, btnY, btnW, btnH);
         btn.backgroundColor = [UIColor yellowColor];
         btn.layer.cornerRadius = btnW / 2;
-        btn.alpha = 0.4;
+        btn.alpha = (i == 4) ? 1 : 0.4;
         btn.tag = 80 + i;
-//        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%d", i + 12]] forState:UIControlStateNormal];
-//        [btn setTitle:titleArray[i] forState:UIControlStateNormal];
         [btn setImage:[UIImage imageNamed:titleArray[i]] forState:UIControlStateNormal];
-//        btn.titleLabel.font = setFont(10);
-//        [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
         [btn addTarget:self action:@selector(wetherButtonOnClick:) forControlEvents:UIControlEventTouchUpInside];
         
         [self addSubview:btn];

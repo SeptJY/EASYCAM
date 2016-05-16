@@ -58,7 +58,10 @@ static void * MINUS_ZOOM_MINUS = &MINUS_ZOOM_MINUS;
         self.videoZoom = 0;
         
         // 设置蓝牙显示的方向
-        self.derection = ([[NSUserDefaults standardUserDefaults] integerForKey:BlueDerection] == 1) ? CoreBlueDerectionAntiClockwise : CoreBlueDerectionClockwise;
+        self.derection = [[NSUserDefaults standardUserDefaults] boolForKey:BlueDerection];
+        self.videoType = [[NSUserDefaults standardUserDefaults] boolForKey:@"ResetVideo"];
+        
+        self.isFalsh = [[NSUserDefaults standardUserDefaults] boolForKey:@"videoFalsh"];
     }
     return self;
 }

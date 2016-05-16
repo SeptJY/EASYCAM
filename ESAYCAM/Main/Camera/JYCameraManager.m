@@ -38,7 +38,7 @@
         
         self.videoSize = CGSizeMake(1920.0, 1080.0);
         
-        self.quality = 5.0f;
+        self.quality = [[NSUserDefaults standardUserDefaults] floatForKey:@"CodingQuality"];
     }
     return self;
 }
@@ -153,7 +153,9 @@
         _camera.outputImageOrientation = UIInterfaceOrientationLandscapeRight;
         _camera.horizontallyMirrorFrontFacingCamera = NO;
         _camera.horizontallyMirrorRearFacingCamera = NO;
-    
+        
+        [self cameraManagerEffectqualityWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:@"imageViewSeleted"] withBlock:nil];
+        
         self.filter = [[GPUImageSaturationFilter alloc] init];
         [_camera addTarget:self.filter];
         [self.filter addTarget:self.cameraScreen];
@@ -165,6 +167,7 @@
 #pragma mark 启用预览
 - (void)startCamera{
     [self.camera startCameraCapture];
+    self.sessionRunning = self.captureSession.isRunning;
 }
 
 #pragma mark 关闭预览
@@ -218,7 +221,7 @@
 #pragma mark -------------------------> 调焦焦距
 - (void)cameraManagerChangeFoucus:(CGFloat)value
 {
-//    NSLog(@"%f", value);
+//    NSLog(@"%f", value);d
     CGFloat lensPosition = value - 0.5;
     if (videoInput.device.position == AVCaptureDevicePositionBack) {
         if (lensPosition < 0) {
@@ -461,17 +464,18 @@ static const float kExposureDurationPower = 5;
             sessionPreset = AVCaptureSessionPreset3840x2160;
             break;
         default:
-            sessionPreset = AVCaptureSessionPresetHigh;
+            sessionPreset = AVCaptureSessionPreset1920x1080;
             break;
     }
     if ([self.captureSession canSetSessionPreset:sessionPreset])
     {
         [self setCaptureSessionPreset:sessionPreset];
         
+        self.videoSize = [self getVideoSizeWith:sessionPreset];
+        
         // 2.偏好设置保存选中的分辨率
         [[NSUserDefaults standardUserDefaults] setInteger:tag forKey:@"imageViewSeleted"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        NSLog(@"%@", self.captureSessionPreset);
     } else{
         canSetSessionPreset(NO);
     }
@@ -484,6 +488,20 @@ static const float kExposureDurationPower = 5;
     
     [self.captureSession commitConfiguration];
     //    });
+}
+
+- (CGSize)getVideoSizeWith:(NSString *)sessionPreset
+{
+    NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[a-zA-Z.-]" options:0 error:NULL];
+    NSString *result = [regular stringByReplacingMatchesInString:sessionPreset options:0 range:NSMakeRange(0, [sessionPreset length]) withTemplate:@""];
+    
+    NSRange rang = [result rangeOfString:@"0"];
+    NSString *width = [result substringWithRange:NSMakeRange(0, rang.location + 1)];
+    NSString *height = [result substringWithRange:NSMakeRange(rang.location + 1, result.length - rang.location - 1)];
+    
+    CGSize videoSize = CGSizeMake([width floatValue], [height floatValue]);
+    
+    return videoSize;
 }
 
 #pragma mark -------------------------> 更改操作

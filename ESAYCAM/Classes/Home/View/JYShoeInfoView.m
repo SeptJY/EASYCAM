@@ -170,9 +170,9 @@
     
     CGSize lableSize = [NSString sizeWithText:@"x4.5" font:self.rateLabel.font maxSize:CGSizeMake(100, 50)];
     
-    self.imageView.frame = CGRectMake(5, (self.height - 18) * 0.5, 15, 18);
+    self.imageView.frame = CGRectMake(2, (self.height - 18) * 0.5, 15, 18);
     
-    self.rateLabel.frame = CGRectMake(JYSpaceWidth + self.imageView.x + self.imageView.width, (self.height - lableSize.height) * 0.5, lableSize.width, lableSize.height);
+    self.rateLabel.frame = CGRectMake(5 + self.imageView.x + self.imageView.width, (self.height - lableSize.height) * 0.5, lableSize.width, lableSize.height);
     
     self.rateNumLabel.frame = CGRectMake(self.rateLabel.x + self.rateLabel.width, self.rateLabel.y, lableSize.width + 5, lableSize.height);
     

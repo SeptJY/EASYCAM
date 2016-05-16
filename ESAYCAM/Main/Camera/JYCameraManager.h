@@ -79,6 +79,8 @@ typedef void(^JYLableText)(NSString *text);
 
 - (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
 
+@property (nonatomic, getter=isSessionRunning) BOOL sessionRunning;
+
 @property (assign, nonatomic) CGFloat quality;
 
 @end

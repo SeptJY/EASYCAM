@@ -31,8 +31,18 @@
         
         // 设置语言切换通知
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restoreDefaults) name:@"RestoreDefaults" object:nil];
     }
     return self;
+}
+
+- (void)restoreDefaults
+{
+    self.lowCell.imageHidden = YES;
+    self.defautlCell.imageHidden = NO;
+    self.mediaCell.imageHidden = YES;
+    self.highCell.imageHidden = YES;
 }
 
 /** 切换语言 */
@@ -156,6 +166,8 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"changeLanguage" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RestoreDefaults" object:nil];
 }
 
 @end

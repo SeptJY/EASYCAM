@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5B11491A1CDB1B6A00F7E8F1 /* JYInfoLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1149191CDB1B6900F7E8F1 /* JYInfoLogView.m */; };
 		5B11491C1CDB1B8900F7E8F1 /* JYInfoLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */; };
+		5B7232901CE9572E00DA387A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B7232921CE9572E00DA387A /* InfoPlist.strings */; };
 		5B8F96631CDD7A9000961260 /* JYCustomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F96611CDD7A9000961260 /* JYCustomCell.m */; };
 		5B8F96641CDD7A9000961260 /* JYCustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B8F96621CDD7A9000961260 /* JYCustomCell.xib */; };
 		5B8F96671CDDE25D00961260 /* JYFlashView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F96661CDDE25D00961260 /* JYFlashView.m */; };
@@ -91,6 +92,8 @@
 		5B1149181CDB1B6900F7E8F1 /* JYInfoLogView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYInfoLogView.h; sourceTree = "<group>"; };
 		5B1149191CDB1B6900F7E8F1 /* JYInfoLogView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYInfoLogView.m; sourceTree = "<group>"; };
 		5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JYInfoLogView.xib; sourceTree = "<group>"; };
+		5B7232911CE9572E00DA387A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5B7232931CE9573000DA387A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5B8F96601CDD7A9000961260 /* JYCustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYCustomCell.h; sourceTree = "<group>"; };
 		5B8F96611CDD7A9000961260 /* JYCustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYCustomCell.m; sourceTree = "<group>"; };
 		5B8F96621CDD7A9000961260 /* JYCustomCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JYCustomCell.xib; sourceTree = "<group>"; };
@@ -281,6 +284,7 @@
 				5BB739761CD82D920084C624 /* Assets.xcassets */,
 				5BB739781CD82D920084C624 /* LaunchScreen.storyboard */,
 				5BB7397B1CD82D920084C624 /* Info.plist */,
+				5B7232921CE9572E00DA387A /* InfoPlist.strings */,
 				5BB7396B1CD82D920084C624 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -415,8 +419,8 @@
 				5BB739D41CD82FF40084C624 /* JYRulesView.m */,
 				5BB739D51CD82FF40084C624 /* JYSettingView.h */,
 				5BB739D61CD82FF40084C624 /* JYSettingView.m */,
-				5BB739D71CD82FF40084C624 /* JYShoeInfoView.m */,
 				5BB739D81CD82FF40084C624 /* JYShowInfoView.h */,
+				5BB739D71CD82FF40084C624 /* JYShoeInfoView.m */,
 				5BB739D91CD82FF40084C624 /* JYSliderImageView.h */,
 				5BB739DA1CD82FF40084C624 /* JYSliderImageView.m */,
 				5BB739DB1CD82FF40084C624 /* JYSliderImageView.xib */,
@@ -706,6 +710,7 @@
 				5B11491C1CDB1B8900F7E8F1 /* JYInfoLogView.xib in Resources */,
 				5B8F96641CDD7A9000961260 /* JYCustomCell.xib in Resources */,
 				5BB73A0C1CD82FF40084C624 /* JYSliderImageView.xib in Resources */,
+				5B7232901CE9572E00DA387A /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -862,6 +867,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		5B7232921CE9572E00DA387A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5B7232911CE9572E00DA387A /* zh-Hans */,
+				5B7232931CE9573000DA387A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		5BB739781CD82D920084C624 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

@@ -26,8 +26,16 @@
         
         // 设置语言切换通知
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restoreDefaults) name:@"RestoreDefaults" object:nil];
     }
     return self;
+}
+
+- (void)restoreDefaults
+{
+    self.oneCell.imageHidden = NO;
+    self.twoCell.imageHidden = YES;
 }
 
 /** 切换语言 */
@@ -47,7 +55,7 @@
         _oneCell.btnTag = 80;
         _oneCell.delegate = self;
         _oneCell.tag = 70;
-        _oneCell.imageHidden = NO;
+        _oneCell.imageHidden = [[NSUserDefaults standardUserDefaults] boolForKey:@"ResetVideo"];
         
         [self addSubview:_oneCell];
     }
@@ -62,7 +70,7 @@
         _twoCell.btnTag = 81;
         _twoCell.delegate = self;
         _twoCell.tag = 71;
-        _twoCell.imageHidden = YES;
+        _twoCell.imageHidden = ![[NSUserDefaults standardUserDefaults] boolForKey:@"ResetVideo"];;
         
         [self addSubview:_twoCell];
     }
@@ -97,6 +105,8 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"changeLanguage" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RestoreDefaults" object:nil];
 }
 
 @end

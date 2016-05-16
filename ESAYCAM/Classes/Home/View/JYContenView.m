@@ -387,16 +387,14 @@ static NSString *ID = @"fenbinalv";
 //    }
 }
 
-- (void)setSwitchEnlenble:(BOOL)switchEnlenble
+- (void)contentViewSwitchHidden:(BOOL)hidden andTag:(NSInteger)tag
 {
-    _switchEnlenble = switchEnlenble;
-    
-    self.settingView.mSwitch = switchEnlenble;
+    [self.settingView switchHidden:hidden andTag:tag];
 }
 
 - (void)contenViewSetDirectionBtnTitle:(NSString *)title andTag:(NSInteger)tag
 {
-    [self.settingView setDirectionBtnTitle:NSLocalizedString(title, nil) andTag:tag];
+    [self.settingView setDirectionBtnTitle:title andTag:tag];
 }
 
 // 附加镜头

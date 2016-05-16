@@ -26,8 +26,16 @@
         
         // 设置语言切换通知
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restoreDefaults) name:@"RestoreDefaults" object:nil];
     }
     return self;
+}
+
+- (void)restoreDefaults
+{
+    self.zhengCell.imageHidden = NO;
+    self.fanCell.imageHidden = YES;
 }
 
 /** 切换语言 */
@@ -47,7 +55,7 @@
         _zhengCell.btnTag = 80;
         _zhengCell.delegate = self;
         _zhengCell.tag = 70;
-        _zhengCell.imageHidden = NO;
+        _zhengCell.imageHidden = [[NSUserDefaults standardUserDefaults] boolForKey:BlueDerection];
         
         [self addSubview:_zhengCell];
     }
@@ -62,7 +70,7 @@
         _fanCell.btnTag = 81;
         _fanCell.delegate = self;
         _fanCell.tag = 71;
-        _fanCell.imageHidden = YES;
+        _fanCell.imageHidden = ![[NSUserDefaults standardUserDefaults] boolForKey:BlueDerection];;
         
         [self addSubview:_fanCell];
     }
@@ -97,6 +105,8 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"changeLanguage" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RestoreDefaults" object:nil];
 }
 
 @end

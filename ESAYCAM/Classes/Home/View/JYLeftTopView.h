@@ -23,7 +23,7 @@
 
 @property (assign, nonatomic) BOOL isShow;
 
-@property (assign, nonatomic) BOOL imgHidden;
+//@property (assign, nonatomic) BOOL imgHidden;
 
 @property (assign, nonatomic) BOOL settingHiden;
 

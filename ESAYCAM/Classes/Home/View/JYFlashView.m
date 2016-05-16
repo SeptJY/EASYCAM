@@ -29,8 +29,17 @@
     if (self) {
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restoreDefaults) name:@"RestoreDefaults" object:nil];
     }
     return self;
+}
+
+- (void)restoreDefaults
+{
+    self.autoCell.imageHidden = NO;
+    self.offCell.imageHidden = YES;
+    self.onCell.imageHidden = YES;
 }
 
 //- (instancetype)initWithTitle:(NSString *)lableText
@@ -127,7 +136,9 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"changeLanguage" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RestoreDefaults" object:nil];
 }
 
 @end

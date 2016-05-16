@@ -40,7 +40,7 @@
         
         self.layer.opacity = ([[NSUserDefaults standardUserDefaults] floatForKey:@"opacity"] == 0) ? 1 : [[NSUserDefaults standardUserDefaults] floatForKey:@"opacity"];
         
-        _timer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(refreshDeviceDianliang) userInfo:nil repeats:YES];
+        _timer = [NSTimer scheduledTimerWithTimeInterval:0.5f target:self selector:@selector(refreshDeviceDianliang) userInfo:nil repeats:YES];
     }
     return self;
 }
@@ -114,18 +114,18 @@
     return _iRlectricityView;
 }
 
-- (void)setImgHidden:(BOOL)imgHidden
-{
-    _imgHidden = imgHidden;
-    
-    self.iRlectricityView.hidden = imgHidden;
-    
-    if (imgHidden == YES) {
-        [_timer setFireDate:[NSDate distantFuture]];
-    } else{
-        [_timer setFireDate:[NSDate date]];
-    }
-}
+//- (void)setImgHidden:(BOOL)imgHidden
+//{
+//    _imgHidden = imgHidden;
+//    
+//    self.iRlectricityView.hidden = imgHidden;
+//    
+//    if (imgHidden == YES) {
+//        [_timer setFireDate:[NSDate distantFuture]];
+//    } else{
+//        [_timer setFireDate:[NSDate date]];
+//    }
+//}
 
 - (void)setSettingHiden:(BOOL)settingHiden
 {

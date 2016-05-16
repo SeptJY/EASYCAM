@@ -49,10 +49,7 @@
 /** 切换语言 */
 - (void)changeLanguage
 {
-    if (self.btnModel == CustomSliderAutoAndManual) {
-        [self.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:@"自动" value:nil table:@"Localizable"] forState:UIControlStateSelected];
-        [self.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:@"手动" value:nil table:@"Localizable"] forState:UIControlStateNormal];
-    }
+    [self.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:self.btn.currentTitle value:nil table:@"Localizable"] forState:UIControlStateSelected];
 }
 
 - (UIView *)lineView
@@ -94,8 +91,8 @@
         [_btn setTitleColor:setColor(127, 127, 127) forState:UIControlStateSelected];
         [_btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-        [_btn setTitle:NSLocalizedString(@"手动", nil) forState:UIControlStateNormal];
-        [_btn setTitle:NSLocalizedString(@"自动", nil) forState:UIControlStateSelected];
+        [_btn setTitle:[NSString titleChinese:@"手动" english:@"MT"] forState:UIControlStateNormal];
+        [_btn setTitle:[NSString titleChinese:@"自动" english:@"Auto"] forState:UIControlStateSelected];
         [_btn addTarget:self action:@selector(customSliderAutoBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
         _btn.selected = YES;
         
@@ -200,7 +197,7 @@
             
             break;
         case CustomSliderReset:
-            [self.btn setTitle:@"Reset" forState:UIControlStateSelected];
+            [self.btn setTitle:[NSString titleChinese:@"重置" english:@"Reset"] forState:UIControlStateSelected];
             break;
             
         default:

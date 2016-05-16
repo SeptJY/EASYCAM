@@ -114,7 +114,7 @@ static const float kExposureDurationPower = 5;
     self.sizeMesage = [NSString titleChinese:@"您好，当前设备不支持3840x2160" english:@"Hello, the current device does not support 3840x2160"];
     self.sizeOk = [NSString titleChinese:@"好的" english:@"OK"];
     
-    self.lensMesage = [NSString titleChinese:@"是否安装了其他镜头" english:@"Whether to install the other lenses"];
+    self.lensMesage = [NSString titleChinese:@"是否变更了镜头" english:@"Whether to change the lens"];
     
     self.direction = [NSString titleChinese:@"蓝牙设备未连接" english:@"Bluetooth device not connected"];
     
@@ -172,6 +172,30 @@ static const float kExposureDurationPower = 5;
     self.leftTopView.layer.opacity = 1;
     self.infoView.layer.opacity = 1;
     self.videoView.layer.opacity = 1;
+    
+    // 分辨率恢复1920x1080
+    [self.videoCamera cameraManagerEffectqualityWithTag:62 withBlock:nil];
+    
+    // 编码质量恢复到标准
+    self.videoCamera.quality = 5.0f;
+    [[NSUserDefaults standardUserDefaults] setFloat:self.videoCamera.quality forKey:@"CodingQuality"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // 手轮方向
+    self.blueManager.derection = CoreBlueDerectionClockwise;
+    [[NSUserDefaults standardUserDefaults] setFloat:self.blueManager.derection forKey:BlueDerection];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // 自动重复
+    self.blueManager.videoType = JYResetVideoTypeTwo;
+    [[NSUserDefaults standardUserDefaults] setFloat:self.blueManager.videoType forKey:@"ResetVideo"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // 闪关灯
+    [self.videoCamera flashModel:AVCaptureFlashModeAuto];
+    
+    // 前置录像灯
+    self.blueManager.isFalsh = NO;
 }
 
 - (void)changeLanguage
@@ -189,7 +213,7 @@ static const float kExposureDurationPower = 5;
     self.sizeMesage = [[JYLanguageTool bundle] localizedStringForKey:@"您好，当前设备不支持3840x2160" value:nil table:@"Localizable"];
     self.sizeOk = [[JYLanguageTool bundle] localizedStringForKey:@"好的" value:nil table:@"Localizable"];
     
-    self.lensMesage = [[JYLanguageTool bundle] localizedStringForKey:@"是否安装了其他镜头" value:nil table:@"Localizable"];
+    self.lensMesage = [[JYLanguageTool bundle] localizedStringForKey:@"是否变更了镜头" value:nil table:@"Localizable"];
     
     self.direction = [[JYLanguageTool bundle] localizedStringForKey:@"蓝牙设备未连接" value:nil table:@"Localizable"];
     
@@ -265,20 +289,15 @@ static const float kExposureDurationPower = 5;
 
 - (void)takeVideoing
 {
-    if (self.leftTopView.imgHidden == NO) {
-        self.videoView.isVideo = NO;
-        
-        [self.videoCamera startVideo];
-        [self.videoTimeView startTimer];
-        self.leftTopView.imgHidden = YES;
-    }
+    self.videoView.isVideo = NO;
+    [self.videoCamera startVideo];
+    [self.videoTimeView startTimer];
 }
 
 - (void)stopVideoing
 {
     [self.videoTimeView stopTimer];
     [self.videoCamera stopVideo];
-    self.leftTopView.imgHidden = NO;
     [SVProgressHUD showWithStatus:self.nowSace];
 }
 
@@ -406,66 +425,67 @@ static const float kExposureDurationPower = 5;
 //                [self.menuBtn menuButtonsetImg:@"home_photo_icon" andTag:102];
 //                [self.menuBtn menuButtonSeleted:YES andTag:101];
             }
-            else if (self.useModel == CoreBlueUseModelDurationAndFucus)  // 当前在快门时间模式时 界面 -1的话  就是处于ZOOM模式
-            {
-                if (self.videoTimeView.hidden == YES) {
-                    self.useModel = CoreBlueUseModelDurationAndZoom;
-                    self.zoomView.hidden = NO;
-                    self.focusView.hidden = YES;
-//                    self.sliderImageView.hidden = NO;
-                    self.videoView.isVideo = YES;
-//                    [self.menuBtn menuButtonsetImg:@"home_photo_tv_click_icon" andTag:102];
-//                    self.imgModel = JYPhotoImgTVPhtoto;
-//                    [self.menuBtn menuButtonSeleted:NO andTag:101];
+//            else if (self.useModel == CoreBlueUseModelDurationAndFucus)  // 当前在快门时间模式时 界面 -1的话  就是处于ZOOM模式
+//            {
+//                if (self.videoTimeView.hidden == YES) {
+//                    self.useModel = CoreBlueUseModelDurationAndZoom;
+//                    self.zoomView.hidden = NO;
+//                    self.focusView.hidden = YES;
+////                    self.sliderImageView.hidden = NO;
+//                    self.videoView.isVideo = YES;
+////                    [self.menuBtn menuButtonsetImg:@"home_photo_tv_click_icon" andTag:102];
+////                    self.imgModel = JYPhotoImgTVPhtoto;
+////                    [self.menuBtn menuButtonSeleted:NO andTag:101];
+////                    
+//                    [self.menuBtn menuButtonSeleted:NO andTag:100];
+//                }
+//            } else if (self.useModel == CoreBlueUseModelDurationAndZoom)  // 当前在快门时间模式时 界面 -1的话  就是处于ZOOM模式
+//            {
+//                if (self.videoTimeView.hidden == YES) {
+//                    self.useModel = CoreBlueUseModelFocus;
+//                    self.focusView.hidden = NO;
+//                    self.zoomView.hidden = YES;
+////                    self.sliderImageView.hidden = YES;
+//                    self.videoView.isVideo = NO;
 //                    
-                    [self.menuBtn menuButtonSeleted:NO andTag:100];
-                }
-            } else if (self.useModel == CoreBlueUseModelDurationAndZoom)  // 当前在快门时间模式时 界面 -1的话  就是处于ZOOM模式
-            {
-                if (self.videoTimeView.hidden == YES) {
-                    self.useModel = CoreBlueUseModelFocus;
-                    self.focusView.hidden = NO;
-                    self.zoomView.hidden = YES;
-//                    self.sliderImageView.hidden = YES;
-                    self.videoView.isVideo = NO;
-                    
-                    [self.menuBtn menuButtonSeleted:YES andTag:100];
-//                    [self.menuBtn menuButtonsetImg:@"home_photo_icon" andTag:102];
-//                    [self.menuBtn menuButtonSeleted:YES andTag:101];
-                }
-            }
+//                    [self.menuBtn menuButtonSeleted:YES andTag:100];
+////                    [self.menuBtn menuButtonsetImg:@"home_photo_icon" andTag:102];
+////                    [self.menuBtn menuButtonSeleted:YES andTag:101];
+//                }
+//            }
             break;
         case CoreBlueTypeMinus:
             //             当前在调焦模式和ZOOM模式时 界面 -1的话 就是处于调焦模式
-            if (self.useModel == CoreBlueUseModelDurationAndZoom || self.useModel == CoreBlueUseModelDurationAndFucus)
-            {
-                if (self.videoTimeView.hidden == YES) {
-                    self.useModel = CoreBlueUseModelDurationAndFucus;
-                    self.zoomView.hidden = YES;
-                    self.focusView.hidden = NO;
-//                    self.sliderImageView.hidden = NO;
-                    self.videoView.isVideo = YES;
-//                    [self.menuBtn menuButtonsetImg:@"home_photo_tv_click_icon" andTag:102];
-//                    self.imgModel = JYPhotoImgTVPhtoto;
-//                    [self.menuBtn menuButtonSeleted:NO andTag:101];
-//                    
-                    [self.menuBtn menuButtonSeleted:YES andTag:100];
-                }
-            } else if (self.useModel == CoreBlueUseModelFocus)  // 当前在快门时间模式和ZOOM时 界面 -1的话  就是处于快门时间模式
-            {
-                if (self.videoTimeView.hidden == YES) {
-                    self.useModel = CoreBlueUseModelDurationAndZoom;
-                    self.zoomView.hidden = NO;
-                    self.focusView.hidden = YES;
-//                    self.sliderImageView.hidden = NO;
-                    self.videoView.isVideo = YES;
-//                    [self.menuBtn menuButtonsetImg:@"home_photo_tv_click_icon" andTag:102];
-//                    self.imgModel = JYPhotoImgTVPhtoto;
-//                    [self.menuBtn menuButtonSeleted:NO andTag:101];
-//                    
-                    [self.menuBtn menuButtonSeleted:NO andTag:100];
-                }
-            } else if (self.useModel == CoreBlueUseModelZOOM)  // 当前在快门时间模式和ZOOM时 界面 -1的话  就是处于快门时间模式
+//            if (self.useModel == CoreBlueUseModelDurationAndZoom || self.useModel == CoreBlueUseModelDurationAndFucus)
+//            {
+//                if (self.videoTimeView.hidden == YES) {
+//                    self.useModel = CoreBlueUseModelDurationAndFucus;
+//                    self.zoomView.hidden = YES;
+//                    self.focusView.hidden = NO;
+////                    self.sliderImageView.hidden = NO;
+//                    self.videoView.isVideo = YES;
+////                    [self.menuBtn menuButtonsetImg:@"home_photo_tv_click_icon" andTag:102];
+////                    self.imgModel = JYPhotoImgTVPhtoto;
+////                    [self.menuBtn menuButtonSeleted:NO andTag:101];
+////                    
+//                    [self.menuBtn menuButtonSeleted:YES andTag:100];
+//                }
+//            } else if (self.useModel == CoreBlueUseModelFocus)  // 当前在快门时间模式和ZOOM时 界面 -1的话  就是处于快门时间模式
+//            {
+//                if (self.videoTimeView.hidden == YES) {
+//                    self.useModel = CoreBlueUseModelDurationAndZoom;
+//                    self.zoomView.hidden = NO;
+//                    self.focusView.hidden = YES;
+////                    self.sliderImageView.hidden = NO;
+//                    self.videoView.isVideo = YES;
+////                    [self.menuBtn menuButtonsetImg:@"home_photo_tv_click_icon" andTag:102];
+////                    self.imgModel = JYPhotoImgTVPhtoto;
+////                    [self.menuBtn menuButtonSeleted:NO andTag:101];
+////                    
+//                    [self.menuBtn menuButtonSeleted:NO andTag:100];
+//                }
+//            } else
+            if (self.useModel == CoreBlueUseModelZOOM)  // 当前在快门时间模式和ZOOM时 界面 -1的话  就是处于快门时间模式
             {
                 self.useModel = CoreBlueUseModelFocus;
                 self.zoomView.hidden = YES;
@@ -569,7 +589,7 @@ static const float kExposureDurationPower = 5;
 {
     if (!_grladView) {
         _grladView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_grid_icon"]];
-        _grladView.hidden = ![[NSUserDefaults standardUserDefaults] boolForKey:@"grladView_hidden"];
+        _grladView.hidden = NO;
         _grladView.alpha = 0.3;
         
         [self.view insertSubview:_grladView belowSubview:self.subView];
@@ -968,12 +988,11 @@ static const float kExposureDurationPower = 5;
     switch (mSwitch.tag) {
         case 42:    // 前置录像灯
             self.blueManager.isFalsh = mSwitch.on;
+            [[NSUserDefaults standardUserDefaults] setBool:mSwitch.on forKey:@"videoFalsh"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
             break;
         case 41:    // 九宫格
             self.grladView.hidden = !mSwitch.on;
-            // 保存设置
-            [[NSUserDefaults standardUserDefaults] setBool:mSwitch.on forKey:@"grladView_hidden"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
             break;
         default:
             break;
@@ -1021,7 +1040,7 @@ static const float kExposureDurationPower = 5;
             self.videoCamera.videoSize = CGSizeMake(1920.0, 1080.0);
             break;
         case 63:
-            if (screenW != 480 && self.isCan == YES) {    // iPhone6 及以上设备
+            if (screenW != 480 && self.isCan == NO) {    // iPhone6 及以上设备
                 
                 self.videoCamera.videoSize = CGSizeMake(3840.0, 2160.0);
             } else {
@@ -1229,11 +1248,15 @@ static const float kExposureDurationPower = 5;
             self.videoCamera.quality = 10.0f;
             break;
     }
+    
+    // 2.偏好设置保存编码质量
+    [[NSUserDefaults standardUserDefaults] setFloat:self.videoCamera.quality forKey:@"CodingQuality"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)contentViewCameraLensViewCellBtnOnClick:(UIButton *)btn
 {
-    UIAlertController *alertCtl = [UIAlertController alertControllerWithTitle:self.sizeTitle message:@"是否安装了其他镜头" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alertCtl = [UIAlertController alertControllerWithTitle:self.sizeTitle message:self.lensMesage preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:self.altSure style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         switch (btn.tag) {
@@ -1264,7 +1287,7 @@ static const float kExposureDurationPower = 5;
         [self.myContentView contenViewCameraLensViewShowOneCell];
         self.infoView.dzText = @"x1";
         
-        [self.myContentView contenViewSetDirectionBtnTitle:@"无镜头" andTag:85];
+        [self.myContentView contenViewSetDirectionBtnTitle:btn.currentTitle andTag:85];
     }];
     [alertCtl addAction:noAction];
     
@@ -1283,6 +1306,9 @@ static const float kExposureDurationPower = 5;
                 self.blueManager.videoType = JYResetVideoTypeOne;
                 break;
         }
+        [[NSUserDefaults standardUserDefaults] setBool:self.blueManager.videoType forKey:@"ResetVideo"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
         [self.myContentView contenViewSetDirectionBtnTitle:btn.currentTitle andTag:86];
     }else {
         [self resetVideoAndHandwheelAlert];
@@ -1312,6 +1338,10 @@ static const float kExposureDurationPower = 5;
                 self.blueManager.derection = CoreBlueDerectionAntiClockwise;
                 break;
         }
+        
+        [[NSUserDefaults standardUserDefaults] setBool:self.blueManager.derection forKey:BlueDerection];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
         // 选中成功则显示当前选中的名称
         [self.myContentView contenViewSetDirectionBtnTitle:btn.currentTitle andTag:84];
     }else {
@@ -1514,7 +1544,7 @@ static const float kExposureDurationPower = 5;
         case 101:   // video <---> photo
         {
             self.videoView.isVideo = btn.selected;
-            self.myContentView.switchEnlenble = btn.selected;
+            [self.myContentView contentViewSwitchHidden:YES andTag:42];
         }
             break;
         case 102:    // 局部放大功能
@@ -1763,14 +1793,14 @@ static const float kExposureDurationPower = 5;
     self.videoView.frame = CGRectMake(screenW - self.ruleBottomView.width - videoW, 0, videoW, screenH);
     
     // 4.录像时间显示
-    CGFloat videoTimeW = (screenH >= 375) ? 130 : 110;
+    CGFloat videoTimeW = (screenW != 480) ? 95 : 75;
     CGFloat videoTimeH = 30;
     CGFloat videoTimeX = (screenW - videoTimeW) * 0.5;
     CGFloat videoTimeY = JYSpaceWidth;
     
     self.videoTimeView.frame = CGRectMake(videoTimeX, videoTimeY, videoTimeW, videoTimeH);
     
-    CGFloat infoW = 170;
+    CGFloat infoW = 150;
     self.infoView.frame = CGRectMake(screenW - ruleW - infoW, magin, infoW, 30);
     
     // 5.左上角的View  -- 设置和快捷键
@@ -1858,6 +1888,9 @@ static const float kExposureDurationPower = 5;
 #pragma mark KVO and Notifications
 - (void)addObservers
 {
+    // 1.监听会话是否开启
+    [self.videoCamera.captureSession addObserver:self forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:SessionRunningContext];
+    
     // 实时监听白平衡的变化
     [self.videoCamera.inputCamera addObserver:self forKeyPath:@"deviceWhiteBalanceGains" options:NSKeyValueObservingOptionNew context:DeviceWhiteBalanceGains];
     
@@ -1871,6 +1904,25 @@ static const float kExposureDurationPower = 5;
     [self.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureDuration" options:NSKeyValueObservingOptionNew context:DeviceExposureDuration];
     
     [self.videoCamera addObserver:self forKeyPath:@"videoSize" options:NSKeyValueObservingOptionNew context:VideoSize];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.videoCamera.captureSession];
+}
+
+- (void)sessionRuntimeError:(NSNotification *)notification
+{
+    NSError *error = notification.userInfo[AVCaptureSessionErrorKey];
+    NSLog( @"Capture session runtime error: %@", error );
+    
+    // Automatically try to restart the session running if media services were reset and the last start running succeeded.
+    // Otherwise, enable the user to try to resume the session running.
+    if ( error.code == AVErrorMediaServicesWereReset ) {
+        dispatch_async( self.sessionQueue, ^{
+            if ( self.videoCamera.isSessionRunning ) {
+                [self.videoCamera.captureSession startRunning];
+                self.videoCamera.sessionRunning = self.videoCamera.captureSession.isRunning;
+            }
+        } );
+    }
 }
 
 #pragma KVO监听事件
@@ -1925,6 +1977,8 @@ static const float kExposureDurationPower = 5;
             [self.fpsView reloadData];
         });
 //        NSLog(@"self.fpsArray = %@", self.fpsArray);
+    } else if (context == SessionRunningContext) {
+        
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];

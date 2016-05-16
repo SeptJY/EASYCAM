@@ -30,6 +30,6 @@
 - (void)setDirectionBtnTitle:(NSString *)title andTag:(NSInteger)tag;
 
 // 设置switch按钮的可用状态
-@property (assign, nonatomic) BOOL mSwitch;
+- (void)switchHidden:(BOOL)hidden andTag:(NSInteger)tag;
 
 @end

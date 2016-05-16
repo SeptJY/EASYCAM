@@ -24,6 +24,23 @@
 
 @implementation JYResolutionView
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restoreDefaults) name:@"RestoreDefaults" object:nil];
+    }
+    return self;
+}
+
+- (void)restoreDefaults
+{
+    self.cell640x480.imageHidden = YES;
+    self.cell1280x720.imageHidden = YES;
+    self.cell1920x1080.imageHidden = NO;
+    self.cell3840x2160.imageHidden = YES;
+}
+
 - (JYDirectionCell *)cell640x480
 {
     if (!_cell640x480) {
@@ -106,6 +123,11 @@
     self.cell1920x1080.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 2, self.width - JYSpaceWidth, JYCortrolWidth);
     
     self.cell3840x2160.frame = CGRectMake(JYSpaceWidth, JYCortrolWidth * 3, self.width - JYSpaceWidth, JYCortrolWidth);
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RestoreDefaults" object:nil];
 }
 
 @end

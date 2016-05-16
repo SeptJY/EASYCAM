@@ -51,7 +51,7 @@
 "硬件支持" = "Support";
 "附加镜头" = "Lens";
 "自动" = "Auto";
-"手动" = "M";
+"手动" = "MT";
 "正" = "Positive";
 "反" = "Negative";
 "外接对焦手轮" = "External focusing hand wheel";
@@ -74,7 +74,7 @@
 "蓝牙设备未连接" = "Bluetooth device not connected";
 "开启" = "On";
 "关闭" = "Off";
-"录像灯" = "VideoFlash";
+"前置提示灯" = "Prompt Lamp";
 "长度小于12的英文或数字" = "Length less than 12 of the English or number";
 "请输入你要修改的名字, 不支持中文名字" = "Please enter the name you want to modify, do not support the Chinese name";
 "修改名称" = "Modify name";
@@ -87,3 +87,4 @@
 "其他设备" = "Other devices";
 "未搜索到周围的设备" = "No search to the surrounding devices";
 "帧  率" = "fps";
+"是否变更了镜头" = "Whether to change the lens";
