@@ -76,7 +76,7 @@
         
         _label.font = setBoldFont(15);
         _label.textColor = [UIColor yellowColor];
-        _label.textAlignment = NSTextAlignmentCenter;
+        _label.textAlignment = NSTextAlignmentLeft;
         
         [self addSubview:_label];
     }

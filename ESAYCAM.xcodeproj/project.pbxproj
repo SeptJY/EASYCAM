@@ -659,6 +659,7 @@
 				TargetAttributes = {
 					5BB739661CD82D910084C624 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = 8JD24CDC43;
 					};
 					5BB7397F1CD82D920084C624 = {
 						CreatedOnToolsVersion = 7.3;
@@ -969,12 +970,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer: li mao (QMJJB449A9)";
 				GCC_PREFIX_HEADER = ESAYCAM/PrefixHeader.pch;
 				INFOPLIST_FILE = ESAYCAM/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ezcam360.ESAYCAM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "a9daaf2a-4933-4ac5-8e1b-45e434ba0584";
 			};
 			name = Debug;
 		};
@@ -984,12 +987,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer: li mao (QMJJB449A9)";
 				GCC_PREFIX_HEADER = ESAYCAM/PrefixHeader.pch;
 				INFOPLIST_FILE = ESAYCAM/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ezcam360.ESAYCAM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "a9daaf2a-4933-4ac5-8e1b-45e434ba0584";
 			};
 			name = Release;
 		};

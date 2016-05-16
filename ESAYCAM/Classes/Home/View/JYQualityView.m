@@ -56,7 +56,7 @@
         _lowCell.btnTag = 80;
         _lowCell.delegate = self;
         _lowCell.tag = 70;
-        _lowCell.imageHidden = NO;
+        _lowCell.imageHidden = YES;
         
         [self addSubview:_lowCell];
     }
@@ -71,7 +71,7 @@
         _defautlCell.btnTag = 81;
         _defautlCell.delegate = self;
         _defautlCell.tag = 71;
-        _defautlCell.imageHidden = YES;
+        _defautlCell.imageHidden = NO;
         
         [self addSubview:_defautlCell];
     }
@@ -105,35 +105,35 @@
         
         [self addSubview:_highCell];
     }
-    return _mediaCell;
+    return _highCell;
 }
 
 - (void)directionCellBtnOnClick:(UIButton *)btn
 {
     switch (btn.tag) {
         case 80:
-            self.lowCell.imageHidden = YES;
-            self.highCell.imageHidden = NO;
-            self.defautlCell.imageHidden = NO;
-            self.mediaCell.imageHidden = NO;
+            self.lowCell.imageHidden = NO;
+            self.highCell.imageHidden = YES;
+            self.defautlCell.imageHidden = YES;
+            self.mediaCell.imageHidden = YES;
             break;
         case 81:
-            self.lowCell.imageHidden = NO;
-            self.highCell.imageHidden = NO;
-            self.defautlCell.imageHidden = YES;
-            self.mediaCell.imageHidden = NO;
-            break;
-        case 82:
-            self.lowCell.imageHidden = NO;
-            self.highCell.imageHidden = NO;
+            self.lowCell.imageHidden = YES;
+            self.highCell.imageHidden = YES;
             self.defautlCell.imageHidden = NO;
             self.mediaCell.imageHidden = YES;
             break;
-        case 83:
-            self.lowCell.imageHidden = NO;
+        case 82:
+            self.lowCell.imageHidden = YES;
             self.highCell.imageHidden = YES;
-            self.defautlCell.imageHidden = NO;
+            self.defautlCell.imageHidden = YES;
             self.mediaCell.imageHidden = NO;
+            break;
+        case 83:
+            self.lowCell.imageHidden = YES;
+            self.highCell.imageHidden = NO;
+            self.defautlCell.imageHidden = YES;
+            self.mediaCell.imageHidden = YES;
             break;
     }
     
@@ -144,10 +144,10 @@
 
 - (void)layoutSubviews
 {
-    self.lowCell.frame = CGRectMake(JYSpaceWidth, (self.height - 2 * JYCortrolWidth) / 2, self.width - JYSpaceWidth, JYCortrolWidth);
+    self.lowCell.frame = CGRectMake(JYSpaceWidth, (self.height - 4 * JYCortrolWidth) / 2, self.width - JYSpaceWidth, JYCortrolWidth);
     
     self.defautlCell.frame = CGRectMake(JYSpaceWidth, self.lowCell.y + JYCortrolWidth, self.width - JYSpaceWidth, JYCortrolWidth);
-    self.mediaCell.frame = CGRectMake(JYSpaceWidth, (self.defautlCell.y - 2 * JYCortrolWidth) / 2, self.width - JYSpaceWidth, JYCortrolWidth);
+    self.mediaCell.frame = CGRectMake(JYSpaceWidth, self.defautlCell.y + JYCortrolWidth, self.width - JYSpaceWidth, JYCortrolWidth);
     
     self.highCell.frame = CGRectMake(JYSpaceWidth, self.mediaCell.y + JYCortrolWidth, self.width - JYSpaceWidth, JYCortrolWidth);
     

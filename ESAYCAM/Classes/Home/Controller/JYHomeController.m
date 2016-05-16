@@ -89,6 +89,8 @@ static const float kExposureDurationPower = 5;
 
 @property (strong, nonatomic) UITableView *fpsView;
 
+@property (assign, nonatomic) BOOL isCan;
+
 @end
 
 @implementation JYHomeController
@@ -99,26 +101,28 @@ static const float kExposureDurationPower = 5;
     self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL);
     self.navigationController.navigationBarHidden = YES;
     
-    self.connectSucces = NSLocalizedString(@"连接成功", nil);
-    self.disConnect = NSLocalizedString(@"连接中断", nil);
-    self.nowSace = NSLocalizedString(@"正在保存...", nil);
+    self.connectSucces = [NSString titleChinese:@"连接成功" english:@"Successful Connection"];
+    self.disConnect = [NSString titleChinese:@"连接中断" english:@"Bluetooth connection interrupt"];
+    self.nowSace = [NSString titleChinese:@"正在保存..." english:@"Saving..."];
     
-    self.altTitle = NSLocalizedString(@"参数重置", nil);
-    self.altMesage = NSLocalizedString(@"所有设置将全部恢复为默认设置", nil);
-    self.altSure = NSLocalizedString(@"是", nil);
-    self.altCancel = NSLocalizedString(@"否", nil);
+    self.altTitle = [NSString titleChinese:@"参数重置" english:@"Parameter Reset"];
+    self.altMesage = [NSString titleChinese:@"所有设置将全部恢复为默认设置" english:@"All settings will be restored to default settings"];
+    self.altSure = [NSString titleChinese:@"是" english:@"Yes"];
+    self.altCancel = [NSString titleChinese:@"否" english:@"No"];
     
-    self.sizeTitle = NSLocalizedString(@"温馨提示", nil);
-    self.sizeMesage = NSLocalizedString(@"您好，当前设备不支持3840x2160", nil);
-    self.sizeOk = NSLocalizedString(@"好的", nil);
+    self.sizeTitle = [NSString titleChinese:@"温馨提示" english:@"Reminder"];
+    self.sizeMesage = [NSString titleChinese:@"您好，当前设备不支持3840x2160" english:@"Hello, the current device does not support 3840x2160"];
+    self.sizeOk = [NSString titleChinese:@"好的" english:@"OK"];
     
-    self.lensMesage = NSLocalizedString(@"是否安装了其他镜头", nil);
+    self.lensMesage = [NSString titleChinese:@"是否安装了其他镜头" english:@"Whether to install the other lenses"];
     
-    self.direction = NSLocalizedString(@"蓝牙设备未连接", nil);
+    self.direction = [NSString titleChinese:@"蓝牙设备未连接" english:@"Bluetooth device not connected"];
     
-    self.changeName = NSLocalizedString(@"修改名称", nil);
-    self.nameMsg = NSLocalizedString(@"请输入你要修改的名字, 不支持中文名字", nil);
-    self.nameplace = NSLocalizedString(@"修改名称", nil);
+    self.changeName = [NSString titleChinese:@"修改名称" english:@"Modify name"];
+    self.nameMsg = [NSString titleChinese:@"请输入你要修改的名字, 不支持中文名字" english:@"Please enter the name you want to modify, do not support the Chinese name"];
+    self.nameplace = [NSString titleChinese:@"长度小于12的英文或数字" english:@"Length less than 12 of the English or number"];
+    
+    self.noperName = [NSString titleChinese:@"未连接" english:@"Not connected"];
 
     
     [self homeOfFirstConnectPeripheral];
@@ -173,7 +177,7 @@ static const float kExposureDurationPower = 5;
 - (void)changeLanguage
 {
     self.connectSucces = [[JYLanguageTool bundle] localizedStringForKey:@"连接成功" value:nil table:@"Localizable"];
-    self.disConnect = [[JYLanguageTool bundle] localizedStringForKey:@"蓝牙连接中断" value:nil table:@"Localizable"];
+    self.disConnect = [[JYLanguageTool bundle] localizedStringForKey:@"连接中断" value:nil table:@"Localizable"];
     self.nowSace = [[JYLanguageTool bundle] localizedStringForKey:@"正在保存..." value:nil table:@"Localizable"];
     
     self.altTitle = [[JYLanguageTool bundle] localizedStringForKey:@"参数重置" value:nil table:@"Localizable"];
@@ -188,6 +192,8 @@ static const float kExposureDurationPower = 5;
     self.lensMesage = [[JYLanguageTool bundle] localizedStringForKey:@"是否安装了其他镜头" value:nil table:@"Localizable"];
     
     self.direction = [[JYLanguageTool bundle] localizedStringForKey:@"蓝牙设备未连接" value:nil table:@"Localizable"];
+    
+    self.noperName = [[JYLanguageTool bundle] localizedStringForKey:@"未连接" value:nil table:@"Localizable"];
 }
 
 #pragma mark -------------------------> 相机操作
@@ -236,12 +242,10 @@ static const float kExposureDurationPower = 5;
 //                        NSLog(@"解挡数组  %@", [NSKeyedUnarchiver unarchiveObjectWithFile:path_encode]);
             
             JYPeripheral *codePer = obj;
-            NSLog(@"codePer = %@", codePer.identifier);
 //            NSLog(@"%@", self.blueManager.peripherals);
             // 3.遍历蓝牙数据中的数据
             for (CBPeripheral *isPer in self.blueManager.peripherals) {
                 JYPeripheral *mPer = [[JYPeripheral alloc] initWithPeripheral:isPer];
-                                NSLog(@"蓝牙数组中 %@", mPer.identifier);
                 // 3.1判断是否相同
                 if ([codePer.identifier isEqualToString:mPer.identifier]) {
                     // 3.2相同的话说明之前连接过此蓝牙  直接连接
@@ -275,7 +279,7 @@ static const float kExposureDurationPower = 5;
     [self.videoTimeView stopTimer];
     [self.videoCamera stopVideo];
     self.leftTopView.imgHidden = NO;
-//    [SVProgressHUD showWithStatus:self.nowSace];
+    [SVProgressHUD showWithStatus:self.nowSace];
 }
 
 /** 蓝牙发送的指令和查询指令 */
@@ -486,6 +490,10 @@ static const float kExposureDurationPower = 5;
     [SVProgressHUD showErrorWithStatus:self.disConnect duration:2.0f style:SVProgressHUDMaskTypeBlack];
     self.infoView.image = @"home_core_blue_error";
     self.infoView.raNum = 10.0;
+    [JYSeptManager sharedManager].perName = self.noperName ;
+    
+    [self.blueManager.peripherals removeAllObjects];
+    [self.coreBlueView.peripherals removeAllObjects];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
@@ -532,7 +540,7 @@ static const float kExposureDurationPower = 5;
             CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
             int32_t width = dimensions.width;
 //            NSLog(@"width = %d", width);
-            if (width == (int)self.videoCamera.videoSize.width) {
+            if (width == (int)self.videoCamera.videoSize.width && range.maxFrameRate <= 61.0f) {
 //                NSLog(@"%f", range.maxFrameRate);
                 [fpsArr addObject:[NSString stringWithFormat:@"%.f", range.maxFrameRate]];
             }
@@ -868,7 +876,7 @@ static const float kExposureDurationPower = 5;
         }else
         {
 //            dispatch_async(self.sessionQueue, ^{
-                self.logView.myText.text = [NSString stringWithFormat:@"%f", (0.5 - (-y + SHOW_Y) / (screenH - 30))];
+//                self.logView.myText.text = [NSString stringWithFormat:@"%f", (0.5 - (-y + SHOW_Y) / (screenH - 30))];
                 // 2.1 30是showView的高度   -- 调节微距
                 
                     [self.videoCamera cameraManagerChangeFoucus:(1 - (-y + SHOW_Y) / (screenH - 30))];
@@ -883,7 +891,7 @@ static const float kExposureDurationPower = 5;
         }
         self.saveNum = y;
     }
-    self.logView.camereText.text = [NSString stringWithFormat:@"%f", self.videoCamera.inputCamera.lensPosition];
+//    self.logView.camereText.text = [NSString stringWithFormat:@"%f", self.videoCamera.inputCamera.lensPosition];
     // 3.控制放大view的显示与掩藏
     self.timeNum--;
 //    dispatch_async(self.sessionQueue, ^{
@@ -920,12 +928,16 @@ static const float kExposureDurationPower = 5;
 {
     switch (btn.tag) {
         case 50:  // 蓝牙界面显示
+        {
             self.coreBlueView.peripherals = self.blueManager.peripherals;
             
             self.myContentView.scrollView.hidden = YES;
             self.coreBlueView.hidden = NO;
             
-            [self.coreBlueView.tableView reloadData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.coreBlueView.tableView reloadData];
+            });
+        }
             break;
         case 53:   // 手轮方向
             if (self.blueManager.connectPeripheral == nil) {
@@ -994,7 +1006,7 @@ static const float kExposureDurationPower = 5;
         [self.videoCamera cameraManagerEffectqualityWithTag:btn.tag withBlock:^(BOOL isCan) {
             if(!isCan)
             {
-                [self alertController];
+                self.isCan = YES;
             }
         }];
     }
@@ -1009,7 +1021,7 @@ static const float kExposureDurationPower = 5;
             self.videoCamera.videoSize = CGSizeMake(1920.0, 1080.0);
             break;
         case 63:
-            if (screenW != 480) {    // iPhone6 及以上设备
+            if (screenW != 480 && self.isCan == YES) {    // iPhone6 及以上设备
                 
                 self.videoCamera.videoSize = CGSizeMake(3840.0, 2160.0);
             } else {
@@ -1039,7 +1051,7 @@ static const float kExposureDurationPower = 5;
         case 50:     // 色温
         {
             self.temp = slider.value;
-            self.logView.tempText.text = [NSString stringWithFormat:@"%f", self.temp];
+//            self.logView.tempText.text = [NSString stringWithFormat:@"%f", self.temp];
             AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTint = {
                 .temperature = self.temp,
                 .tint = self.tint,
@@ -1050,7 +1062,7 @@ static const float kExposureDurationPower = 5;
         case 51:     // 色调
         {
             self.tint = slider.value;
-            self.logView.tintText.text = [NSString stringWithFormat:@"%f", self.tint];
+//            self.logView.tintText.text = [NSString stringWithFormat:@"%f", self.tint];
             AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTint = {
                 .temperature = self.temp,
                 .tint = self.tint,
@@ -1203,7 +1215,20 @@ static const float kExposureDurationPower = 5;
 
 - (void)contentViewQualityBtnOnClick:(UIButton *)btn
 {
-    NSLog(@"%@", btn.currentTitle);
+    switch (btn.tag) {
+        case 80:
+            self.videoCamera.quality = 3.0f;
+            break;
+        case 81:
+            self.videoCamera.quality = 5.0f;
+            break;
+        case 82:
+            self.videoCamera.quality = 7.0f;
+            break;
+        case 83:
+            self.videoCamera.quality = 10.0f;
+            break;
+    }
 }
 
 - (void)contentViewCameraLensViewCellBtnOnClick:(UIButton *)btn
@@ -1215,16 +1240,17 @@ static const float kExposureDurationPower = 5;
             case 80:      // 默认
                 self.infoView.dzText = @"x1";
                 self.blueManager.managerLens = JYBlueManagerLensOne;
-                self.focusView.contents=(id)[UIImage imageNamed:@"1x_focus"].CGImage;
+                self.focusView.contents = (id)[UIImage imageNamed:@"1x_focus"].CGImage;
                 break;
             case 81:      // 2倍增距镜
                 self.infoView.dzText = @"x2";
                 self.blueManager.managerLens = JYBlueManagerLensTwo;
-                self.focusView.contents=(id)[UIImage imageNamed:@"2x_focus"].CGImage;
+                self.focusView.contents = (id)[UIImage imageNamed:@"2x_focus"].CGImage;
                 break;
             case 82:      // 3倍增距镜
-                self.infoView.dzText = @"x3";
+                self.infoView.dzText = @"//";
                 self.blueManager.managerLens = JYBlueManagerLensThree;
+                self.focusView.contents = (id)[UIImage imageNamed:@"degree_scale_other"].CGImage;
                 break;
                 
             default:
@@ -1357,7 +1383,7 @@ static const float kExposureDurationPower = 5;
         }
             break;
         case 24:
-            self.logView.hidden = !self.logView.hidden;
+//            self.logView.hidden = !self.logView.hidden;
             break;
     }
 }

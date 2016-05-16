@@ -38,7 +38,7 @@
     
     self.twoCell.title = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x2" value:nil table:@"Localizable"];
     
-    self.threeCell.title = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x3" value:nil table:@"Localizable"];
+    self.threeCell.title = [[JYLanguageTool bundle] localizedStringForKey:@"其他镜头" value:nil table:@"Localizable"];
 }
 
 - (JYDirectionCell *)oneCell
@@ -73,7 +73,7 @@
 {
     if (!_threeCell) {
         
-        _threeCell = [[JYDirectionCell alloc] initWithTitle:[NSString titleChinese:@"增距镜x3" english:@"Lensx3"]];
+        _threeCell = [[JYDirectionCell alloc] initWithTitle:[NSString titleChinese:@"其他镜头" english:@"Other Lens"]];
         _threeCell.btnTag = 82;
         _threeCell.delegate = self;
         _threeCell.tag = 92;

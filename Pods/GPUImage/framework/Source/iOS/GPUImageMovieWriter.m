@@ -38,6 +38,8 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
     BOOL isRecording;
 }
 
+@property (assign, nonatomic) CGFloat quality;
+
 // Movie recording
 - (void)initializeMovieWithOutputSettings:(NSMutableDictionary *)outputSettings;
 
@@ -69,18 +71,21 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
 #pragma mark -
 #pragma mark Initialization and teardown
 
-- (id)initWithMovieURL:(NSURL *)newMovieURL size:(CGSize)newSize;
+- (id)initWithMovieURL:(NSURL *)newMovieURL size:(CGSize)newSize quality:(CGFloat)quality;
 {
+    return [self initWithMovieURL:newMovieURL size:newSize fileType:AVFileTypeQuickTimeMovie outputSettings:nil quality:quality];
     return [self initWithMovieURL:newMovieURL size:newSize fileType:AVFileTypeQuickTimeMovie outputSettings:nil];
 }
 
-- (id)initWithMovieURL:(NSURL *)newMovieURL size:(CGSize)newSize fileType:(NSString *)newFileType outputSettings:(NSMutableDictionary *)outputSettings;
+- (id)initWithMovieURL:(NSURL *)newMovieURL size:(CGSize)newSize fileType:(NSString *)newFileType outputSettings:(NSMutableDictionary *)outputSettings quality:(CGFloat)quality;
 {
     if (!(self = [super init]))
     {
 		return nil;
     }
 
+    self.quality = quality;
+    
     _shouldInvalidateAudioSampleWhenDone = NO;
     
     self.enabled = YES;
@@ -202,7 +207,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
         [NSNumber numberWithInteger:videoSize.width], AVVideoWidthKey,
         [NSNumber numberWithInteger:videoSize.height], AVVideoHeightKey,
         [NSDictionary dictionaryWithObjectsAndKeys:
-         [NSNumber numberWithInteger:videoSize.height * videoSize.width * 10.0], AVVideoAverageBitRateKey,
+         [NSNumber numberWithInteger:videoSize.height * videoSize.width * self.quality], AVVideoAverageBitRateKey,
          [NSNumber numberWithInteger:30], AVVideoMaxKeyFrameIntervalKey,
          nil], AVVideoCompressionPropertiesKey,
         nil];

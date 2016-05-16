@@ -79,4 +79,6 @@ typedef void(^JYLableText)(NSString *text);
 
 - (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
 
+@property (assign, nonatomic) CGFloat quality;
+
 @end

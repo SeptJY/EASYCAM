@@ -6,9 +6,9 @@
   Copyright © 2016年 九月. All rights reserved.
 */
 
-"设置" = "Setup";
+"设置" = "Setting";
 "白平衡" = "WB";
-"曝光" = "Exposure";
+"曝光" = "EV";
 
 "色调" = "Tint";
 "色温" = "Temp";
@@ -22,12 +22,12 @@
 "感光度" = "ISO";
 "曝光补偿" = "Bias";
 
-"  蓝   牙" = "Bluetooth";
+"蓝  牙" = "Bluetooth";
 "摄像头" = "Position";
 "闪光灯" = "Flash";
 "九宫格" = "Grid";
-"  语   言" = "Language";
-"  分辨率 " = "Resolution";
+"语  言" = "Language";
+"分辨率 " = "Resolution";
 "透明度" = "Opacity";
 "取消" = "Cancle";
 "低等" = "Lower";
@@ -59,14 +59,14 @@
 "固件版本:" = "Firmware:";
 //"增距镜x1" = "Lensx1";
 "增距镜x2" = "Lensx2";
-"增距镜x3" = "Lensx3";
+"其他镜头" = "Other Lens";
 "自动重复"
 = "Auto Repeat";
 "实时" = "RealTime";
 "两点" = "Linear";
 "参数重置" = "Parameter Reset";
 "是" = "Yes";
-"否" = "NO";
+"否" = "No";
 "所有设置将全部恢复为默认设置" = "All settings will be restored to default settings";
 "您好，当前设备不支持3840x2160" = "Hello, the current device does not support 3840x2160";
 "好的" = "OK";
@@ -79,9 +79,11 @@
 "请输入你要修改的名字, 不支持中文名字" = "Please enter the name you want to modify, do not support the Chinese name";
 "修改名称" = "Modify name";
 "无镜头" = "No Lens";
-"  帧   率" = "FPS";
-"编码质量" = "Coding quality";
+"编码质量" = "Quality";
 "低" = "Low";
 "标准" = "Standard";
 "中" = "Medium";
 "高" = "High";
+"其他设备" = "Other devices";
+"未搜索到周围的设备" = "No search to the surrounding devices";
+"帧  率" = "fps";

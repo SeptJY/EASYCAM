@@ -69,11 +69,7 @@ static id _instace;
 
 - (BOOL)currentLanguage
 {
-    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-    
-    NSArray* languages = [def objectForKey:@"AppleLanguages"];
-    
-    NSString *current = [languages objectAtIndex:0];
+    NSString *current = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLanguage"];
     
     NSString *str = [current substringWithRange:NSMakeRange(0, 2)];
     if ([str isEqualToString:@"zh"]) {

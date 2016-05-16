@@ -44,7 +44,8 @@
         // 检测各种特殊的字符串：比如电话、网站
         _webView.dataDetectorTypes = UIDataDetectorTypeAll;
         _webView.delegate = self;
-        [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.ezcam360.com"]]];
+        NSString *url = ([[JYSeptManager sharedManager] currentLanguage]) ? @"http://www.ezcam360.com/a/Chinese/index/" : @"http://www.ezcam360.com/a/English/index/";
+        [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
         
         [self.view addSubview:_webView];
     }

@@ -319,6 +319,7 @@ static NSString *ID = @"fenbinalv";
     self.resetView.hidden = YES;
     self.handView.hidden = YES;
     self.flashView.hidden = YES;
+    self.qualityView.hidden = YES;
 }
 
 /** JYSettingViewDelegate  */
@@ -587,6 +588,8 @@ static NSString *ID = @"fenbinalv";
     self.handView.frame = self.lensView.frame;
     
     self.flashView.frame = self.lensView.frame;
+    
+    self.qualityView.frame = self.lensView.frame;
 }
 
 - (void)dealloc

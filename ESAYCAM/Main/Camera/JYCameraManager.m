@@ -38,7 +38,7 @@
         
         self.videoSize = CGSizeMake(1920.0, 1080.0);
         
-        
+        self.quality = 5.0f;
     }
     return self;
 }
@@ -62,7 +62,6 @@
 
 - (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS
 {
-    NSLog(@"ff %@", self.camera.inputCamera.activeFormat);
     BOOL isRunning = self.captureSession.isRunning;
     
     if (isRunning)  [self.captureSession stopRunning];
@@ -91,16 +90,12 @@
             
             CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(selectedFormat.formatDescription);
             self.videoSize = CGSizeMake(dimensions.width, dimensions.height);
-            //            NSLog(@"%@", selectedFormat.formatDescription);
-            NSLog(@"selected format:h = %d -- w = %d", dimensions.height, dimensions.width);
             
             _inputCamera.activeFormat = selectedFormat;
             _inputCamera.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
             _inputCamera.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t)desiredFPS);
             [_inputCamera unlockForConfiguration];
-            NSLog(@"TT %@", self.inputCamera.activeFormat);
         }
-        //        NSLog(@"cc %@", self.camera.captureSession.sessionPreset);
     }
     
     if (isRunning) [self.captureSession startRunning];
@@ -189,7 +184,6 @@
     [self.filter removeTarget:movieWriter];
     self.camera.audioEncodingTarget = nil;
     [movieWriter finishRecording];
-    NSLog(@"preset = %@", self.captureSession.sessionPreset);
 }
 
 - (GPUImageMovieWriter *)writer
@@ -197,8 +191,7 @@
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie.MOV"];
     unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
     NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
-    NSLog(@"captureSessionPreset = %@", self.captureSession.sessionPreset);
-    GPUImageMovieWriter *writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize];
+    GPUImageMovieWriter *writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize quality:self.quality];
     
 
 //    GPUImageMovieWriter *writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize fileType:AVFileTypeQuickTimeMovie outputSettings:attributes];        writer.shouldPassthroughAudio = YES;
@@ -212,7 +205,7 @@
 
 - (void)movieRecordingCompleted
 {
-    NSLog(@"ABSBSBBSBSB");
+//    NSLog(@"ABSBSBBSBSB");
 }
 
 - (void)movieRecordingvideoSaveSuccess:(NSURL *)url

@@ -104,11 +104,16 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
 
 - (void)changeLanguage
 {
-    self.blueDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"  蓝   牙" value:nil table:@"Localizable"];
+    self.blueDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"蓝  牙" value:nil table:@"Localizable"];
     
-    self.resolutionDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"  分辨率 " value:nil table:@"Localizable"];
+    self.resolutionDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"分辨率 " value:nil table:@"Localizable"];
     
-    self.languageDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"  语   言" value:nil table:@"Localizable"];
+    self.languageDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"语  言" value:nil table:@"Localizable"];
+    
+    self.fpsDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"帧  率" value:nil table:@"Localizable"];
+    
+    self.qualityDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"编码质量" value:nil table:@"Localizable"];
+    [self.qualityDirection.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:self.qualityDirection.btn.currentTitle value:nil table:@"Localizable"] forState:UIControlStateNormal];
     
     self.direction.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"手轮方向" value:nil table:@"Localizable"];
     
@@ -118,26 +123,6 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     self.lastVideo.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"自动重复" value:nil table:@"Localizable"];
     [self.lastVideo.btn setTitle:[[JYLanguageTool bundle] localizedStringForKey:self.lastVideo.btn.currentTitle value:nil table:@"Localizable"] forState:UIControlStateNormal];
     
-    
-//    if ([self.lastVideo.titleBtn isEqualToString:@"实时"] || [self.lastVideo.titleBtn isEqualToString:@"RealTime"]) {
-//        self.lastVideo.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"实时" value:nil table:@"Localizable"];
-//    }
-//    
-//    if ([self.lastVideo.titleBtn isEqualToString:@"两点"] || [self.lastVideo.titleBtn isEqualToString:@"Linear"]) {
-//        self.lastVideo.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"两点" value:nil table:@"Localizable"];
-//    }
-    
-//    if ([self.chooseDirection.titleBtn isEqualToString:@"无镜头"] || [self.chooseDirection.titleBtn isEqualToString:@"No Lens"]) {
-//        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"无镜头" value:nil table:@"Localizable"];
-//    }
-//    
-//    if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x2"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx2"]) {
-//        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x2" value:nil table:@"Localizable"];
-//    }
-//    
-//    if ([self.chooseDirection.titleBtn isEqualToString:@"增距镜x3"] || [self.chooseDirection.titleBtn isEqualToString:@"Lensx3"]) {
-//        self.chooseDirection.titleBtn = [[JYLanguageTool bundle] localizedStringForKey:@"增距镜x3" value:nil table:@"Localizable"];
-//    }
     
     self.suportDirection.titleLabel = [[JYLanguageTool bundle] localizedStringForKey:@"硬件支持" value:nil table:@"Localizable"];
     
@@ -176,7 +161,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
         _blueDirection = [[JYLabelDirection alloc] initWithTitle:DIRECTION_SIZE_LABEL];
         _blueDirection.titleBtn = [NSString titleChinese:@"未连接" english:@"Not connected"];
         _blueDirection.btnTag = 50;
-        _blueDirection.titleLabel = [NSString titleChinese:@"  蓝   牙" english:@"Bluetooth"];
+        _blueDirection.titleLabel = [NSString titleChinese:@"蓝  牙" english:@"Bluetooth"];
         _blueDirection.delegate = self;
         _blueDirection.tag = 80;
         
@@ -193,7 +178,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
         _resolutionDirection = [[JYLabelDirection alloc] initWithTitle:DIRECTION_SIZE_LABEL];
         _resolutionDirection.titleBtn = [[JYResolutionData sharedManager] resolutionBackImageBtnTitleWith:[[NSUserDefaults standardUserDefaults] integerForKey:@"imageViewSeleted"]];
         _resolutionDirection.btnTag = 51;
-        _resolutionDirection.titleLabel = [NSString titleChinese:@"  分辨率 " english:@"Resolution"];
+        _resolutionDirection.titleLabel = [NSString titleChinese:@"分辨率 " english:@"Resolution"];
         ;
         _resolutionDirection.delegate = self;
         _blueDirection.tag = 81;
@@ -226,7 +211,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
         
         _languageDirection = [[JYLabelDirection alloc] initWithTitle:DIRECTION_SIZE_LABEL];
         _languageDirection.titleBtn = [NSString titleChinese:@"简体中文" english:@"English"];
-        _languageDirection.titleLabel = [NSString titleChinese:@"  语   言" english:@"Language"];
+        _languageDirection.titleLabel = [NSString titleChinese:@"语  言" english:@"Language"];
         _languageDirection.btnTag = 52;
         _languageDirection.delegate = self;
         _blueDirection.tag = 83;
@@ -310,7 +295,7 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     if (!_fpsDirection) {
         
         _fpsDirection = [[JYLabelDirection alloc] initWithTitle:DIRECTION_SIZE_LABEL];
-        _fpsDirection.titleLabel = [NSString titleChinese:@"  帧   率" english:@"FPS"];
+        _fpsDirection.titleLabel = [NSString titleChinese:@"帧  率" english:@"fps"];
         _fpsDirection.btnTag = 58;
         _fpsDirection.delegate = self;
         _fpsDirection.tag = 88;
@@ -327,15 +312,15 @@ static void *COREBLUE_NAME = &COREBLUE_NAME;
     if (!_qualityDirection) {
         
         _qualityDirection = [[JYLabelDirection alloc] initWithTitle:DIRECTION_SIZE_LABEL];
-        _qualityDirection.titleLabel = [NSString titleChinese:@"编码质量" english:@"Coding quality"];
+        _qualityDirection.titleLabel = [NSString titleChinese:@"编码质量" english:@"Quality"];
         _qualityDirection.btnTag = 59;
         _qualityDirection.delegate = self;
         _qualityDirection.tag = 89;
-        _qualityDirection.titleBtn = @"标准";
+        _qualityDirection.titleBtn = [NSString titleChinese:@"标准" english:@"Standard"];
         
-        [self addSubview:_fpsDirection];
+        [self addSubview:_qualityDirection];
     }
-    return _fpsDirection;
+    return _qualityDirection;
 }
 
 - (void)setDirectionBtnTitle:(NSString *)title andTag:(NSInteger)tag

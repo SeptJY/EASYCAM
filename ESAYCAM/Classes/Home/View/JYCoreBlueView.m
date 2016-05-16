@@ -22,7 +22,7 @@
 
 @property (strong, nonatomic) JYPeripheral *seletedPer;
 
-
+@property (strong, nonatomic) NSString *notitle;
 
 @end
 
@@ -36,9 +36,19 @@
         self.perArrays = [NSMutableArray array];
         self.tableView.rowHeight = JYCortrolWidth;
         
+        self.notitle = NSLocalizedString(@"未搜索到周围的设备", nil);
+        
         [self.tableView registerNib:[UINib nibWithNibName:@"JYCustomCell" bundle:nil] forCellReuseIdentifier:@"cell"];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
     }
     return self;
+}
+
+- (void)changeLanguage
+{
+    self.notitle = [[JYLanguageTool bundle] localizedStringForKey:@"未搜索到周围的设备" value:nil table:@"Localizable"];
+    self.titleLabel.text = [[JYLanguageTool bundle] localizedStringForKey:@"其他设备" value:nil table:@"Localizable"];
 }
 
 - (void)setPeripherals:(NSMutableArray *)peripherals
@@ -70,7 +80,7 @@
         
         _titleLabel = [[UILabel alloc] init];
         
-        _titleLabel.text = NSLocalizedString(@"其他设备", nil);
+        _titleLabel.text = NSLocalizedString(@"其他设备", nil);;
         _titleLabel.font = setFont(15);
         _titleLabel.textColor = [UIColor blueColor];
         _titleLabel.backgroundColor = [UIColor clearColor];
@@ -144,7 +154,7 @@
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
     } else {
-        cell.title = @"未搜索到周围的服务";
+        cell.title = self.notitle;
     }
     
     return cell;

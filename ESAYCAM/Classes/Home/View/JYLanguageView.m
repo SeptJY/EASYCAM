@@ -53,7 +53,7 @@
         _chinaCell.btnTag = 80;
         _chinaCell.delegate = self;
         _chinaCell.tag = 70;
-        _chinaCell.imageHidden = [JYSeptManager sharedManager].isEnglish;
+        _chinaCell.imageHidden = ![[JYSeptManager sharedManager] currentLanguage];
         
         [self addSubview:_chinaCell];
     }
@@ -68,7 +68,7 @@
         _englishCell.btnTag = 81;
         _englishCell.delegate = self;
         _englishCell.tag = 70;
-        _englishCell.imageHidden = ![JYSeptManager sharedManager].isEnglish;
+        _englishCell.imageHidden = [[JYSeptManager sharedManager] currentLanguage];
         
         [self addSubview:_englishCell];
     }
@@ -85,7 +85,6 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(languageViewDirectionCellBtnOnClick:)]) {
         [self.delegate languageViewDirectionCellBtnOnClick:btn];
     }
-    
     switch (btn.tag) {
         case 80:
             [JYLanguageTool setUserlanguage:@"zh-Hans"];
