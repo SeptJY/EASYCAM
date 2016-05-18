@@ -20,7 +20,7 @@
 "曝光偏移" = "Offset";
 "曝光时间" = "Time";
 "感光度" = "ISO";
-"曝光补偿" = "Bias";
+"曝光补偿" = "EV";
 
 "蓝  牙" = "Bluetooth";
 "摄像头" = "Position";

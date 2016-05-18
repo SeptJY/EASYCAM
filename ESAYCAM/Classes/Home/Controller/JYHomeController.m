@@ -1218,7 +1218,10 @@ static const float kExposureDurationPower = 5;
             } else {
                 [self.videoCamera exposeMode:AVCaptureExposureModeLocked];
             }
-            break;;
+            break;
+        case 43:    // 曝光时间
+            [self.videoCamera cameraManagerWithExposure:0];
+            break;
             
         default:
             break;

@@ -38,7 +38,7 @@
         
         self.videoSize = CGSizeMake(1920.0, 1080.0);
         
-        self.quality = [[NSUserDefaults standardUserDefaults] floatForKey:@"CodingQuality"];
+        self.quality = ([[NSUserDefaults standardUserDefaults] floatForKey:@"CodingQuality"] == 0) ? 5.0f : [[NSUserDefaults standardUserDefaults] floatForKey:@"CodingQuality"];
     }
     return self;
 }
@@ -289,6 +289,7 @@ static const float kExposureDurationPower = 5;
 // 设置曝光属性  ---> 曝光补偿
 - (void)cameraManagerWithExposure:(CGFloat)value
 {
+//    NSLog(@"%f", value);
     NSError *error = nil;
     AVCaptureDevice *currentVideoDevice = videoInput.device;
     
