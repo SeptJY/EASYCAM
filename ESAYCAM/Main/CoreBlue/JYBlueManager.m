@@ -214,6 +214,7 @@ static void * MINUS_ZOOM_MINUS = &MINUS_ZOOM_MINUS;
 -(void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
 {
 //    NSLog(@"%@ -蓝牙断开连接", connectPeripheral.name);
+    self.removePer = [connectPeripheral.identifier UUIDString];
     if(connectPeripheral != nil)
         connectPeripheral = nil;
     

@@ -512,8 +512,15 @@ static const float kExposureDurationPower = 5;
     self.infoView.raNum = 10.0;
     [JYSeptManager sharedManager].perName = self.noperName ;
     
-    [self.blueManager.peripherals removeAllObjects];
-    [self.coreBlueView.peripherals removeAllObjects];
+    // 移除短线后的蓝牙
+    
+//    for (CBPeripheral *pre in self.blueManager.peripherals) {
+//        if ([[pre.identifier UUIDString] isEqualToString:self.blueManager.removePer]) {
+//            [self.blueManager.peripherals removeObject:pre];
+//        }
+//    }
+//    [self.blueManager.peripherals removeAllObjects];
+//    [self.coreBlueView.peripherals removeAllObjects];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
@@ -760,7 +767,6 @@ static const float kExposureDurationPower = 5;
             [JYSeptManager sharedManager].perName = self.blueManager.connectPeripheral.name;
         }
     }
-    
     self.coreBlueView.hidden = YES;
     self.myContentView.scrollView.hidden = NO;
 }
@@ -1090,7 +1096,7 @@ static const float kExposureDurationPower = 5;
         }
             break;
         case 52:     // 饱和度
-            [self.videoCamera.filter setSaturation:[(UISlider *)slider value]];
+            [self.videoCamera.saturation setSaturation:[(UISlider *)slider value]];
             break;
             
         default:
@@ -1123,7 +1129,7 @@ static const float kExposureDurationPower = 5;
             }
             break;
         case 32:    // 色调
-            [self.videoCamera.filter setSaturation:1.0];
+            [self.videoCamera.saturation setSaturation:1.0];
             break;
             
         default:
@@ -1140,19 +1146,22 @@ static const float kExposureDurationPower = 5;
     [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeLocked];
     
     switch (btn.tag) {
-        case 80:      // 荧光
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:4200.0 andTint:81.0];
+        case 80:      // 日光灯
+            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 500 andTint:self.tint];
             break;
-        case 81:      // 灯泡
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:3400.0 andTint:25.0];
+        case 81:      // 钨丝灯
+            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 2700 andTint:self.tint];
             break;
-        case 82:      // 晴天
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:5000.0 andTint:0.0];
+        case 82:      // 烛光
+            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 5000 andTint:self.tint];
             break;
         case 83:      // 阴天
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:4886.0 andTint:52.0];
+            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 1000 andTint:self.tint];
             break;
-        case 84:      // 蓝天
+        case 84:      // 晴天
+            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 2000 andTint:self.tint];
+            break;
+        case 85:      // 蓝天
             [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
             break;
         default:
@@ -1172,7 +1181,7 @@ static const float kExposureDurationPower = 5;
         }
             break;
         case 63:     // 曝光补偿
-            [self.videoCamera cameraManagerWithExposure:slider.value];
+            [self.videoCamera.exposure setExposure:slider.value];
             break;
         default:
             break;
@@ -1220,7 +1229,7 @@ static const float kExposureDurationPower = 5;
             }
             break;
         case 43:    // 曝光时间
-            [self.videoCamera cameraManagerWithExposure:0];
+            [self.videoCamera.exposure setExposure:0];
             break;
             
         default:

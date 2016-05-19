@@ -156,12 +156,35 @@
         
         [self cameraManagerEffectqualityWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:@"imageViewSeleted"] withBlock:nil];
         
-        self.filter = [[GPUImageSaturationFilter alloc] init];
+//        self.filter = [[GPUImageSaturationFilter alloc] init];
         [_camera addTarget:self.filter];
         [self.filter addTarget:self.cameraScreen];
         [self.filter addTarget:self.subPreview];
     }
     return _camera;
+}
+
+- (GPUImageFilterGroup *)filter
+{
+    if (!_filter) {
+        _filter = [[GPUImageFilterGroup alloc] init];
+        
+        GPUImageExposureFilter *filter1 = [[GPUImageExposureFilter alloc] init];
+        
+        GPUImageSaturationFilter *filter2 = [[GPUImageSaturationFilter alloc] init]; //饱和度
+//        GPUImageWhiteBalanceFilter *filter3 = [[GPUImageWhiteBalanceFilter alloc] init];
+        
+        self.exposure = filter1;
+        self.saturation = filter2;
+//        self.whiteBalance = filter3;
+        
+        [filter1 addTarget:filter2];
+//        [filter2 addTarget:filter3];
+        
+        [(GPUImageFilterGroup *) _filter setInitialFilters:[NSArray arrayWithObject: filter1]];
+        [(GPUImageFilterGroup *) _filter setTerminalFilter:filter2];
+    }
+    return _filter;
 }
 
 #pragma mark 启用预览

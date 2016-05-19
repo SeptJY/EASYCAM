@@ -103,4 +103,6 @@ typedef enum{
 
 @property (assign, nonatomic) JYResetVideoType videoType;
 
+@property (copy, nonatomic) NSString *removePer;
+
 @end

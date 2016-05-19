@@ -49,13 +49,13 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
 /** 语言切换 */
 - (void)changeLanguage
 {
-    self.baisSlider.title = [[JYLanguageTool bundle] localizedStringForKey:@"曝光偏移" value:nil table:@"Localizable"];
+    self.baisSlider.title = [[JYLanguageTool bundle] localizedStringForKey:@"曝光补偿" value:nil table:@"Localizable"];
     
     self.ISOSlider.title = [[JYLanguageTool bundle] localizedStringForKey:@"感光度" value:nil table:@"Localizable"];
     
     self.timeSlider.title = [[JYLanguageTool bundle] localizedStringForKey:@"曝光时间" value:nil table:@"Localizable"];
     
-    self.offSetSlider.title = [[JYLanguageTool bundle] localizedStringForKey:@"曝光补偿" value:nil table:@"Localizable"];
+    self.offSetSlider.title = [[JYLanguageTool bundle] localizedStringForKey:@"曝光偏移" value:nil table:@"Localizable"];
 }
 
 /**
@@ -145,9 +145,9 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
         
         _baisSlider = [JYCustomSliderView customSliderViewWithTitle:@"曝光偏移"];
         _baisSlider.delegate = self;
-        _baisSlider.maximumValue = 8;
-        _baisSlider.minimumValue = -8;
-        _baisSlider.value = 0.5;
+        _baisSlider.maximumValue = 3;
+        _baisSlider.minimumValue = -3;
+        _baisSlider.value = 0;
         _baisSlider.title = [NSString titleChinese:@"曝光补偿" english:@"EV"];
         _baisSlider.sliderTag = 63;
         _baisSlider.sliderEnabled = YES;
@@ -203,13 +203,13 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
     
     CGFloat space_height = (self.height - SLIDER_COUNT * sliderH) / (SLIDER_COUNT - 1);
     
-    self.offSetSlider.frame = CGRectMake(0, 10, self.width, sliderH);
+    self.baisSlider.frame = CGRectMake(0, 10, self.width, sliderH);
     
     self.ISOSlider.frame = CGRectMake(0, 10 + sliderH + space_height, self.width, sliderH);
     
     self.timeSlider.frame = CGRectMake(0, 10 + (sliderH + space_height) * 2, self.width, sliderH);
     
-    self.baisSlider.frame = CGRectMake(0, 10 + (sliderH + space_height) * 3, self.width, sliderH);
+    self.offSetSlider.frame = CGRectMake(0, 10 + (sliderH + space_height) * 3, self.width, sliderH);
 }
 
 #if 0

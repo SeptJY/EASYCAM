@@ -53,8 +53,8 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
         
         _tempSlider = [JYCustomSliderView customSliderViewWithTitle:@"Saturation"];
         _tempSlider.delegate = self;
-        _tempSlider.maximumValue = 8000;
-        _tempSlider.minimumValue = 3000;
+        _tempSlider.maximumValue = 10000;
+        _tempSlider.minimumValue = 1000;
         _tempSlider.value = 5500;
         _tempSlider.title = [NSString titleChinese:@"色   温" english:@"Temp"];
         _tempSlider.sliderTag = 50;
@@ -148,7 +148,7 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
 /** 创建五个按钮 -- 气候 */
 - (void)createWetherButton
 {
-    NSArray *titleArray = @[@"ic_wb_fluorescent", @"ic_wb_incandescent", @"ic_wb_daylight", @"ic_wb_cloudy", @"A"];
+    NSArray *titleArray = @[@"ic_wb_incandescent", @"ic_wb_fluorescent", @"",  @"ic_wb_cloudy", @"ic_wb_daylight", @"A"];
     
     CGFloat btnW = 30;
     CGFloat btnH = btnW;
@@ -164,7 +164,7 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
         btn.frame = CGRectMake(btnX, btnY, btnW, btnH);
         btn.backgroundColor = [UIColor yellowColor];
         btn.layer.cornerRadius = btnW / 2;
-        btn.alpha = (i == 4) ? 1 : 0.4;
+        btn.alpha = (i == titleArray.count - 1) ? 1 : 0.4;
         btn.tag = 80 + i;
         [btn setImage:[UIImage imageNamed:titleArray[i]] forState:UIControlStateNormal];
         [btn addTarget:self action:@selector(wetherButtonOnClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -196,22 +196,26 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
     
     switch (btn.tag) {
         case 80:      // 荧光
-            self.tempSlider.value = 3642.0;
-            self.tintSlider.value = 50.0;
+//            self.tempSlider.value = 3642.0;
+//            self.tintSlider.value = 50.0;
             break;
         case 81:      // 白炽灯
-            self.tempSlider.value = 3400.0;
-            self.tintSlider.value = 25.0;
+//            self.tempSlider.value = 3400.0;
+//            self.tintSlider.value = 25.0;
             break;
         case 82:      // 晴天
-            self.tempSlider.value = 5400;
-            self.tintSlider.value = 0.0;
+//            self.tempSlider.value = 5400;
+//            self.tintSlider.value = 0.0;
             break;
         case 83:      // 阴天
-            self.tempSlider.value = 4886.0;
-            self.tintSlider.value = 52.0;
+//            self.tempSlider.value = 4886.0;
+//            self.tintSlider.value = 52.0;
             break;
-        case 84:      // 蓝天
+        case 84:      // 阴天
+            //            self.tempSlider.value = 4886.0;
+            //            self.tintSlider.value = 52.0;
+            break;
+        case 85:      // 蓝天
             self.tintSlider.btnSeleted = YES;
             self.tempSlider.btnSeleted = YES;
             self.tintSlider.sliderEnabled = NO;

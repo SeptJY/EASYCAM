@@ -25,7 +25,11 @@ typedef void(^JYLableText)(NSString *text);
 
 @property (weak, nonatomic) id<JYCameraManagerDelegate>cameraDelegate;
 
-@property (nonatomic, strong) GPUImageSaturationFilter *filter;
+@property (nonatomic, strong) GPUImageFilterGroup *filter;
+@property (nonatomic, strong) GPUImageExposureFilter *exposure;
+@property (nonatomic, strong) GPUImageSaturationFilter *saturation;
+@property (strong, nonatomic) GPUImageWhiteBalanceFilter *whiteBalance;
+
 - (void)startCamera;
 - (void)stopCamera;
 
