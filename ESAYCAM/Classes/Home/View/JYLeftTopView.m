@@ -21,7 +21,7 @@
 
 @property (strong, nonatomic) UIView *bgView;
 
-@property (strong, nonatomic) UIButton *quickBtn;
+
 @property (strong, nonatomic) UIButton *settingBtn;
 
 @property (strong, nonatomic) UIImageView *iRlectricityView;
@@ -50,17 +50,12 @@
     [self getCurrentBatteryLevel];
 }
 
-- (UIButton *)quickBtn
+- (UIImageView *)quickBtn
 {
     if (!_quickBtn) {
         
-        _quickBtn = [[UIButton alloc] init];
-        
-//        _quickBtn.tag = 10;
-        [_quickBtn setImage:[UIImage imageNamed:@"dub_arrow_down"] forState:UIControlStateNormal];
-        [_quickBtn setImage:[UIImage imageNamed:@"dub_arrow_up"] forState:UIControlStateSelected];
-        [_quickBtn setAdjustsImageWhenHighlighted:NO];
-//        [_quickBtn addTarget:self action:@selector(leftTopViewQuickOrSettingBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+        _quickBtn = [[UIImageView alloc] init];
+        _quickBtn.image = [UIImage imageNamed:@"dub_arrow_down"];
         
         [self addSubview:_quickBtn];
     }
@@ -84,25 +79,6 @@
     return _settingBtn;
 }
 
-- (UILabel *)label
-{
-    if (!_label) {
-        
-        _label = [[UILabel alloc] init];
-        _label.backgroundColor = [UIColor clearColor];
-        
-        [self insertSubview:_label aboveSubview:self.quickBtn];
-    }
-    return _label;
-}
-
-- (void)setIsShow:(BOOL)isShow
-{
-    _isShow = isShow;
-    
-    self.quickBtn.selected = _isShow;
-}
-
 - (UIImageView *)iRlectricityView
 {
     if (!_iRlectricityView) {
@@ -113,19 +89,6 @@
     }
     return _iRlectricityView;
 }
-
-//- (void)setImgHidden:(BOOL)imgHidden
-//{
-//    _imgHidden = imgHidden;
-//    
-//    self.iRlectricityView.hidden = imgHidden;
-//    
-//    if (imgHidden == YES) {
-//        [_timer setFireDate:[NSDate distantFuture]];
-//    } else{
-//        [_timer setFireDate:[NSDate date]];
-//    }
-//}
 
 - (void)setSettingHiden:(BOOL)settingHiden
 {
@@ -161,7 +124,7 @@
         
         _bgView = [[UIView alloc] init];
         
-        _bgView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:BG_ALPHA];
+        _bgView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
         
         [self addSubview:_bgView];
     }
@@ -185,10 +148,10 @@
 {
     [super layoutSubviews];
     
-    CGFloat bgW = self.width - 2 * JYSpaceWidth;
-    CGFloat bgH = self.height - 2 * JYSpaceWidth;
-    CGFloat bgX = JYSpaceWidth;
-    CGFloat bgY = JYSpaceWidth;
+    CGFloat bgW = self.width - 2 * 10;
+    CGFloat bgH = self.height - 2 * 10;
+    CGFloat bgX = 10;
+    CGFloat bgY = 10;
     
     self.bgView.frame = CGRectMake(bgX, bgY, bgW, bgH);
     self.bgView.layer.cornerRadius = bgH / 2;
@@ -200,12 +163,13 @@
     
     self.lineView.frame = CGRectMake(lineX, lineY, lineW, lineH);
     
-    self.quickBtn.frame = CGRectMake(0, 0, self.width / 2, self.height);
-    self.quickBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+    //    self.quickBtn.frame = CGRectMake(0, 0, self.width / 2, self.height);
+    
+    //    self.quickBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
     self.settingBtn.frame = CGRectMake(self.width / 2, 0, self.width / 2, self.height);
     self.settingBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 10);
     
-    self.label.frame = CGRectMake(0, 0, 35, 35);
+    self.quickBtn.frame = CGRectMake(0, 0, 35, 35);
     
     // 3.设置电量图片的frmae
     CGFloat rlectricityW = 25;

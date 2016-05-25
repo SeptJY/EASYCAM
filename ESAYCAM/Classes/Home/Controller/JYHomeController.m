@@ -1517,15 +1517,17 @@ static const float kExposureDurationPower = 5;
 /** 按钮显示之后 */
 - (void)bubbleMenuButtonWillExpand:(DWBubbleMenuButton *)expandableView
 {
-    //    NSLog(@"%s", __func__);
-    self.leftTopView.isShow = YES;
+//    NSLog(@"%s", __func__);
+    //    self.leftTopView.isShow = YES;
+    self.leftTopView.quickBtn.image = [UIImage imageNamed:@"dub_arrow_up"];
 }
 
 /** 按钮掩藏之后 */
 - (void)bubbleMenuButtonDidCollapse:(DWBubbleMenuButton *)expandableView
 {
-    //    NSLog(@"%s", __func__);
-    self.leftTopView.isShow = NO;
+//    NSLog(@"%s", __func__);
+    //    self.leftTopView.isShow = NO;
+    self.leftTopView.quickBtn.image = [UIImage imageNamed:@"dub_arrow_down"];
 }
 
 - (void)setUpphotoImgPhtoto
@@ -1589,7 +1591,7 @@ static const float kExposureDurationPower = 5;
         
         _menuBtn.delegate = self;
         
-        _menuBtn.homeButtonView = self.leftTopView.label;
+        _menuBtn.homeButtonView = self.leftTopView.quickBtn;
         
         [_menuBtn addButtons:[self createDemoButtonArray]];
     }
