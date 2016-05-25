@@ -101,28 +101,28 @@ static const float kExposureDurationPower = 5;
     self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL);
     self.navigationController.navigationBarHidden = YES;
     
-    self.connectSucces = [NSString titleChinese:@"连接成功" english:@"Successful Connection"];
-    self.disConnect = [NSString titleChinese:@"连接中断" english:@"Bluetooth connection interrupt"];
-    self.nowSace = [NSString titleChinese:@"正在保存..." english:@"Saving..."];
+    self.connectSucces = [NSString titleChinese:@"Successful Connection" english:@"连接成功"];
+    self.disConnect = [NSString titleChinese:@"Bluetooth connection interrupt" english:@"连接中断"];
+    self.nowSace = [NSString titleChinese:@"Saving..." english:@"正在保存..."];
     
-    self.altTitle = [NSString titleChinese:@"参数重置" english:@"Parameter Reset"];
-    self.altMesage = [NSString titleChinese:@"所有设置将全部恢复为默认设置" english:@"All settings will be restored to default settings"];
-    self.altSure = [NSString titleChinese:@"是" english:@"Yes"];
-    self.altCancel = [NSString titleChinese:@"否" english:@"No"];
+    self.altTitle = [NSString titleChinese:@"Parameter Reset" english:@"参数重置"];
+    self.altMesage = [NSString titleChinese:@"All settings will be restored to default settings" english:@"所有设置将全部恢复为默认设置"];
+    self.altSure = [NSString titleChinese:@"Yes" english:@"是"];
+    self.altCancel = [NSString titleChinese:@"No" english:@"否"];
     
-    self.sizeTitle = [NSString titleChinese:@"温馨提示" english:@"Reminder"];
-    self.sizeMesage = [NSString titleChinese:@"您好，当前设备不支持3840x2160" english:@"Hello, the current device does not support 3840x2160"];
-    self.sizeOk = [NSString titleChinese:@"好的" english:@"OK"];
+    self.sizeTitle = [NSString titleChinese:@"Reminder" english:@"温馨提示"];
+    self.sizeMesage = [NSString titleChinese:@"Hello, the current device does not support 3840x2160" english:@"您好，当前设备不支持3840x2160"];
+    self.sizeOk = [NSString titleChinese:@"OK" english:@"好的"];
     
-    self.lensMesage = [NSString titleChinese:@"是否变更了镜头" english:@"Whether to change the lens"];
+    self.lensMesage = [NSString titleChinese:@"Whether to change the lens" english:@"是否变更了镜头"];
     
-    self.direction = [NSString titleChinese:@"蓝牙设备未连接" english:@"Bluetooth device not connected"];
+    self.direction = [NSString titleChinese:@"Bluetooth device not connected" english:@"蓝牙设备未连接"];
     
-    self.changeName = [NSString titleChinese:@"修改名称" english:@"Modify name"];
-    self.nameMsg = [NSString titleChinese:@"请输入你要修改的名字, 不支持中文名字" english:@"Please enter the name you want to modify, do not support the Chinese name"];
-    self.nameplace = [NSString titleChinese:@"长度小于12的英文或数字" english:@"Length less than 12 of the English or number"];
+    self.changeName = [NSString titleChinese:@"Modify name" english:@"修改名称"];
+    self.nameMsg = [NSString titleChinese:@"Please enter the name you want to modify, do not support the Chinese name" english:@"请输入你要修改的名字, 不支持中文名字"];
+    self.nameplace = [NSString titleChinese:@"Length less than 12 of the English or number" english:@"长度小于12的英文或数字"];
     
-    self.noperName = [NSString titleChinese:@"未连接" english:@"Not connected"];
+    self.noperName = [NSString titleChinese:@"Not connected" english:@"未连接"];
 
     
     [self homeOfFirstConnectPeripheral];
@@ -1556,6 +1556,9 @@ static const float kExposureDurationPower = 5;
         case 101:   // video <---> photo
         {
             self.videoView.isVideo = btn.selected;
+            [[NSUserDefaults standardUserDefaults] setBool:btn.selected forKey:@"video"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
             [self.myContentView contentViewSwitchHidden:YES andTag:42];
         }
             break;
@@ -1610,6 +1613,7 @@ static const float kExposureDurationPower = 5;
         
         _phtotBtn = [self createBtnWithImg:@"shift_RECtoCAM" seletedImg:@"shift_CAMtoREC" size:CGSizeMake(35.0f, 65.0f)];
         _phtotBtn.tag = 101;
+        _phtotBtn.selected = [[NSUserDefaults standardUserDefaults] boolForKey:@"video"];
     }
     return _phtotBtn;
 }
