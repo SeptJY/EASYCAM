@@ -55,6 +55,10 @@
 
 - (void)contentViewQualityBtnOnClick:(UIButton *)btn;
 
+- (void)baisSliderValueChange:(UISlider *)slider;
+
+- (void)contentViewBaisSliderAutoBtnOnClick:(UIButton *)btn;
+
 @end
 
 @interface JYContenView : UIView

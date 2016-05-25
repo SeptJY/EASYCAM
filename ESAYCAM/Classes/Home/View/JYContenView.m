@@ -535,6 +535,20 @@ static NSString *ID = @"fenbinalv";
     }
 }
 
+- (void)baisSliderValueChange:(UISlider *)slider
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(baisSliderValueChange:)]) {
+        [self.delegate baisSliderValueChange:slider];
+    }
+}
+
+- (void)baisSliderAutoBtnOnClick:(UIButton *)btn
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewBaisSliderAutoBtnOnClick:)]) {
+        [self.delegate contentViewBaisSliderAutoBtnOnClick:btn];
+    }
+}
+
 /** 设置系统相机反馈的白平衡、曝光属性 slider的value
  tag : slider的tag
  type: 0 -> expsureView, 1 -> balanceView

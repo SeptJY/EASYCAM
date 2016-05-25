@@ -10,6 +10,9 @@
 		5B11491A1CDB1B6A00F7E8F1 /* JYInfoLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1149191CDB1B6900F7E8F1 /* JYInfoLogView.m */; };
 		5B11491C1CDB1B8900F7E8F1 /* JYInfoLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */; };
 		5B7232901CE9572E00DA387A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B7232921CE9572E00DA387A /* InfoPlist.strings */; };
+		5B86648F1CED5BE70081FA95 /* ASValueTrackingSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B86648C1CED5BE70081FA95 /* ASValueTrackingSlider.m */; };
+		5B8664901CED5BE70081FA95 /* ASValuePopUpView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B86648E1CED5BE70081FA95 /* ASValuePopUpView.m */; };
+		5B8664931CED5C1F0081FA95 /* JYBaisSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8664921CED5C1F0081FA95 /* JYBaisSlider.m */; };
 		5B8F96631CDD7A9000961260 /* JYCustomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F96611CDD7A9000961260 /* JYCustomCell.m */; };
 		5B8F96641CDD7A9000961260 /* JYCustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B8F96621CDD7A9000961260 /* JYCustomCell.xib */; };
 		5B8F96671CDDE25D00961260 /* JYFlashView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F96661CDDE25D00961260 /* JYFlashView.m */; };
@@ -94,6 +97,12 @@
 		5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JYInfoLogView.xib; sourceTree = "<group>"; };
 		5B7232911CE9572E00DA387A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		5B7232931CE9573000DA387A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5B86648B1CED5BE70081FA95 /* ASValueTrackingSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASValueTrackingSlider.h; sourceTree = "<group>"; };
+		5B86648C1CED5BE70081FA95 /* ASValueTrackingSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASValueTrackingSlider.m; sourceTree = "<group>"; };
+		5B86648D1CED5BE70081FA95 /* ASValuePopUpView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASValuePopUpView.h; sourceTree = "<group>"; };
+		5B86648E1CED5BE70081FA95 /* ASValuePopUpView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASValuePopUpView.m; sourceTree = "<group>"; };
+		5B8664911CED5C1F0081FA95 /* JYBaisSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYBaisSlider.h; sourceTree = "<group>"; };
+		5B8664921CED5C1F0081FA95 /* JYBaisSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYBaisSlider.m; sourceTree = "<group>"; };
 		5B8F96601CDD7A9000961260 /* JYCustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYCustomCell.h; sourceTree = "<group>"; };
 		5B8F96611CDD7A9000961260 /* JYCustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYCustomCell.m; sourceTree = "<group>"; };
 		5B8F96621CDD7A9000961260 /* JYCustomCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JYCustomCell.xib; sourceTree = "<group>"; };
@@ -373,6 +382,10 @@
 				5BB739AF1CD82FF40084C624 /* JYResolutionData.m */,
 				5BB739B01CD82FF40084C624 /* JYSaveVideoData.h */,
 				5BB739B11CD82FF40084C624 /* JYSaveVideoData.m */,
+				5B86648B1CED5BE70081FA95 /* ASValueTrackingSlider.h */,
+				5B86648C1CED5BE70081FA95 /* ASValueTrackingSlider.m */,
+				5B86648D1CED5BE70081FA95 /* ASValuePopUpView.h */,
+				5B86648E1CED5BE70081FA95 /* ASValuePopUpView.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -440,6 +453,8 @@
 				5B8F96661CDDE25D00961260 /* JYFlashView.m */,
 				84CEC8C31CE621DC00E1573B /* JYQualityView.h */,
 				84CEC8C41CE621DC00E1573B /* JYQualityView.m */,
+				5B8664911CED5C1F0081FA95 /* JYBaisSlider.h */,
+				5B8664921CED5C1F0081FA95 /* JYBaisSlider.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -810,10 +825,12 @@
 				5BB739F51CD82FF40084C624 /* JYPeripheral.m in Sources */,
 				5BB739F81CD82FF40084C624 /* DWBubbleMenuButton.m in Sources */,
 				5BB73A011CD82FF40084C624 /* JYLabelDirection.m in Sources */,
+				5B86648F1CED5BE70081FA95 /* ASValueTrackingSlider.m in Sources */,
 				5BB7396F1CD82D920084C624 /* AppDelegate.m in Sources */,
 				5BB73A031CD82FF40084C624 /* JYLanguageView.m in Sources */,
 				5BB73A0A1CD82FF40084C624 /* JYShoeInfoView.m in Sources */,
 				5BB739FD1CD82FF40084C624 /* JYCustomSliderView.m in Sources */,
+				5B8664901CED5BE70081FA95 /* ASValuePopUpView.m in Sources */,
 				5BB73A151CD82FF40084C624 /* JYTabBarView.m in Sources */,
 				5BB7396C1CD82D920084C624 /* main.m in Sources */,
 				5BB739FC1CD82FF40084C624 /* JYCoreBlueView.m in Sources */,
@@ -823,6 +840,7 @@
 				5BB73A3D1CD82FFE0084C624 /* JQIndicatorView.m in Sources */,
 				5BB73A121CD82FF40084C624 /* JYNewFetureViewCtl.m in Sources */,
 				5BB73A0D1CD82FF40084C624 /* JYSupportView.m in Sources */,
+				5B8664931CED5C1F0081FA95 /* JYBaisSlider.m in Sources */,
 				5B11491A1CDB1B6A00F7E8F1 /* JYInfoLogView.m in Sources */,
 				5BB73A041CD82FF40084C624 /* JYLeftTopView.m in Sources */,
 				5BB73A101CD82FF40084C624 /* JYVideoTimeView.m in Sources */,
@@ -984,15 +1002,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: li mao (QMJJB449A9)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: li mao (QMJJB449A9)";
 				GCC_PREFIX_HEADER = ESAYCAM/PrefixHeader.pch;
 				INFOPLIST_FILE = ESAYCAM/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ezcam360.HANDCAM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "cee3a271-1a16-45ca-99ef-ffb22e9ab003";
 			};
 			name = Debug;
 		};
@@ -1002,14 +1020,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: li mao (QMJJB449A9)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: li mao (QMJJB449A9)";
 				GCC_PREFIX_HEADER = ESAYCAM/PrefixHeader.pch;
 				INFOPLIST_FILE = ESAYCAM/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ezcam360.HANDCAM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "cee3a271-1a16-45ca-99ef-ffb22e9ab003";
 			};
 			name = Release;
 		};

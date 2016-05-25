@@ -15,6 +15,9 @@
 
 - (void)expsureViewCustomSliderAutoBtnOnClick:(UIButton *)btn;
 
+- (void)baisSliderValueChange:(UISlider *)slider;
+- (void)baisSliderAutoBtnOnClick:(UIButton *)btn;
+
 @end
 
 @interface JYExpsureView : UIView

@@ -764,7 +764,8 @@ static const float kExposureDurationPower = 5;
                 }
             }
             // 保存当前连接的蓝牙名称，
-            [JYSeptManager sharedManager].perName = self.blueManager.connectPeripheral.name;
+            CBPeripheral *pper = self.blueManager.peripherals[indexPath.row];
+            [JYSeptManager sharedManager].perName = pper.name;
         }
     }
     self.coreBlueView.hidden = YES;
@@ -1153,13 +1154,13 @@ static const float kExposureDurationPower = 5;
             [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 2700 andTint:self.tint];
             break;
         case 82:      // 烛光
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 5000 andTint:self.tint];
+            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 7000 andTint:self.tint];
             break;
         case 83:      // 阴天
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 1000 andTint:self.tint];
+            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 500 andTint:self.tint];
             break;
         case 84:      // 晴天
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 2000 andTint:self.tint];
+            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 1000 andTint:self.tint];
             break;
         case 85:      // 蓝天
             [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
@@ -1179,11 +1180,6 @@ static const float kExposureDurationPower = 5;
         {
             [self.videoCamera setExposureDurationWith:slider.value withBlock:nil];
         }
-            break;
-        case 63:     // 曝光补偿
-            [self.videoCamera.exposure setExposure:slider.value];
-            break;
-        default:
             break;
     }
 }
@@ -1227,12 +1223,6 @@ static const float kExposureDurationPower = 5;
             } else {
                 [self.videoCamera exposeMode:AVCaptureExposureModeLocked];
             }
-            break;
-        case 43:    // 曝光时间
-            [self.videoCamera.exposure setExposure:0];
-            break;
-            
-        default:
             break;
     }
 }
@@ -1375,6 +1365,16 @@ static const float kExposureDurationPower = 5;
     [alertCtl addAction:okAction];
     
     [self presentViewController:alertCtl animated:YES completion:nil];
+}
+
+- (void)baisSliderValueChange:(UISlider *)slider
+{
+    [self.videoCamera.exposure setExposure:slider.value];
+}
+
+- (void)contentViewBaisSliderAutoBtnOnClick:(UIButton *)btn
+{
+    [self.videoCamera.exposure setExposure:0];
 }
 
 /** 设置的内容视图 */
@@ -1652,29 +1652,6 @@ static const float kExposureDurationPower = 5;
     
     return [buttonsMutable copy];
 }
-
-//#pragma mark -------------------------> JYSliderImageViewDelegate
-//- (void)sliderImageViewValueChange:(UISlider *)sender
-//{
-//    __weak JYHomeController *WeakSelf = self;
-//    [self.videoCamera setExposureDurationWith:sender.value withBlock:^(NSString *text) {
-//        WeakSelf.sliderImageView.label.text = text;
-//    }];
-//}
-//
-///** sliderImageView */
-//- (JYSliderImageView *)sliderImageView
-//{
-//    if (!_sliderImageView) {
-//        
-//        _sliderImageView = [[JYSliderImageView alloc] init];
-//        _sliderImageView.hidden = YES;
-//        _sliderImageView.delegate = self;
-//        
-//        [self.subView addSubview:_sliderImageView];
-//    }
-//    return _sliderImageView;
-//}
 
 /** 蓝牙显示的View */
 - (JYShowInfoView *)infoView

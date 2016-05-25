@@ -65,6 +65,7 @@
 "实时" = "RealTime";
 "两点" = "Linear";
 "参数重置" = "Parameter Reset";
+"重置" = "Reset";
 "是" = "Yes";
 "否" = "No";
 "所有设置将全部恢复为默认设置" = "All settings will be restored to default settings";

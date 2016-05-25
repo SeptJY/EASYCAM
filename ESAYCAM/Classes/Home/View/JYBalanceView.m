@@ -148,7 +148,7 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
 /** 创建五个按钮 -- 气候 */
 - (void)createWetherButton
 {
-    NSArray *titleArray = @[@"ic_wb_incandescent", @"ic_wb_fluorescent", @"",  @"ic_wb_cloudy", @"ic_wb_daylight", @"A"];
+    NSArray *titleArray = @[@"ic_wb_fluorescent", @"ic_wb_incandescent", @"candle80x80",  @"ic_wb_cloudy", @"ic_wb_daylight", @"A"];
     
     CGFloat btnW = 30;
     CGFloat btnH = btnW;

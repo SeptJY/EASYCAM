@@ -7,6 +7,7 @@
 //
 
 #import "JYExpsureView.h"
+#import "JYBaisSlider.h"
 
 #define SLIDER_COUNT 4
 
@@ -16,9 +17,9 @@ static void *SeptManagerTimeValue = &SeptManagerTimeValue;
 static void *SeptManagerOffsetValue = &SeptManagerOffsetValue;
 static void *JYSELFHIDDEN = &JYSELFHIDDEN;
 
-@interface JYExpsureView () <JYCustomSliderViewDelegate>
+@interface JYExpsureView () <JYCustomSliderViewDelegate, JYBaisSliderDelegate>
 
-@property (strong, nonatomic) JYCustomSliderView *baisSlider;
+@property (strong, nonatomic) JYBaisSlider *baisSlider;
 
 @property (strong, nonatomic) JYCustomSliderView *ISOSlider;
 
@@ -139,19 +140,16 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
     return _timeSlider;
 }
 
-- (JYCustomSliderView *)baisSlider
+- (JYBaisSlider *)baisSlider
 {
     if (!_baisSlider) {
         
-        _baisSlider = [JYCustomSliderView customSliderViewWithTitle:@"曝光偏移"];
+        _baisSlider = [[JYBaisSlider alloc] initWithTitle:@"曝光偏移"];
         _baisSlider.delegate = self;
         _baisSlider.maximumValue = 3;
         _baisSlider.minimumValue = -3;
         _baisSlider.value = 0;
         _baisSlider.title = [NSString titleChinese:@"曝光补偿" english:@"EV"];
-        _baisSlider.sliderTag = 63;
-        _baisSlider.sliderEnabled = YES;
-        _baisSlider.btnModel = CustomSliderReset;
         
         [self addSubview:_baisSlider];
     }
@@ -176,6 +174,20 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
             
         default:
             break;
+    }
+}
+
+- (void)baisSliderValueChange:(UISlider *)slider
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(baisSliderValueChange:)]) {
+        [self.delegate baisSliderValueChange:slider];
+    }
+}
+
+- (void)baisSliderAutoBtnOnClick:(UIButton *)btn
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(baisSliderAutoBtnOnClick:)]) {
+        [self.delegate baisSliderAutoBtnOnClick:btn];
     }
 }
 
