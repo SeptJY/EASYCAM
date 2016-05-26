@@ -7,7 +7,8 @@
 //
 
 #import "JYHomeController.h"
-#import "JYCameraManager.h"
+//#import "JYCameraManager.h"
+#import "JYVideoCamera.h"
 #import "JYVideoView.h"
 #import "JYVideoTimeView.h"
 #import "JYShowInfoView.h"
@@ -23,10 +24,10 @@
 static const float kExposureMinimumDuration = 1.0/1000;
 static const float kExposureDurationPower = 5;
 
-@interface JYHomeController () <JYCameraManagerDelegate, JYVideoViewDelegate, JYLeftTopViewDelegate, MWPhotoBrowserDelegate, DWBubbleMenuViewDelegate, JYSliderImageViewDelegate, JYContentViewDelegate, JYBlueManagerDelegate, JYCoreBlueViewDelegate, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface JYHomeController () <JYVideoCameraDelegate, JYVideoViewDelegate, JYLeftTopViewDelegate, MWPhotoBrowserDelegate, DWBubbleMenuViewDelegate, JYSliderImageViewDelegate, JYContentViewDelegate, JYBlueManagerDelegate, JYCoreBlueViewDelegate, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) UIView *subView;
-@property (strong, nonatomic) JYCameraManager *videoCamera;
+@property (strong, nonatomic) JYVideoCamera *videoCamera;
 @property (strong, nonatomic) UIView *bottomPreview;
 
 @property (strong, nonatomic) JYVideoView *videoView;
@@ -101,28 +102,28 @@ static const float kExposureDurationPower = 5;
     self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL);
     self.navigationController.navigationBarHidden = YES;
     
-    self.connectSucces = [NSString titleChinese:@"Successful Connection" english:@"连接成功"];
-    self.disConnect = [NSString titleChinese:@"Bluetooth connection interrupt" english:@"连接中断"];
-    self.nowSace = [NSString titleChinese:@"Saving..." english:@"正在保存..."];
+    self.connectSucces = [NSString titleChinese:@"连接成功" english:@"Successful Connection"];
+    self.disConnect = [NSString titleChinese:@"连接中断" english:@"Bluetooth connection interrupt"];
+    self.nowSace = [NSString titleChinese:@"保存成功" english:@"Save success"];
     
-    self.altTitle = [NSString titleChinese:@"Parameter Reset" english:@"参数重置"];
-    self.altMesage = [NSString titleChinese:@"All settings will be restored to default settings" english:@"所有设置将全部恢复为默认设置"];
-    self.altSure = [NSString titleChinese:@"Yes" english:@"是"];
-    self.altCancel = [NSString titleChinese:@"No" english:@"否"];
+    self.altTitle = [NSString titleChinese:@"参数重置" english:@"Parameter Reset"];
+    self.altMesage = [NSString titleChinese:@"所有设置将全部恢复为默认设置" english:@"All settings will be restored to default settings"];
+    self.altSure = [NSString titleChinese:@"是" english:@"Yes"];
+    self.altCancel = [NSString titleChinese:@"否" english:@"No"];
     
-    self.sizeTitle = [NSString titleChinese:@"Reminder" english:@"温馨提示"];
-    self.sizeMesage = [NSString titleChinese:@"Hello, the current device does not support 3840x2160" english:@"您好，当前设备不支持3840x2160"];
-    self.sizeOk = [NSString titleChinese:@"OK" english:@"好的"];
+    self.sizeTitle = [NSString titleChinese:@"温馨提示" english:@"Reminder"];
+    self.sizeMesage = [NSString titleChinese:@"您好，当前设备不支持3840x2160" english:@"Hello, the current device does not support 3840x2160"];
+    self.sizeOk = [NSString titleChinese:@"好的" english:@"OK"];
     
-    self.lensMesage = [NSString titleChinese:@"Whether to change the lens" english:@"是否变更了镜头"];
+    self.lensMesage = [NSString titleChinese:@"是否变更了镜头" english:@"Whether to change the lens"];
     
-    self.direction = [NSString titleChinese:@"Bluetooth device not connected" english:@"蓝牙设备未连接"];
+    self.direction = [NSString titleChinese:@"蓝牙设备未连接" english:@"Bluetooth device not connected"];
     
-    self.changeName = [NSString titleChinese:@"Modify name" english:@"修改名称"];
-    self.nameMsg = [NSString titleChinese:@"Please enter the name you want to modify, do not support the Chinese name" english:@"请输入你要修改的名字, 不支持中文名字"];
-    self.nameplace = [NSString titleChinese:@"Length less than 12 of the English or number" english:@"长度小于12的英文或数字"];
+    self.changeName = [NSString titleChinese:@"修改名称" english:@"Modify name"];
+    self.nameMsg = [NSString titleChinese:@"请输入你要修改的名字, 不支持中文名字" english:@"Please enter the name you want to modify, do not support the Chinese name"];
+    self.nameplace = [NSString titleChinese:@"长度小于12的英文或数字" english:@"Length less than 12 of the English or number"];
     
-    self.noperName = [NSString titleChinese:@"Not connected" english:@"未连接"];
+    self.noperName = [NSString titleChinese:@"未连接" english:@"Not connected"];
 
     
     [self homeOfFirstConnectPeripheral];
@@ -202,7 +203,7 @@ static const float kExposureDurationPower = 5;
 {
     self.connectSucces = [[JYLanguageTool bundle] localizedStringForKey:@"连接成功" value:nil table:@"Localizable"];
     self.disConnect = [[JYLanguageTool bundle] localizedStringForKey:@"连接中断" value:nil table:@"Localizable"];
-    self.nowSace = [[JYLanguageTool bundle] localizedStringForKey:@"正在保存..." value:nil table:@"Localizable"];
+    self.nowSace = [[JYLanguageTool bundle] localizedStringForKey:@"保存成功" value:nil table:@"Localizable"];
     
     self.altTitle = [[JYLanguageTool bundle] localizedStringForKey:@"参数重置" value:nil table:@"Localizable"];
     self.altMesage = [[JYLanguageTool bundle] localizedStringForKey:@"所有设置将全部恢复为默认设置" value:nil table:@"Localizable"];
@@ -232,20 +233,21 @@ static const float kExposureDurationPower = 5;
     [self.videoCamera stopCamera];
 }
 
-- (JYCameraManager *)videoCamera {
+- (JYVideoCamera *)videoCamera {
     if (!_videoCamera) {
-        _videoCamera = [[JYCameraManager alloc] initWithFrame:self.view.bounds superview:self.view];
-        _videoCamera.cameraDelegate = self;
-        [_videoCamera flashModel:AVCaptureFlashModeAuto];
-        [self.bottomPreview addSubview:_videoCamera.subPreview];
+        _videoCamera = [[JYVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1920x1080 superView:self.view];
+//        _videoCamera.cameraDelegate = self;
+//        [_videoCamera flashModel:AVCaptureFlashModeAuto];
+        [self.bottomPreview addSubview:self.videoCamera.scaleView];
+        _videoCamera.delegate = self;
     }
     return _videoCamera;
 }
 
 - (void)cameraManagerRecodingSuccess:(NSURL *)url
 {
-    [SVProgressHUD dismiss];
-    
+//    [SVProgressHUD dismiss];
+    [SVProgressHUD showSuccessWithStatus:self.nowSace duration:1.0f style:SVProgressHUDMaskTypeBlack];
     self.videoView.imgUrl = url;
 }
 
@@ -298,7 +300,8 @@ static const float kExposureDurationPower = 5;
 {
     [self.videoTimeView stopTimer];
     [self.videoCamera stopVideo];
-    [SVProgressHUD showWithStatus:self.nowSace];
+//    [SVProgressHUD showWithStatus:self.nowSace];
+//    [SVProgressHUD showSuccessWithStatus:self.connectSucces duration:2.0f style:SVProgressHUDMaskTypeBlack];
 }
 
 /** 蓝牙发送的指令和查询指令 */
@@ -560,7 +563,7 @@ static const float kExposureDurationPower = 5;
 - (NSMutableArray *)getFpsAtNowResolution
 {
     NSMutableArray *fpsArr = [NSMutableArray array];
-    for (AVCaptureDeviceFormat *format in [self.videoCamera.inputCamera formats]) {
+    for (AVCaptureDeviceFormat *format in [self.videoCamera.videoCamera.inputCamera formats]) {
         for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
         
             CMFormatDescriptionRef desc = format.formatDescription;
@@ -1082,7 +1085,7 @@ static const float kExposureDurationPower = 5;
                 .temperature = self.temp,
                 .tint = self.tint,
             };
-            [self.videoCamera cameraManagerSetWhiteBalanceGains:[self.videoCamera.inputCamera deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
+            [self.videoCamera cameraManagerSetWhiteBalanceGains:[self.videoCamera.videoCamera.inputCamera deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
         }
             break;
         case 51:     // 色调
@@ -1093,11 +1096,11 @@ static const float kExposureDurationPower = 5;
                 .temperature = self.temp,
                 .tint = self.tint,
             };
-            [self.videoCamera cameraManagerSetWhiteBalanceGains:[self.videoCamera.inputCamera deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
+            [self.videoCamera cameraManagerSetWhiteBalanceGains:[self.videoCamera.videoCamera.inputCamera deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
         }
             break;
         case 52:     // 饱和度
-            [self.videoCamera.saturation setSaturation:[(UISlider *)slider value]];
+            [self.videoCamera.saturationFilter setSaturation:[(UISlider *)slider value]];
             break;
             
         default:
@@ -1130,7 +1133,7 @@ static const float kExposureDurationPower = 5;
             }
             break;
         case 32:    // 色调
-            [self.videoCamera.saturation setSaturation:1.0];
+            [self.videoCamera.saturationFilter setSaturation:1.0];
             break;
             
         default:
@@ -1178,7 +1181,7 @@ static const float kExposureDurationPower = 5;
             break;
         case 62:     // 曝光时间
         {
-            [self.videoCamera setExposureDurationWith:slider.value withBlock:nil];
+            [self.videoCamera setExposureDurationWith:slider.value];
         }
             break;
     }
@@ -1369,12 +1372,12 @@ static const float kExposureDurationPower = 5;
 
 - (void)baisSliderValueChange:(UISlider *)slider
 {
-    [self.videoCamera.exposure setExposure:slider.value];
+    [self.videoCamera.exposureFilter setExposure:slider.value];
 }
 
 - (void)contentViewBaisSliderAutoBtnOnClick:(UIButton *)btn
 {
-    [self.videoCamera.exposure setExposure:0];
+    [self.videoCamera.exposureFilter setExposure:0];
 }
 
 /** 设置的内容视图 */
@@ -1884,23 +1887,23 @@ static const float kExposureDurationPower = 5;
 - (void)addObservers
 {
     // 1.监听会话是否开启
-    [self.videoCamera.captureSession addObserver:self forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:SessionRunningContext];
+    [self.videoCamera.videoCamera.captureSession addObserver:self forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:SessionRunningContext];
     
     // 实时监听白平衡的变化
-    [self.videoCamera.inputCamera addObserver:self forKeyPath:@"deviceWhiteBalanceGains" options:NSKeyValueObservingOptionNew context:DeviceWhiteBalanceGains];
+    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"deviceWhiteBalanceGains" options:NSKeyValueObservingOptionNew context:DeviceWhiteBalanceGains];
     
     // 实时监听曝光偏移的变化exposureTargetOffset
-    [self.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureTargetOffset" options:NSKeyValueObservingOptionNew context:DeviceExposureOffset];
+    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureTargetOffset" options:NSKeyValueObservingOptionNew context:DeviceExposureOffset];
     
     // 实时监听感光度的变化
-    [self.videoCamera.inputCamera addObserver:self forKeyPath:@"ISO" options:NSKeyValueObservingOptionNew context:DeviceExposureISO];
+    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"ISO" options:NSKeyValueObservingOptionNew context:DeviceExposureISO];
     
     // 实时监听曝光时间的变化
-    [self.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureDuration" options:NSKeyValueObservingOptionNew context:DeviceExposureDuration];
+    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureDuration" options:NSKeyValueObservingOptionNew context:DeviceExposureDuration];
     
-    [self.videoCamera addObserver:self forKeyPath:@"videoSize" options:NSKeyValueObservingOptionNew context:VideoSize];
+    [self.videoCamera.videoCamera addObserver:self forKeyPath:@"videoSize" options:NSKeyValueObservingOptionNew context:VideoSize];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.videoCamera.captureSession];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.videoCamera.videoCamera.captureSession];
 }
 
 - (void)sessionRuntimeError:(NSNotification *)notification
@@ -1910,14 +1913,14 @@ static const float kExposureDurationPower = 5;
     
     // Automatically try to restart the session running if media services were reset and the last start running succeeded.
     // Otherwise, enable the user to try to resume the session running.
-    if ( error.code == AVErrorMediaServicesWereReset ) {
-        dispatch_async( self.sessionQueue, ^{
-            if ( self.videoCamera.isSessionRunning ) {
-                [self.videoCamera.captureSession startRunning];
-                self.videoCamera.sessionRunning = self.videoCamera.captureSession.isRunning;
-            }
-        } );
-    }
+//    if ( error.code == AVErrorMediaServicesWereReset ) {
+//        dispatch_async( self.sessionQueue, ^{
+//            if ( self.videoCamera.videoCamera.isSessionRunning ) {
+//                [self.videoCamera.captureSession startRunning];
+//                self.videoCamera.sessionRunning = self.videoCamera.captureSession.isRunning;
+//            }
+//        } );
+//    }
 }
 
 #pragma KVO监听事件
@@ -1928,7 +1931,7 @@ static const float kExposureDurationPower = 5;
     
     if (context == DeviceWhiteBalanceGains) {  // 白平衡
         if (self.tempAuto == 0 && self.tintAuto == 0) {
-            AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTintValues = [self.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:self.videoCamera.inputCamera.deviceWhiteBalanceGains];
+            AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTintValues = [self.videoCamera.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:self.videoCamera.videoCamera.inputCamera.deviceWhiteBalanceGains];
             self.tint = temperatureAndTintValues.tint;
             self.temp = temperatureAndTintValues.temperature;
             [self.myContentView contentViewSetCustomSliderValue:temperatureAndTintValues.temperature andCustomSliderTag:50 classType:1];
@@ -1937,9 +1940,9 @@ static const float kExposureDurationPower = 5;
         else if ( newValue && newValue != [NSNull null] ) {
             AVCaptureWhiteBalanceGains newGains;
             [newValue getValue:&newGains];
-            AVCaptureWhiteBalanceTemperatureAndTintValues newTemperatureAndTint = [self.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:newGains];
+            AVCaptureWhiteBalanceTemperatureAndTintValues newTemperatureAndTint = [self.videoCamera.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:newGains];
             
-            if (self.videoCamera.inputCamera.whiteBalanceMode != AVCaptureExposureModeLocked ) {
+            if (self.videoCamera.videoCamera.inputCamera.whiteBalanceMode != AVCaptureExposureModeLocked ) {
                 [self.myContentView contentViewSetCustomSliderValue:newTemperatureAndTint.temperature andCustomSliderTag:50 classType:1];
                 [self.myContentView contentViewSetCustomSliderValue:newTemperatureAndTint.tint andCustomSliderTag:51 classType:1];
             }
@@ -1948,19 +1951,19 @@ static const float kExposureDurationPower = 5;
     else if (context == DeviceExposureISO) {   // 感光度
         if (self.isoAuto == 0) {
             //            self.f_iso = videoCamera.inputCamera.ISO;
-            [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.inputCamera.ISO andCustomSliderTag:61 classType:0];
+            [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.videoCamera.inputCamera.ISO andCustomSliderTag:61 classType:0];
         }
     }
     else if (context == DeviceExposureOffset) {   // 曝光偏移
-        [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.inputCamera.exposureTargetOffset andCustomSliderTag:60 classType:0];
+        [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.videoCamera.inputCamera.exposureTargetOffset andCustomSliderTag:60 classType:0];
     }
     else if (context == DeviceExposureDuration) {   // 曝光时间
         
         if ( newValue && newValue != [NSNull null] ) {
             double newDurationSeconds = CMTimeGetSeconds( [newValue CMTimeValue] );
-            if (self.videoCamera.inputCamera.exposureMode != AVCaptureExposureModeCustom ) {
-                double minDurationSeconds = MAX( CMTimeGetSeconds(self.videoCamera.inputCamera.activeFormat.minExposureDuration ), kExposureMinimumDuration );
-                double maxDurationSeconds = CMTimeGetSeconds(self.videoCamera.inputCamera.activeFormat.maxExposureDuration );
+            if (self.videoCamera.videoCamera.inputCamera.exposureMode != AVCaptureExposureModeCustom ) {
+                double minDurationSeconds = MAX( CMTimeGetSeconds(self.videoCamera.videoCamera.inputCamera.activeFormat.minExposureDuration ), kExposureMinimumDuration );
+                double maxDurationSeconds = CMTimeGetSeconds(self.videoCamera.videoCamera.inputCamera.activeFormat.maxExposureDuration );
                 // Map from duration to non-linear UI range 0-1
                 double p = ( newDurationSeconds - minDurationSeconds ) / ( maxDurationSeconds - minDurationSeconds ); // Scale to 0-1
                 [self.myContentView contentViewSetCustomSliderValue:pow( p, 1 / kExposureDurationPower ) andCustomSliderTag:62 classType:0];

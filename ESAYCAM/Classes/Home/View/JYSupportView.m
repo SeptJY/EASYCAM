@@ -105,12 +105,11 @@ static void * HardSoftVersion = &HardSoftVersion;
     if (!_nameBtn) {
         
         _nameBtn = [[UIButton alloc] init];
-        [_nameBtn setBackgroundImage:[UIImage imageNamed:@"home_support_btn_bg_icon"] forState:UIControlStateNormal];
-        [_nameBtn setBackgroundImage:[UIImage imageNamed:@"home_support_btn_bg_icon_selected"] forState:UIControlStateHighlighted];
-        [_nameBtn setTitle:NSLocalizedString(@"外接对焦手轮", nil) forState:UIControlStateNormal];
+        
+        [_nameBtn setTitle:@"www.ezcam360.com" forState:UIControlStateNormal];
         [_nameBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_nameBtn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-        _nameBtn.titleLabel.font = setFont(10);
+//        _nameBtn.titleLabel.font = setFont(17);
         
         [_nameBtn addTarget:self action:@selector(pushEsaycamWebView) forControlEvents:UIControlEventTouchUpInside];
         
@@ -204,9 +203,9 @@ static void * HardSoftVersion = &HardSoftVersion;
 {
     CGFloat margin = 15;
     
-    self.imgBtn.frame = CGRectMake(margin, margin, self.width * 0.5 - 30, self.height - 15);
+    self.imgBtn.frame = CGRectMake(margin, 0, self.width * 0.5 - 30, self.height - 30);
     
-    self.nameBtn.frame = CGRectMake((self.width * 0.5 - 120) * 0.5 + self.width * 0.5, self.height - 10 - 28, 120, 28);
+    self.nameBtn.frame = CGRectMake(margin, self.height - 10 - 30, self.width - 2 * margin, 30);
     
     CGSize labelSize = [NSString sizeWithText:self.appLabel.text font:self.appLabel.font maxSize:CGSizeMake(200, 50)];
     CGFloat labelX = self.width * 0.5 + (self.width * 0.5 - 2 * labelSize.width) / 2;

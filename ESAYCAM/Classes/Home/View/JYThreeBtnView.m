@@ -30,9 +30,10 @@
         
         self = [[[NSBundle mainBundle] loadNibNamed:@"JYThreeBtnView" owner:nil options:nil] lastObject];
         
-        [self.settingBtn setTitle:[NSString titleChinese:@"Setting" english:@"设置"] forState:UIControlStateNormal];
-        [self.balanceBtn setTitle:[NSString titleChinese:@"WB" english:@"白平衡"] forState:UIControlStateNormal];
-        [self.exposureBtn setTitle:[NSString titleChinese:@"EV" english:@"曝光"] forState:UIControlStateNormal];
+//        NSLog(@"%@", [NSString titleChinese:@"设置" english:@"Setting"]);
+        [self.settingBtn setTitle:[NSString titleChinese:@"设置" english:@"Setting"] forState:UIControlStateNormal];
+        [self.balanceBtn setTitle:[NSString titleChinese:@"白平衡" english:@"WB"] forState:UIControlStateNormal];
+        [self.exposureBtn setTitle:[NSString titleChinese:@"曝光" english:@"EV"] forState:UIControlStateNormal];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
     }

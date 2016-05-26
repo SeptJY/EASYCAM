@@ -70,6 +70,7 @@
 		5BB73A3E1CD82FFE0084C624 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5BB73A311CD82FFE0084C624 /* Localizable.strings */; };
 		5BB73A3F1CD82FFE0084C624 /* JYLanguageTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB73A341CD82FFE0084C624 /* JYLanguageTool.m */; };
 		5BB73A421CD8301E0084C624 /* JYNewFeturnData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5BB73A411CD8301E0084C624 /* JYNewFeturnData.plist */; };
+		5BFE28471CF6E3F300290864 /* JYVideoCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BFE28461CF6E3F300290864 /* JYVideoCamera.m */; };
 		84CEC8C51CE621DC00E1573B /* JYQualityView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CEC8C41CE621DC00E1573B /* JYQualityView.m */; };
 		CF43909DBB0CA3B8AD8180F3 /* libPods-ESAYCAM.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F64AA4596C5B9F9D5BE87E4 /* libPods-ESAYCAM.a */; };
 /* End PBXBuildFile section */
@@ -217,6 +218,8 @@
 		5BB73A351CD82FFE0084C624 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		5BB73A401CD830190084C624 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		5BB73A411CD8301E0084C624 /* JYNewFeturnData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = JYNewFeturnData.plist; sourceTree = "<group>"; };
+		5BFE28451CF6E3F300290864 /* JYVideoCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYVideoCamera.h; sourceTree = "<group>"; };
+		5BFE28461CF6E3F300290864 /* JYVideoCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYVideoCamera.m; sourceTree = "<group>"; };
 		7F64AA4596C5B9F9D5BE87E4 /* libPods-ESAYCAM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ESAYCAM.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84CEC8C31CE621DC00E1573B /* JYQualityView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYQualityView.h; sourceTree = "<group>"; };
 		84CEC8C41CE621DC00E1573B /* JYQualityView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYQualityView.m; sourceTree = "<group>"; };
@@ -331,6 +334,8 @@
 			children = (
 				5BB7399F1CD82FED0084C624 /* JYCameraManager.h */,
 				5BB739A01CD82FED0084C624 /* JYCameraManager.m */,
+				5BFE28451CF6E3F300290864 /* JYVideoCamera.h */,
+				5BFE28461CF6E3F300290864 /* JYVideoCamera.m */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -830,6 +835,7 @@
 				5BB73A031CD82FF40084C624 /* JYLanguageView.m in Sources */,
 				5BB73A0A1CD82FF40084C624 /* JYShoeInfoView.m in Sources */,
 				5BB739FD1CD82FF40084C624 /* JYCustomSliderView.m in Sources */,
+				5BFE28471CF6E3F300290864 /* JYVideoCamera.m in Sources */,
 				5B8664901CED5BE70081FA95 /* ASValuePopUpView.m in Sources */,
 				5BB73A151CD82FF40084C624 /* JYTabBarView.m in Sources */,
 				5BB7396C1CD82D920084C624 /* main.m in Sources */,

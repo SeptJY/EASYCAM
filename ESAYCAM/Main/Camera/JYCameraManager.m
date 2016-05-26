@@ -219,12 +219,11 @@
     NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
     GPUImageMovieWriter *writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize quality:self.quality];
     
-
-//    GPUImageMovieWriter *writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize fileType:AVFileTypeQuickTimeMovie outputSettings:attributes];        writer.shouldPassthroughAudio = YES;
-    writer.delegate = self;
     
+    //    GPUImageMovieWriter *writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize fileType:AVFileTypeQuickTimeMovie outputSettings:attributes];        writer.shouldPassthroughAudio = YES;
+    writer.delegate = self;
     [self.filter addTarget:writer];
-    self.camera.audioEncodingTarget = writer;
+    self.audioEncodingTarget = writer;
     
     return writer;
 }
@@ -232,12 +231,15 @@
 - (void)movieRecordingCompleted
 {
 //    NSLog(@"ABSBSBBSBSB");
+//    if (self.cameraDelegate && [self.cameraDelegate respondsToSelector:@selector(cameraManagerRecodingSuccess:)]) {
+//        [self.cameraDelegate cameraManagerRecodingSuccess:nil];
+//    }
 }
 
 - (void)movieRecordingvideoSaveSuccess:(NSURL *)url
 {
     if (self.cameraDelegate && [self.cameraDelegate respondsToSelector:@selector(cameraManagerRecodingSuccess:)]) {
-        [self.cameraDelegate cameraManagerRecodingSuccess:url];
+        [self.cameraDelegate cameraManagerRecodingSuccess:nil];
     }
 }
 

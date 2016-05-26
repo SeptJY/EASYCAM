@@ -69,9 +69,31 @@ static id _instace;
 
 - (BOOL)currentLanguage
 {
-    NSString *current = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLanguage"];
+//    NSString *current = [[NSUserDefaults standardUserDefaults] objectForKey:@"userLanguage"];
+//    NSLog(@"%@", current);
+//    if (current == nil) {
+//        NSArray* languages = [def objectForKey:@"AppleLanguages"];
+//        
+//        NSString *current = [languages objectAtIndex:0];
+//    }
     
-    NSString *str = [current substringWithRange:NSMakeRange(0, 2)];
+    // 取得用户默认信息
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    
+    NSString *string = [def valueForKey:@"userLanguage"];
+    
+    if (string.length == 0) {
+        
+        //获取系统当前语言版本(中文zh-Hans,英文en)
+        NSArray* languages = [def objectForKey:@"AppleLanguages"];
+        
+        NSString *current = [languages objectAtIndex:0];
+        
+        string = current;
+    }
+    
+    NSString *str = [string substringWithRange:NSMakeRange(0, 2)];
+//    NSLog(@"%@", str);
     if ([str isEqualToString:@"zh"]) {
         return 1;
     } else

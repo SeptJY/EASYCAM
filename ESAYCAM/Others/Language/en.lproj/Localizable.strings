@@ -33,7 +33,7 @@
 "低等" = "Lower";
 "保存成功" = "Save success";
 "保存失败" = "Save failed";
-"正在保存..." = "Saving...";
+//"保存..." = "Saving...";
 "默认" = "Default";
 "1920x1080    默认" = "1920x1080    Default";
 "3840x2160    仅支持iPhone6及以上设备" = "3840x2160    Support only iPhone6 and above equipment";
