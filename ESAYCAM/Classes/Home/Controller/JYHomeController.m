@@ -238,7 +238,6 @@ static const float kExposureDurationPower = 5;
         _videoCamera = [[JYVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1920x1080 superView:self.view];
 //        _videoCamera.cameraDelegate = self;
 //        [_videoCamera flashModel:AVCaptureFlashModeAuto];
-        [self.bottomPreview addSubview:self.videoCamera.scaleView];
         _videoCamera.delegate = self;
     }
     return _videoCamera;
@@ -612,15 +611,11 @@ static const float kExposureDurationPower = 5;
 {
     if (!_bottomPreview) {
         
-        CGFloat bottomWH = 200;
-        CGFloat bottomX = (screenW - bottomWH) * 0.5;
-        CGFloat bottomY = (screenH - bottomWH) * 0.5;
-        
-        _bottomPreview = [[UIView alloc] initWithFrame:CGRectMake(bottomX, bottomY, bottomWH, bottomWH)];
+        _bottomPreview = [[UIView alloc] init];
         _bottomPreview.hidden = YES;
         _bottomPreview.clipsToBounds = YES;
-        _bottomPreview.layer.cornerRadius = bottomWH * 0.5;
         _bottomPreview.backgroundColor = [UIColor yellowColor];
+        [_bottomPreview addSubview:self.videoCamera.scaleView];
         
         [self.view addSubview:_bottomPreview];
     }
@@ -1101,6 +1096,7 @@ static const float kExposureDurationPower = 5;
             break;
         case 52:     // 饱和度
             [self.videoCamera.saturationFilter setSaturation:[(UISlider *)slider value]];
+            
             break;
             
         default:
@@ -1819,6 +1815,13 @@ static const float kExposureDurationPower = 5;
     self.logView.frame = CGRectMake(0, screenH - 60, screenW - 100, 60);
     
     self.fpsView.frame = self.coreBlueView.frame;
+    
+    CGFloat bottomWH = 200;
+    CGFloat bottomX = (screenW - bottomWH) * 0.5;
+    CGFloat bottomY = (screenH - bottomWH) * 0.5;
+    
+    self.bottomPreview.frame = CGRectMake(bottomX, bottomY, bottomWH, bottomWH);
+    self.bottomPreview.layer.cornerRadius = bottomWH * 0.5;
 }
 
 - (void)didReceiveMemoryWarning {

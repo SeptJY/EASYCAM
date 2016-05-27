@@ -143,15 +143,16 @@
         _filter = [[GPUImageFilterGroup alloc] init];
         
         self.exposureFilter = [[GPUImageExposureFilter alloc] init];
-        self.saturationFilter = [[GPUImageSaturationFilter alloc] init];
+//        self.saturationFilter = [[GPUImageSaturationFilter alloc] init];
+        self.lowPassFilter = [[GPUImageLowPassFilter alloc] init];
         
-        [self.exposureFilter addTarget:self.saturationFilter];
+        [self.exposureFilter addTarget:self.lowPassFilter];
         
         [(GPUImageFilterGroup *) _filter setInitialFilters:[NSArray arrayWithObject: self.exposureFilter]];
-        [(GPUImageFilterGroup *) _filter setTerminalFilter:self.saturationFilter];
+        [(GPUImageFilterGroup *) _filter setTerminalFilter:self.lowPassFilter];
         
         [_filter addTarget:self.filteredVideoView];
-//        [_filter addTarget:self.scaleView];
+        [_filter addTarget:self.scaleView];
     }
     return _filter;
 }
@@ -163,6 +164,7 @@
         _videoCamera.outputImageOrientation = UIInterfaceOrientationLandscapeRight;
         [_videoCamera addAudioInputsAndOutputs];
         [_videoCamera addTarget:self.filter];
+//        _videoCamera.frameRate = 120;
     }
     return _videoCamera;
 }

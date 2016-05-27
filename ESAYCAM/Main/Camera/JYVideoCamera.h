@@ -37,6 +37,8 @@ typedef void(^CanSetSessionPreset)(BOOL isCan);
 
 @property (nonatomic, strong) GPUImageExposureFilter *exposureFilter;
 @property (nonatomic, strong) GPUImageSaturationFilter *saturationFilter;
+
+@property (strong, nonatomic) GPUImageLowPassFilter *lowPassFilter;
 @property (strong, nonatomic) GPUImageFilterGroup *filter;
 
 - (instancetype)initWithSessionPreset:(NSString *)sessionPreset superView:(UIView *)superView;

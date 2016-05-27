@@ -533,6 +533,7 @@ NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString = SHAD
 
 - (void)setFrameRate:(int32_t)frameRate;
 {
+    NSLog(@"%s", __func__);
 	_frameRate = frameRate;
 	
 	if (_frameRate > 0)
