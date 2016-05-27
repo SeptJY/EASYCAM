@@ -236,8 +236,7 @@ static const float kExposureDurationPower = 5;
 - (JYVideoCamera *)videoCamera {
     if (!_videoCamera) {
         _videoCamera = [[JYVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1920x1080 superView:self.view];
-//        _videoCamera.cameraDelegate = self;
-//        [_videoCamera flashModel:AVCaptureFlashModeAuto];
+        [_videoCamera flashModel:AVCaptureFlashModeAuto];
         _videoCamera.delegate = self;
     }
     return _videoCamera;
@@ -250,9 +249,9 @@ static const float kExposureDurationPower = 5;
     self.videoView.imgUrl = url;
 }
 
-- (void)cameraManageTakingPhotoSucuess:(NSData *)data
+- (void)cameraManageTakingPhotoSucuess:(UIImage *)image
 {
-    self.videoView.imageData = data;
+    self.videoView.image = image;
 }
 
 #pragma mark ------------------------->JYBlueManagerDelegate 蓝牙管理者和蓝牙界面显示
@@ -368,17 +367,12 @@ static const float kExposureDurationPower = 5;
             }
             break;
         case 507:   // 查询当前ZOOM
-//            if (self.zoomView.y <= -SHOW_Y) {
-//                self.zoomView.y = -SHOW_Y;
-//            }
             [self.blueManager blueToolWriteValue:[NSString stringWithFormat:@"a051%db", (int)(20000 + self.zoomNum / (screenH - 30) * 1000)]];
             break;
         case 601:   // 重复录制开始
             self.useModel = CoreBlueUseModelRepeatRecording;
             break;
         case 602:   // 重复录制结束
-            self.focusView.hidden = NO;
-            self.zoomView.hidden = YES;
             self.useModel = CoreBlueUseModelFocus;
             break;
         case 511:   // 查询手轮方向
@@ -421,7 +415,6 @@ static const float kExposureDurationPower = 5;
                 self.zoomView.hidden = NO;
                 self.focusView.hidden = YES;
 //                self.sliderImageView.hidden = YES;
-                self.videoView.isVideo = NO;
                 
                 [self.menuBtn menuButtonSeleted:NO andTag:100];
 //                [self.menuBtn menuButtonsetImg:@"home_photo_icon" andTag:102];
@@ -493,7 +486,6 @@ static const float kExposureDurationPower = 5;
                 self.zoomView.hidden = YES;
                 self.focusView.hidden = NO;
 //                self.sliderImageView.hidden = YES;
-                self.videoView.isVideo = NO;
                 
                 [self.menuBtn menuButtonSeleted:YES andTag:100];
 //                [self.menuBtn menuButtonsetImg:@"home_photo_icon" andTag:102];
@@ -832,7 +824,6 @@ static const float kExposureDurationPower = 5;
         {
             // 调焦
             if (self.saveFocusNum != self.blueManager.moveDistance) {
-                
                 self.focusView.hidden = NO;
                 self.zoomView.hidden = YES;
                 //                NSLog(@"self.iFocusView.y = %f", self.iFocusView.y);
@@ -849,7 +840,6 @@ static const float kExposureDurationPower = 5;
             }
             
             if (self.saveVideoZoom != self.blueManager.videoZoom) {
-                
                 self.focusView.hidden = YES;
                 self.zoomView.hidden = NO;
                 

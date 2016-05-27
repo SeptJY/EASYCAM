@@ -14,7 +14,7 @@
 @optional
 - (void)cameraManagerRecodingSuccess:(NSURL *)url;
 
-- (void)cameraManageTakingPhotoSucuess:(NSData *)data;
+- (void)cameraManageTakingPhotoSucuess:(UIImage *)image;
 
 @end
 

@@ -180,6 +180,13 @@ static void *IMAGE_ICONS = &IMAGE_ICONS;
     self.photoBtn.hidden = !isVideo;
 }
 
+- (void)setImage:(UIImage *)image
+{
+    _image = image;
+    
+    [self.iconsBtn setImage:image forState:UIControlStateNormal];
+}
+
 - (void)layoutSubviews
 {
     CGFloat magin = 10;

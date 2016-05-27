@@ -27,6 +27,8 @@
 
 @property (strong, nonatomic) NSURL *imgUrl;
 
+@property (strong, nonatomic) UIImage *image;
+
 @property (assign, nonatomic) BOOL isVideo;
 
 /** 重复录制的提示开启和停止 */

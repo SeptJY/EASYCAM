@@ -8,12 +8,18 @@
 
 #import "JYVideoCamera.h"
 
-@interface JYVideoCamera () <GPUImageMovieWriterDelegate>
+@interface JYVideoCamera () <GPUImageMovieWriterDelegate, AVCaptureAudioDataOutputSampleBufferDelegate, AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     CMTime defaultVideoMaxFrameDuration;
+    dispatch_queue_t movieWritingQueue;
+    CMBufferQueueRef previewBufferQueue;
 }
 
-
+@property (nonatomic, strong) AVAssetWriter *assetWriter;
+@property (nonatomic, strong) AVAssetWriterInput *assetWriterVideoInput;
+@property (nonatomic, strong) AVAssetWriterInput *assetWriterAudioInput;
+@property (nonatomic, strong) AVCaptureConnection *audioConnection;
+@property (nonatomic, strong) AVCaptureConnection *videoConnection;
 
 @property (strong, nonatomic) GPUImageView *filteredVideoView;
 
@@ -36,6 +42,32 @@
         self.videoSize = CGSizeMake(1920.0, 1080.0);
         
         self.quality = ([[NSUserDefaults standardUserDefaults] floatForKey:@"CodingQuality"] == 0) ? 5.0f : [[NSUserDefaults standardUserDefaults] floatForKey:@"CodingQuality"];
+        
+//        AVCaptureVideoDataOutput *videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
+//        [self.videoCamera.captureSession addOutput:videoDataOutput];
+//        
+//        [videoDataOutput setVideoSettings:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA] forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
+//        
+//        movieWritingQueue = dispatch_queue_create("com.shu223.moviewriting", DISPATCH_QUEUE_SERIAL);
+//        dispatch_queue_t videoCaptureQueue = dispatch_queue_create("com.shu223.videocapture", NULL);
+//        [videoDataOutput setAlwaysDiscardsLateVideoFrames:YES];
+//        [videoDataOutput setSampleBufferDelegate:self queue:videoCaptureQueue];
+//        
+//        self.videoConnection = [videoDataOutput connectionWithMediaType:AVMediaTypeVideo];
+//        
+//        // Audio
+//        AVCaptureAudioDataOutput *audioDataOutput = [[AVCaptureAudioDataOutput alloc] init];
+//        [self.videoCamera.captureSession addOutput:audioDataOutput];
+//        
+//        dispatch_queue_t audioCaptureQueue = dispatch_queue_create("com.shu223.audiocapture", DISPATCH_QUEUE_SERIAL);
+//        [audioDataOutput setSampleBufferDelegate:self queue:audioCaptureQueue];
+//        
+//        self.audioConnection = [audioDataOutput connectionWithMediaType:AVMediaTypeAudio];
+//        
+//        
+//        // BufferQueue
+//        OSStatus err = CMBufferQueueCreate(kCFAllocatorDefault, 1, CMBufferQueueGetCallbacksForUnsortedSampleBuffers(), &previewBufferQueue);
+//        NSLog(@"CMBufferQueueCreate error:%d", err);
     }
     return self;
 }
@@ -92,26 +124,50 @@
 
 - (void)takePhoto
 {
-    [self.videoCamera capturePhotoAsJPEGProcessedUpToFilter:self.filter withCompletionHandler:^(NSData *processedJPEG, NSError *error) {
+//    [self.videoCamera capturePhotoAsJPEGProcessedUpToFilter:self.filter withCompletionHandler:^(NSData *processedJPEG, NSError *error) {
+//        
+//        if (!error) {
+//            [[JYSaveVideoData sharedManager] saveImageWithData:processedJPEG];
+//            // 返回拍照数据
+//            if (self.delegate && [self.delegate respondsToSelector:@selector(cameraManageTakingPhotoSucuess:)]) {
+//                [self.delegate cameraManageTakingPhotoSucuess:processedJPEG];
+//            }
+//        }else
+//        {
+//            NSLog(@"拍照时，error = %@", error);
+//        }
+//    }];
+
+    [self.videoCamera capturePhotoAsImageProcessedUpToFilter:self.filter withOrientation:UIImageOrientationUp withCompletionHandler:^(UIImage *processedImage, NSError *error) {
+        UIImageWriteToSavedPhotosAlbum(processedImage, nil, nil, nil);
         
-        if (!error) {
-            [[JYSaveVideoData sharedManager] saveImageWithData:processedJPEG];
-            // 返回拍照数据
-            if (self.delegate && [self.delegate respondsToSelector:@selector(cameraManageTakingPhotoSucuess:)]) {
-                [self.delegate cameraManageTakingPhotoSucuess:processedJPEG];
-            }
-        }else
-        {
-            NSLog(@"拍照时，error = %@", error);
+        if (self.delegate && [self.delegate respondsToSelector:@selector(cameraManageTakingPhotoSucuess:)]) {
+            [self.delegate cameraManageTakingPhotoSucuess:processedImage];
         }
     }];
+    
 }
 
 - (void)startVideo
 {
-    self.pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie.m4v"];
-    unlink([self.pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
-    NSURL *movieURL = [NSURL fileURLWithPath:self.pathToMovie];
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd-HH-mm-ss"];
+    NSString* dateTimePrefix = [formatter stringFromDate:[NSDate date]];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    
+    int fileNamePostfix = 0;
+    
+    do
+        self.pathToMovie =[NSString stringWithFormat:@"/%@/%@-%i.MOV", documentsDirectory, dateTimePrefix, fileNamePostfix++];
+    while ([[NSFileManager defaultManager] fileExistsAtPath:self.pathToMovie]);
+    
+    NSURL *movieURL = [NSURL URLWithString:[@"file://" stringByAppendingString:self.pathToMovie]];
+    
+//    self.pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie.MOV"];
+//    unlink([self.pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
+//    NSURL *movieURL = [NSURL fileURLWithPath:self.pathToMovie];
     movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:self.videoSize quality:self.quality];
     
     movieWriter.delegate = self;
@@ -143,13 +199,13 @@
         _filter = [[GPUImageFilterGroup alloc] init];
         
         self.exposureFilter = [[GPUImageExposureFilter alloc] init];
-//        self.saturationFilter = [[GPUImageSaturationFilter alloc] init];
-        self.lowPassFilter = [[GPUImageLowPassFilter alloc] init];
+        self.saturationFilter = [[GPUImageSaturationFilter alloc] init];
+//        self.lowPassFilter = [[GPUImageLowPassFilter alloc] init];
         
-        [self.exposureFilter addTarget:self.lowPassFilter];
+        [self.exposureFilter addTarget:self.saturationFilter];
         
         [(GPUImageFilterGroup *) _filter setInitialFilters:[NSArray arrayWithObject: self.exposureFilter]];
-        [(GPUImageFilterGroup *) _filter setTerminalFilter:self.lowPassFilter];
+        [(GPUImageFilterGroup *) _filter setTerminalFilter:self.saturationFilter];
         
         [_filter addTarget:self.filteredVideoView];
         [_filter addTarget:self.scaleView];
