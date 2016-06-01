@@ -270,6 +270,13 @@ static NSString *ID = @"fenbinalv";
     self.scrollView.hidden = NO;
 }
 
+- (void)setWhiteSize:(CGSize)whiteSize
+{
+    _whiteSize = whiteSize;
+    
+    self.balanceView.whiteSize = whiteSize;
+}
+
 #pragma mark -------------------------> JYResetVideoViewDelegate
 // 自动重复
 - (void)resetVideoDirectionCellBtnOnClick:(UIButton *)btn

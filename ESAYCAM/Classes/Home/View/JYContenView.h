@@ -83,4 +83,6 @@
 
 @property (assign, nonatomic) BOOL isHidden;
 
+@property (assign, nonatomic) CGSize whiteSize;
+
 @end

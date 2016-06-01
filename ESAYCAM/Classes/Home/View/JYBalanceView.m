@@ -173,6 +173,14 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
     }
 }
 
+- (void)setWhiteSize:(CGSize)whiteSize
+{
+    _whiteSize = whiteSize;
+    
+    self.tempSlider.value = whiteSize.width;
+    self.tintSlider.value = whiteSize.height;
+}
+
 /** 设置天气滤镜 */
 - (void)wetherButtonOnClick:(UIButton *)btn
 {
@@ -181,7 +189,7 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
         [self.delegate wetherButtonOnClick:btn];
     }
     // 2.遍历所有按钮的背景亮度为0.4
-    for (int i = 0; i < 5; i ++) {
+    for (int i = 0; i < 6; i ++) {
         UIButton *allBtn = [self viewWithTag:80 + i];
         allBtn.alpha = 0.4;
     }

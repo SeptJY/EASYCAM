@@ -36,4 +36,6 @@
 
 - (instancetype)initWithWidth:(CGFloat)width;
 
+@property (assign, nonatomic) CGSize whiteSize;
+
 @end

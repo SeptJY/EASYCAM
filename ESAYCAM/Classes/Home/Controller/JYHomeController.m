@@ -160,6 +160,8 @@ static const float kExposureDurationPower = 5;
         _fpsView.dataSource = self;
         _fpsView.hidden = YES;
         _fpsView.separatorColor = [UIColor yellowColor];
+//        _fpsView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        _fpsView.rowHeight = 50;
         
         [self.subView addSubview:_fpsView];
     }
@@ -289,6 +291,7 @@ static const float kExposureDurationPower = 5;
 
 - (void)takeVideoing
 {
+    [self.menuBtn menuButtonSeleted:NO andTag:101];
     self.videoView.isVideo = NO;
     [self.videoCamera startVideo];
     [self.videoTimeView startTimer];
@@ -373,7 +376,11 @@ static const float kExposureDurationPower = 5;
             self.useModel = CoreBlueUseModelRepeatRecording;
             break;
         case 602:   // 重复录制结束
-            self.useModel = CoreBlueUseModelFocus;
+            if (self.focusView.hidden == NO) {
+                self.useModel = CoreBlueUseModelFocus;
+            } else{
+                self.useModel = CoreBlueUseModelZOOM;
+            }
             break;
         case 511:   // 查询手轮方向
             switch (self.blueManager.derection) {
@@ -1138,18 +1145,23 @@ static const float kExposureDurationPower = 5;
     switch (btn.tag) {
         case 80:      // 日光灯
             [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 500 andTint:self.tint];
+            self.myContentView.whiteSize = CGSizeMake(self.temp + 500, self.tint);
             break;
         case 81:      // 钨丝灯
             [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 2700 andTint:self.tint];
+            self.myContentView.whiteSize = CGSizeMake(self.temp + 2700, self.tint);
             break;
         case 82:      // 烛光
             [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 7000 andTint:self.tint];
+            self.myContentView.whiteSize = CGSizeMake(self.temp + 7000, self.tint);
             break;
         case 83:      // 阴天
             [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 500 andTint:self.tint];
+            self.myContentView.whiteSize = CGSizeMake(self.temp - 500, self.tint);
             break;
         case 84:      // 晴天
             [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 1000 andTint:self.tint];
+            self.myContentView.whiteSize = CGSizeMake(self.temp - 1000, self.tint);
             break;
         case 85:      // 蓝天
             [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];

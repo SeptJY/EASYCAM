@@ -1026,15 +1026,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: li mao (QMJJB449A9)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: li mao (QMJJB449A9)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Easycam Intelligent Technology Co., Ltd (8JD24CDC43)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shenzhen Easycam Intelligent Technology Co., Ltd (8JD24CDC43)";
 				GCC_PREFIX_HEADER = ESAYCAM/PrefixHeader.pch;
 				INFOPLIST_FILE = ESAYCAM/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ezcam360.HANDCAM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "cee3a271-1a16-45ca-99ef-ffb22e9ab003";
+				PROVISIONING_PROFILE = "7a2a944b-6088-4b42-8201-7bea535b4c94";
 			};
 			name = Release;
 		};
