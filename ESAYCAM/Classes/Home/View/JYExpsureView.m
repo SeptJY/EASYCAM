@@ -23,7 +23,7 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
 
 @property (strong, nonatomic) JYCustomSliderView *ISOSlider;
 
-@property (strong, nonatomic) JYCustomSliderView *timeSlider;
+@property (strong, nonatomic) JYBaisSlider *timeSlider;
 
 @property (strong, nonatomic) JYCustomSliderView *offSetSlider;
 
@@ -123,17 +123,18 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
     return _ISOSlider;
 }
 
-- (JYCustomSliderView *)timeSlider
+- (JYBaisSlider *)timeSlider
 {
     if (!_timeSlider) {
         
-        _timeSlider = [JYCustomSliderView customSliderViewWithTitle:@"曝光偏移"];
+        _timeSlider = [[JYBaisSlider alloc]initWithTitle:@"曝光偏移"];
         _timeSlider.delegate = self;
         _timeSlider.maximumValue = 1;
         _timeSlider.minimumValue = 0;
 //        _timeSlider.value = 0.5;
+        _timeSlider.sliderTag = 11;
         _timeSlider.title = [NSString titleChinese:@"曝光时间" english:@"Time"];
-        _timeSlider.sliderTag = 62;
+//        _timeSlider.sliderTag = 62;
         
         [self addSubview:_timeSlider];
     }
@@ -149,6 +150,7 @@ static void *JYSELFHIDDEN = &JYSELFHIDDEN;
         _baisSlider.maximumValue = 3;
         _baisSlider.minimumValue = -3;
         _baisSlider.value = 0;
+        _baisSlider.sliderTag = 10;
         _baisSlider.title = [NSString titleChinese:@"曝光补偿" english:@"EV"];
         
         [self addSubview:_baisSlider];

@@ -110,6 +110,12 @@
     self.slider.value = 0.0;
 }
 
+- (void)setSliderTag:(NSInteger)sliderTag
+{
+    _sliderTag = sliderTag;
+    self.slider.tag = sliderTag;
+}
+
 - (ASValueTrackingSlider *)slider
 {
     if (!_slider) {

@@ -28,4 +28,6 @@
 #import "JYDefine.h"
 #import "SVProgressHUD.h"
 
+#  define LOG_CURRENT_METHOD NSLog(@"%@/%@", NSStringFromClass([self class]), NSStringFromSelector(_cmd))
+
 #endif /* PrefixHeader_pch */

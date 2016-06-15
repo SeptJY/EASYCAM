@@ -20,11 +20,16 @@
 #import "JYCoreBlueView.h"
 #import "JYWebViewController.h"
 #import "JYInfoLogView.h"
+#import "JYCollectionView.h"
+#import <MediaPlayer/MediaPlayer.h>
 
 static const float kExposureMinimumDuration = 1.0/1000;
 static const float kExposureDurationPower = 5;
 
-@interface JYHomeController () <JYVideoCameraDelegate, JYVideoViewDelegate, JYLeftTopViewDelegate, MWPhotoBrowserDelegate, DWBubbleMenuViewDelegate, JYSliderImageViewDelegate, JYContentViewDelegate, JYBlueManagerDelegate, JYCoreBlueViewDelegate, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface JYHomeController () <JYVideoCameraDelegate, JYVideoViewDelegate, JYLeftTopViewDelegate, MWPhotoBrowserDelegate, DWBubbleMenuViewDelegate, JYSliderImageViewDelegate, JYContentViewDelegate, JYBlueManagerDelegate, JYCoreBlueViewDelegate, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, JYCollectionViewDelegate>
+{
+    NSTimer *_timer;
+}
 
 @property (strong, nonatomic) UIView *subView;
 @property (strong, nonatomic) JYVideoCamera *videoCamera;
@@ -69,6 +74,7 @@ static const float kExposureDurationPower = 5;
 @property (strong, nonatomic) UIButton *videoBtn;
 @property (strong, nonatomic) UIButton *phtotBtn;
 @property (strong, nonatomic) UIButton *enlargeBtn;
+@property (strong, nonatomic) UIButton *timesBtn;
 
 @property (assign, nonatomic) BOOL tempAuto;
 @property (assign, nonatomic) BOOL tintAuto;
@@ -91,6 +97,9 @@ static const float kExposureDurationPower = 5;
 @property (strong, nonatomic) UITableView *fpsView;
 
 @property (assign, nonatomic) BOOL isCan;
+
+@property (strong, nonatomic) JYCollectionView *collectionView;
+@property (strong, nonatomic) UISlider *soundSlider;
 
 @end
 
@@ -135,9 +144,51 @@ static const float kExposureDurationPower = 5;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
     
+    _timer = [NSTimer scheduledTimerWithTimeInterval:0.28 target:self selector:@selector(longExposure) userInfo:nil repeats:YES];
+    [_timer setFireDate:[NSDate distantFuture]];
+    
     [self addObservers];
     
     [self getFpsAtNowResolution];
+    
+    self.soundSlider = [self createSlider];
+}
+
+- (void)longExposure
+{
+    [self.videoCamera takePhotoWithArray];
+}
+
+- (UISlider *)createSlider
+{
+    MPVolumeView *volumeView = [[MPVolumeView alloc] init];
+    volumeView.hidden = NO;
+    volumeView.frame = CGRectMake(-1000, -1000, 100, 100);
+    
+    [self.subView addSubview:volumeView];
+    UISlider* volumeViewSlider = nil;
+    for (UIView *view in [volumeView subviews]){
+        if ([view.class.description isEqualToString:@"MPVolumeSlider"]){
+            volumeViewSlider = (UISlider*)view;
+            break;
+        }
+    }
+    return volumeViewSlider;
+}
+
+- (void)videoCameraWillCompera
+{
+    [self.soundSlider setValue:0.8f animated:NO];
+    [self.soundSlider sendActionsForControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)videoCameraCompera
+{
+    [_timer setFireDate:[NSDate distantFuture]];
+    
+    UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.videoCamera.imgsArray], nil, nil, nil);
+    self.videoView.image = [self createLongExposure:self.videoCamera.imgsArray];
+    [self.videoCamera.imgsArray removeAllObjects];
 }
 
 - (NSMutableArray *)fpsArray
@@ -254,6 +305,7 @@ static const float kExposureDurationPower = 5;
 - (void)cameraManageTakingPhotoSucuess:(UIImage *)image
 {
     self.videoView.image = image;
+    [_timer setFireDate:[NSDate distantFuture]];
 }
 
 #pragma mark ------------------------->JYBlueManagerDelegate 蓝牙管理者和蓝牙界面显示
@@ -310,7 +362,8 @@ static const float kExposureDurationPower = 5;
 {
     switch (num) {
         case 201:   // 拍照
-            [self startPhoto];
+//            [self startPhoto];
+            [self.videoCamera takePhotoWithArray];
             break;
         case 301:   // 录像开始
             
@@ -568,7 +621,7 @@ static const float kExposureDurationPower = 5;
             CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
             int32_t width = dimensions.width;
 //            NSLog(@"width = %d", width);
-            if (width == (int)self.videoCamera.videoSize.width && range.maxFrameRate <= 61.0f) {
+            if (width == (int)self.videoCamera.videoSize.width && range.maxFrameRate <= 241.0f) {
 //                NSLog(@"%f", range.maxFrameRate);
                 [fpsArr addObject:[NSString stringWithFormat:@"%.f", range.maxFrameRate]];
             }
@@ -866,7 +919,6 @@ static const float kExposureDurationPower = 5;
 
 - (void)animationWith:(CGFloat)value layer:(CALayer *)layer
 {
-    
     CABasicAnimation *anima=[CABasicAnimation animation];
     
     //1.1告诉系统要执行什么样的动画
@@ -1370,7 +1422,17 @@ static const float kExposureDurationPower = 5;
 
 - (void)baisSliderValueChange:(UISlider *)slider
 {
-    [self.videoCamera.exposureFilter setExposure:slider.value];
+    switch (slider.tag) {
+        case 10:
+            [self.videoCamera.exposureFilter setExposure:slider.value];
+            break;
+        case 11:
+            [self.videoCamera setExposureDurationWith :slider.value];
+            break;
+            
+        default:
+            break;
+    }
 }
 
 - (void)contentViewBaisSliderAutoBtnOnClick:(UIButton *)btn
@@ -1402,15 +1464,23 @@ static const float kExposureDurationPower = 5;
             btn.selected = !btn.selected;
             
             if (btn.selected) {
-                [self takeVideoing];
+//                [self takeVideoing];
+//                [_timer setFireDate:[NSDate date]];
+                [self.videoCamera aaaaaaaaa];
             } else
             {
-                [self stopVideoing];
+//                [self stopVideoing];
+//                [_timer setFireDate:[NSDate distantFuture]];
+//                //                NSLog(@"%@", self.videoCamera.imgsArray);
+//                UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.videoCamera.imgsArray], nil, nil, nil);
+//                [self.videoCamera.imgsArray removeAllObjects];
+                [self.videoCamera bbbbbbbbbbb];
             }
             
             break;
         case 22:    // 拍照
-            [self startPhoto];
+//            [self startPhoto];
+            [_timer setFireDate:[NSDate date]];
             break;
         case 23:    // 图片选择
         {
@@ -1427,8 +1497,38 @@ static const float kExposureDurationPower = 5;
             break;
         case 24:
 //            self.logView.hidden = !self.logView.hidden;
+//            NSLog(@"%@", self.videoCamera.imgsArray);
+            UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.videoCamera.imgsArray], nil, nil, nil);
+            self.videoView.image = [self createLongExposure:self.videoCamera.imgsArray];
+            [self.videoCamera.imgsArray removeAllObjects];
+            
             break;
     }
+}
+
+- (UIImage *) createLongExposure:(NSArray *)images {
+    UIImage *firstImg = images[0];
+    CGSize imgSize = firstImg.size;
+    CGFloat alpha = 1.0 / images.count;
+    
+    UIGraphicsBeginImageContext(imgSize);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, [[UIColor blackColor] CGColor]);
+    CGContextFillRect(context, CGRectMake(0, 0, imgSize.width, imgSize.height));
+    
+    for (UIImage *image in images) {
+        [image drawInRect:CGRectMake(0, 0, imgSize.width, imgSize.height)
+                blendMode:kCGBlendModePlusLighter alpha:alpha];
+    }
+    UIImage *longExpImg = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return longExpImg;
+}
+
+- (void)testMax:(CGRect)max min:(CGRect)min
+{
+    self.logView.myText.text = [NSString stringWithFormat:@"%f", max.origin.x/max.origin.y];
+    self.logView.camereText.text = [NSString stringWithFormat:@"%f", min.origin.x / min.origin.y];
 }
 
 - (void)startPhoto
@@ -1565,7 +1665,10 @@ static const float kExposureDurationPower = 5;
             [self.myContentView contentViewSwitchHidden:YES andTag:42];
         }
             break;
-        case 102:    // 局部放大功能
+        case 102:
+            self.collectionView.hidden = !btn.selected;
+            break;
+        case 103:    // 局部放大功能
             if (btn.selected == 1) {
                 self.bottomPreview.hidden = NO;
                 [self scalingWithFromValue:0.45 toValue:1.0];
@@ -1621,12 +1724,23 @@ static const float kExposureDurationPower = 5;
     return _phtotBtn;
 }
 
+- (UIButton *)timesBtn
+{
+    if (!_timesBtn) {
+        
+        _timesBtn = [self createBtnWithImg:@"Zoom_in_on" seletedImg:@"Zoom_in_off" size:CGSizeMake(35.0f, 60.0f)];
+        _timesBtn.tag = 102;
+        _timesBtn.imageEdgeInsets = UIEdgeInsetsMake(12.5, 0, 12.5, 0);
+    }
+    return _timesBtn;
+}
+
 - (UIButton *)enlargeBtn
 {
     if (!_enlargeBtn) {
         
         _enlargeBtn = [self createBtnWithImg:@"Zoom_in_on" seletedImg:@"Zoom_in_off" size:CGSizeMake(35.0f, 60.0f)];
-        _enlargeBtn.tag = 102;
+        _enlargeBtn.tag = 103;
         _enlargeBtn.imageEdgeInsets = UIEdgeInsetsMake(12.5, 0, 12.5, 0);
     }
     return _enlargeBtn;
@@ -1656,8 +1770,41 @@ static const float kExposureDurationPower = 5;
     [buttonsMutable addObject:self.videoBtn];
     [buttonsMutable addObject:self.phtotBtn];
     [buttonsMutable addObject:self.enlargeBtn];
+    [buttonsMutable addObject:self.timesBtn];
     
     return [buttonsMutable copy];
+}
+
+- (JYCollectionView *)collectionView
+{
+    if (!_collectionView) {
+        
+        _collectionView = [JYCollectionView collectionViewWithSize:CGSizeMake(self.myContentView.width, 40)];
+        
+        _collectionView.backgroundColor= [[UIColor blackColor] colorWithAlphaComponent:BG_ALPHA];
+        _collectionView.delegate = self;
+        _collectionView.hidden = YES;
+        
+        [self.subView addSubview:_collectionView];
+    }
+    return _collectionView;
+}
+
+- (void)collectionViewDidSelectIndex:(CGFloat)time
+{
+    if (time <= 1.0) {   // 这些值大于1.0,则直接复制给快门时间
+        self.videoCamera.isLongExposure = NO;
+//        [self.soundSlider setValue:0.8f animated:NO];
+//        [self.soundSlider sendActionsForControlEvents:UIControlEventTouchUpInside];
+        [self.videoCamera setExposureDurationWith:time];
+    } else {
+        self.videoCamera.isLongExposure = YES;
+        [self.soundSlider setValue:0.0f animated:NO];
+        [self.soundSlider sendActionsForControlEvents:UIControlEventTouchUpInside];
+        [self.videoCamera cameraManagerExposureIOS:46];
+        [self.videoCamera setExposureDurationWith:0.932];
+        self.videoCamera.arrCount = (NSInteger)time;
+    }
 }
 
 /** 蓝牙显示的View */
@@ -1824,6 +1971,8 @@ static const float kExposureDurationPower = 5;
     
     self.bottomPreview.frame = CGRectMake(bottomX, bottomY, bottomWH, bottomWH);
     self.bottomPreview.layer.cornerRadius = bottomWH * 0.5;
+    
+    self.collectionView.frame = CGRectMake(self.myContentView.x, screenH - 50, self.myContentView.width, 40);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -1837,9 +1986,9 @@ static const float kExposureDurationPower = 5;
         _subView = [[UIView alloc] init];
 //        _subView.backgroundColor = [UIColor cyanColor];
         
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureOnClick:)];
-        tapGesture.delegate = self;
-        [self.view addGestureRecognizer:tapGesture];
+//        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureOnClick:)];
+//        tapGesture.delegate = self;
+//        [self.view addGestureRecognizer:tapGesture];
         
         [self.view addSubview:_subView];
     }
@@ -1849,7 +1998,7 @@ static const float kExposureDurationPower = 5;
 - (void)tapGestureOnClick:(UITapGestureRecognizer *)tap
 {
     CGPoint tapPoint = [tap locationInView:self.subView];
-    if (tapPoint.x <= self.myContentView.x || tapPoint.x >= self.myContentView.x + self.myContentView.width || tapPoint.y <= self.myContentView.y || tapPoint.y >= self.myContentView.y + self.myContentView.height) {
+    if (tapPoint.x <= self.myContentView.x || tapPoint.x >= self.myContentView.x + self.myContentView.width || tapPoint.y <= self.myContentView.y) {
         
         if (self.coreBlueView.hidden == NO) {
             self.coreBlueView.hidden = YES;
@@ -1863,7 +2012,7 @@ static const float kExposureDurationPower = 5;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    // 若为UITableViewCellContentView（即点击了tableViewCell），则不截获Touch事件
+//     若为UITableViewCellContentView（即点击了tableViewCell），则不截获Touch事件
     if ([NSStringFromClass([touch.view class]) isEqualToString:@"UITableViewCellContentView"]) {
         return NO;
     }

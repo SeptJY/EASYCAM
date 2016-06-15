@@ -29,4 +29,6 @@
 
 @property (weak, nonatomic) id<JYBaisSliderDelegate> delegate;
 
+@property (assign, nonatomic) NSInteger sliderTag;
+
 @end

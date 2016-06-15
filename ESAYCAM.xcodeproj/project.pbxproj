@@ -10,6 +10,9 @@
 		5B11491A1CDB1B6A00F7E8F1 /* JYInfoLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1149191CDB1B6900F7E8F1 /* JYInfoLogView.m */; };
 		5B11491C1CDB1B8900F7E8F1 /* JYInfoLogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */; };
 		5B7232901CE9572E00DA387A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B7232921CE9572E00DA387A /* InfoPlist.strings */; };
+		5B79319F1D0FF2E4008172E0 /* JYVideoCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B79319E1D0FF2E4008172E0 /* JYVideoCamera.m */; };
+		5B7EA3021D112E3500985390 /* JYCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7EA2FF1D112E3500985390 /* JYCollectionCell.m */; };
+		5B7EA3031D112E3500985390 /* JYCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7EA3011D112E3500985390 /* JYCollectionView.m */; };
 		5B86648F1CED5BE70081FA95 /* ASValueTrackingSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B86648C1CED5BE70081FA95 /* ASValueTrackingSlider.m */; };
 		5B8664901CED5BE70081FA95 /* ASValuePopUpView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B86648E1CED5BE70081FA95 /* ASValuePopUpView.m */; };
 		5B8664931CED5C1F0081FA95 /* JYBaisSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8664921CED5C1F0081FA95 /* JYBaisSlider.m */; };
@@ -70,7 +73,6 @@
 		5BB73A3E1CD82FFE0084C624 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5BB73A311CD82FFE0084C624 /* Localizable.strings */; };
 		5BB73A3F1CD82FFE0084C624 /* JYLanguageTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB73A341CD82FFE0084C624 /* JYLanguageTool.m */; };
 		5BB73A421CD8301E0084C624 /* JYNewFeturnData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5BB73A411CD8301E0084C624 /* JYNewFeturnData.plist */; };
-		5BFE28471CF6E3F300290864 /* JYVideoCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BFE28461CF6E3F300290864 /* JYVideoCamera.m */; };
 		84CEC8C51CE621DC00E1573B /* JYQualityView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84CEC8C41CE621DC00E1573B /* JYQualityView.m */; };
 		CF43909DBB0CA3B8AD8180F3 /* libPods-ESAYCAM.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F64AA4596C5B9F9D5BE87E4 /* libPods-ESAYCAM.a */; };
 /* End PBXBuildFile section */
@@ -98,6 +100,12 @@
 		5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JYInfoLogView.xib; sourceTree = "<group>"; };
 		5B7232911CE9572E00DA387A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		5B7232931CE9573000DA387A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5B79319D1D0FF2E4008172E0 /* JYVideoCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYVideoCamera.h; sourceTree = "<group>"; };
+		5B79319E1D0FF2E4008172E0 /* JYVideoCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYVideoCamera.m; sourceTree = "<group>"; };
+		5B7EA2FE1D112E3500985390 /* JYCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYCollectionCell.h; sourceTree = "<group>"; };
+		5B7EA2FF1D112E3500985390 /* JYCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYCollectionCell.m; sourceTree = "<group>"; };
+		5B7EA3001D112E3500985390 /* JYCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYCollectionView.h; sourceTree = "<group>"; };
+		5B7EA3011D112E3500985390 /* JYCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYCollectionView.m; sourceTree = "<group>"; };
 		5B86648B1CED5BE70081FA95 /* ASValueTrackingSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASValueTrackingSlider.h; sourceTree = "<group>"; };
 		5B86648C1CED5BE70081FA95 /* ASValueTrackingSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASValueTrackingSlider.m; sourceTree = "<group>"; };
 		5B86648D1CED5BE70081FA95 /* ASValuePopUpView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASValuePopUpView.h; sourceTree = "<group>"; };
@@ -218,8 +226,6 @@
 		5BB73A351CD82FFE0084C624 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		5BB73A401CD830190084C624 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		5BB73A411CD8301E0084C624 /* JYNewFeturnData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = JYNewFeturnData.plist; sourceTree = "<group>"; };
-		5BFE28451CF6E3F300290864 /* JYVideoCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYVideoCamera.h; sourceTree = "<group>"; };
-		5BFE28461CF6E3F300290864 /* JYVideoCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYVideoCamera.m; sourceTree = "<group>"; };
 		7F64AA4596C5B9F9D5BE87E4 /* libPods-ESAYCAM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ESAYCAM.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84CEC8C31CE621DC00E1573B /* JYQualityView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYQualityView.h; sourceTree = "<group>"; };
 		84CEC8C41CE621DC00E1573B /* JYQualityView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYQualityView.m; sourceTree = "<group>"; };
@@ -324,7 +330,6 @@
 			isa = PBXGroup;
 			children = (
 				5BB7399E1CD82FED0084C624 /* Camera */,
-				5BB739A11CD82FED0084C624 /* CoreBlue */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -334,8 +339,9 @@
 			children = (
 				5BB7399F1CD82FED0084C624 /* JYCameraManager.h */,
 				5BB739A01CD82FED0084C624 /* JYCameraManager.m */,
-				5BFE28451CF6E3F300290864 /* JYVideoCamera.h */,
-				5BFE28461CF6E3F300290864 /* JYVideoCamera.m */,
+				5B79319D1D0FF2E4008172E0 /* JYVideoCamera.h */,
+				5B79319E1D0FF2E4008172E0 /* JYVideoCamera.m */,
+				5BB739A11CD82FED0084C624 /* CoreBlue */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -346,7 +352,8 @@
 				5BB739A21CD82FED0084C624 /* JYBlueManager.h */,
 				5BB739A31CD82FED0084C624 /* JYBlueManager.m */,
 			);
-			path = CoreBlue;
+			name = CoreBlue;
+			path = ../CoreBlue;
 			sourceTree = "<group>";
 		};
 		5BB739A61CD82FF40084C624 /* Classes */ = {
@@ -398,6 +405,10 @@
 		5BB739B21CD82FF40084C624 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				5B7EA2FE1D112E3500985390 /* JYCollectionCell.h */,
+				5B7EA2FF1D112E3500985390 /* JYCollectionCell.m */,
+				5B7EA3001D112E3500985390 /* JYCollectionView.h */,
+				5B7EA3011D112E3500985390 /* JYCollectionView.m */,
 				5B1149181CDB1B6900F7E8F1 /* JYInfoLogView.h */,
 				5B1149191CDB1B6900F7E8F1 /* JYInfoLogView.m */,
 				5B11491B1CDB1B8900F7E8F1 /* JYInfoLogView.xib */,
@@ -815,6 +826,7 @@
 				5BB739F61CD82FF40084C624 /* JYResolutionData.m in Sources */,
 				5BB73A371CD82FFE0084C624 /* JYNSString+Extension.m in Sources */,
 				5B8F96631CDD7A9000961260 /* JYCustomCell.m in Sources */,
+				5B7EA3021D112E3500985390 /* JYCollectionCell.m in Sources */,
 				5BB739FB1CD82FF40084C624 /* JYContenView.m in Sources */,
 				5BB739FF1CD82FF40084C624 /* JYExpsureView.m in Sources */,
 				5BB739F91CD82FF40084C624 /* JYBalanceView.m in Sources */,
@@ -835,7 +847,7 @@
 				5BB73A031CD82FF40084C624 /* JYLanguageView.m in Sources */,
 				5BB73A0A1CD82FF40084C624 /* JYShoeInfoView.m in Sources */,
 				5BB739FD1CD82FF40084C624 /* JYCustomSliderView.m in Sources */,
-				5BFE28471CF6E3F300290864 /* JYVideoCamera.m in Sources */,
+				5B79319F1D0FF2E4008172E0 /* JYVideoCamera.m in Sources */,
 				5B8664901CED5BE70081FA95 /* ASValuePopUpView.m in Sources */,
 				5BB73A151CD82FF40084C624 /* JYTabBarView.m in Sources */,
 				5BB7396C1CD82D920084C624 /* main.m in Sources */,
@@ -844,6 +856,7 @@
 				5BB73A141CD82FF40084C624 /* JYWebViewController.m in Sources */,
 				5B8F96671CDDE25D00961260 /* JYFlashView.m in Sources */,
 				5BB73A3D1CD82FFE0084C624 /* JQIndicatorView.m in Sources */,
+				5B7EA3031D112E3500985390 /* JYCollectionView.m in Sources */,
 				5BB73A121CD82FF40084C624 /* JYNewFetureViewCtl.m in Sources */,
 				5BB73A0D1CD82FF40084C624 /* JYSupportView.m in Sources */,
 				5B8664931CED5C1F0081FA95 /* JYBaisSlider.m in Sources */,
@@ -1026,15 +1039,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Shenzhen Easycam Intelligent Technology Co., Ltd (8JD24CDC43)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shenzhen Easycam Intelligent Technology Co., Ltd (8JD24CDC43)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: li mao (QMJJB449A9)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: li mao (QMJJB449A9)";
 				GCC_PREFIX_HEADER = ESAYCAM/PrefixHeader.pch;
 				INFOPLIST_FILE = ESAYCAM/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ezcam360.HANDCAM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7a2a944b-6088-4b42-8201-7bea535b4c94";
+				PROVISIONING_PROFILE = "cee3a271-1a16-45ca-99ef-ffb22e9ab003";
 			};
 			name = Release;
 		};

@@ -17,6 +17,7 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 
 @optional
 - (void)willOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer;
+- (void)willOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection;
 @end
 
 
@@ -46,6 +47,8 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 
 /// The AVCaptureSession used to capture from the camera
 @property(readonly, retain, nonatomic) AVCaptureSession *captureSession;
+
+@property (nonatomic, strong) AVCaptureConnection *audioConnection;
 
 /// This enables the capture session preset to be changed on the fly
 @property (readwrite, nonatomic, copy) NSString *captureSessionPreset;
@@ -151,5 +154,9 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 
 + (BOOL)isBackFacingCameraPresent;
 + (BOOL)isFrontFacingCameraPresent;
+
+- (void)resetFormat;
+
+- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
 
 @end
