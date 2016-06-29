@@ -16,7 +16,9 @@ static void * DeviceExposureTargetBias = &DeviceExposureTargetBias;
 static void * DeviceExposureISO = &DeviceExposureISO;
 static void * DeviceExposureDuration = &DeviceExposureDuration;
 static void * DeviceExposureOffset = &DeviceExposureOffset;
-static void * VideoSize = &VideoSize;
+static void * VideoCameraWidth = &VideoCameraWidth;
+static void * zoomVideo = &zoomVideo;
+static void * AppStoreVersion = &AppStoreVersion;
 
 typedef NS_ENUM(NSUInteger, CoreBlueUseModel) {
     CoreBlueUseModelFocus,
@@ -24,6 +26,21 @@ typedef NS_ENUM(NSUInteger, CoreBlueUseModel) {
     CoreBlueUseModelDurationAndFucus,
     CoreBlueUseModelDurationAndZoom,
     CoreBlueUseModelRepeatRecording,
+};
+
+typedef NS_ENUM(NSUInteger, JYCameraType) {
+    JYCameraTypeVideo,
+    JYCameraTypePhoto,
+};
+
+// 曝光模式里的五种效果
+typedef NS_ENUM(NSUInteger, JYTakePhotosType) {
+    JYTakePhotosTypeNonal,
+    JYTakePhotosTypeHDR,
+    JYTakePhotosTypeResetExposure,
+    JYTakePhotosTypePeople,
+    JYTakePhotosTypeSights,
+    JYTakePhotosTypeNight,
 };
 
 //typedef NS_ENUM(NSUInteger, CamereFangDaModel) {
@@ -38,7 +55,12 @@ typedef NS_ENUM(NSUInteger, JYPhotoImgModel) {
     JYPhotoImgTVPhtoto,
 };
 
+
 @interface JYHomeController : UIViewController
+
+@property (assign, nonatomic) JYCameraType cameraType;
+
+@property (assign, nonatomic) JYTakePhotosType takeType;
 
 @property (assign, nonatomic) CoreBlueUseModel useModel;
 

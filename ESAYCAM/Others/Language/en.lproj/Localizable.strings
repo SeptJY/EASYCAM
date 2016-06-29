@@ -75,7 +75,7 @@
 "蓝牙设备未连接" = "Bluetooth device not connected";
 "开启" = "On";
 "关闭" = "Off";
-"前置提示灯" = "Prompt Lamp";
+"摄像指示灯" = "Tally Light";
 "长度小于12的英文或数字" = "Length less than 12 of the English or number";
 "请输入你要修改的名字, 不支持中文名字" = "Please enter the name you want to modify, do not support the Chinese name";
 "修改名称" = "Modify name";

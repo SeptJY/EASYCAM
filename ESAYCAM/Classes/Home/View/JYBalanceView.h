@@ -22,6 +22,8 @@
 /** 天气滤镜 */
 - (void)wetherButtonOnClick:(UIButton *)btn;
 
+//- (void)whiteBalanceBaisSliderValueChange:(UISlider *)slider;
+
 @end
 
 @interface JYBalanceView : UIView

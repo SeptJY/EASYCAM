@@ -282,12 +282,12 @@ void GPUImageCreateResizedSampleBuffer(CVPixelBufferRef cameraFrame, CGSize fina
     _bracketSettings = [NSArray array];
     switch (index) {
         case 0:
-            NSLog(@"Configuring auto-exposure brackets...");
+//            NSLog(@"Configuring auto-exposure brackets...");
             _bracketSettings = [self _exposureBrackets];
             break;
             
         case 1:
-            NSLog(@"Configuring duration/ISO brackets...");
+//            NSLog(@"Configuring duration/ISO brackets...");
             _bracketSettings = [self _durationISOBrackets];
             break;
     }
@@ -362,7 +362,7 @@ void GPUImageCreateResizedSampleBuffer(CVPixelBufferRef cameraFrame, CGSize fina
     // Fixed bracket settings
     const int fixedBracketCount = 3;
     const float biasValues[] = {
-        -2.0, 0.0, +2.0,
+        -2.0, 0.0, + 1.0,
     };
     for (int index = 0; index < fixedBracketCount; index++) {
         
@@ -581,7 +581,7 @@ void GPUImageCreateResizedSampleBuffer(CVPixelBufferRef cameraFrame, CGSize fina
 
 - (void)capturePhotoProcessedUpToFilter:(GPUImageOutput<GPUImageInput> *)finalFilterInChain withImageOnGPUHandler:(void (^)(NSError *error))block
 {
-    NSLog(@"%s  -%d", __func__, __LINE__);
+//    NSLog(@"%s  -%d", __func__, __LINE__);
     dispatch_semaphore_wait(frameRenderingSemaphore, DISPATCH_TIME_FOREVER);
     
     if(photoOutput.isCapturingStillImage){

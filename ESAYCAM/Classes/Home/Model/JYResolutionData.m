@@ -109,6 +109,22 @@ static id _instace;
     }
 }
 
+// 设置相机的分辨率
+- (CGSize)sessionPresionBackSizeWith:(NSString *)sessionPresion
+{
+    if (sessionPresion == AVCaptureSessionPreset640x480) {
+        return CGSizeMake(640, 480);
+    } else if (sessionPresion == AVCaptureSessionPreset1280x720) {
+        return CGSizeMake(1280, 720);
+    } else if (sessionPresion == AVCaptureSessionPreset1920x1080) {
+        return CGSizeMake(1920, 1080);
+    } else if (sessionPresion == AVCaptureSessionPreset1920x1080) {
+        return CGSizeMake(3840, 2160);
+    } else {
+        return CGSizeMake(1920, 1080);
+    }
+}
+
 // 设置相机的视频保存size
 - (CGSize)resolutionBackVideoSizeWith:(NSInteger)tag
 {

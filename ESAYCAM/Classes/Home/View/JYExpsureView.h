@@ -18,9 +18,13 @@
 - (void)baisSliderValueChange:(UISlider *)slider;
 - (void)baisSliderAutoBtnOnClick:(UIButton *)btn;
 
+- (void)exposureFiveXiaoGuoButtonOnClick:(UIButton *)btn;
+
 @end
 
 @interface JYExpsureView : UIView
+
+- (instancetype)initWithWidth:(CGFloat)width;
 
 @property (weak, nonatomic) id<JYExpsureViewDelegate> delegate;
 

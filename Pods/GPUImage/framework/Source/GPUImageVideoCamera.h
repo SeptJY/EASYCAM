@@ -16,14 +16,15 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 @protocol GPUImageVideoCameraDelegate <NSObject>
 
 @optional
-- (void)willOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer;
 - (void)willOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection;
+
+- (void)didOutputMetadataObjects:(NSArray *)metadataObjects;
 @end
 
 
 /**
  A GPUImageOutput that provides frames from either camera
-*/
+ */
 @interface GPUImageVideoCamera : GPUImageOutput <AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
 {
     NSUInteger numberOfFramesCaptured;
@@ -33,30 +34,27 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
     AVCaptureDevice *_inputCamera;
     AVCaptureDevice *_microphone;
     AVCaptureDeviceInput *videoInput;
-	AVCaptureVideoDataOutput *videoOutput;
-
+    AVCaptureVideoDataOutput *videoOutput;
+    
     BOOL capturePaused;
     GPUImageRotationMode outputRotation, internalRotation;
     dispatch_semaphore_t frameRenderingSemaphore;
-        
+    
     BOOL captureAsYUV;
     GLuint luminanceTexture, chrominanceTexture;
-
+    
     __unsafe_unretained id<GPUImageVideoCameraDelegate> _delegate;
 }
 
 /// The AVCaptureSession used to capture from the camera
 @property(readonly, retain, nonatomic) AVCaptureSession *captureSession;
 
-@property (nonatomic, strong) AVCaptureConnection *audioConnection;
-
 /// This enables the capture session preset to be changed on the fly
-@property (readwrite, nonatomic, copy) NSString *captureSessionPreset;
+@property (nonatomic, copy) NSString *captureSessionPreset;
 
 /// This sets the frame rate of the camera (iOS 5 and above only)
 /**
  Setting this to 0 or below will set the frame rate back to the default setting for a particular preset.
- 设置fps
  */
 @property (readwrite) int32_t frameRate;
 
@@ -69,6 +67,8 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 
 /// Use this property to manage camera settings. Focus point, exposure point, etc.
 @property(readonly) AVCaptureDevice *inputCamera;
+
+@property (strong, nonatomic) AVCaptureDeviceInput *deviceInput;
 
 /// This determines the rotation applied to the output image, based on the source material
 @property(readwrite, nonatomic) UIInterfaceOrientation outputImageOrientation;
@@ -90,13 +90,13 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 - (id)initWithSessionPreset:(NSString *)sessionPreset cameraPosition:(AVCaptureDevicePosition)cameraPosition;
 
 /** Add audio capture to the session. Adding inputs and outputs freezes the capture session momentarily, so you
-    can use this method to add the audio inputs and outputs early, if you're going to set the audioEncodingTarget 
-    later. Returns YES is the audio inputs and outputs were added, or NO if they had already been added.
+ can use this method to add the audio inputs and outputs early, if you're going to set the audioEncodingTarget
+ later. Returns YES is the audio inputs and outputs were added, or NO if they had already been added.
  */
 - (BOOL)addAudioInputsAndOutputs;
 
 /** Remove the audio capture inputs and outputs from this session. Returns YES if the audio inputs and outputs
-    were removed, or NO is they hadn't already been added.
+ were removed, or NO is they hadn't already been added.
  */
 - (BOOL)removeAudioInputsAndOutputs;
 
@@ -139,10 +139,13 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 /** Get the AVCaptureConnection of the source camera
  */
 - (AVCaptureConnection *)videoCaptureConnection;
+- (AVCaptureConnection *)AVCaptureConnection1;
 
 /** This flips between the front and rear cameras
  */
 - (void)rotateCamera;
+
+@property (nonatomic, strong) AVCaptureConnection *audioConnection;
 
 /// @name Benchmarking
 
@@ -157,6 +160,8 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString
 
 - (void)resetFormat;
 
-- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
+- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS index:(NSInteger)index;
+
+- (void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange;
 
 @end

@@ -7,11 +7,14 @@
 //
 
 #import "ASValueTrackingSlider.h"
-#import "ASValuePopUpView.h"
+
 
 @interface ASValueTrackingSlider() <ASValuePopUpViewDelegate>
 @property (strong, nonatomic) NSNumberFormatter *numberFormatter;
 @property (strong, nonatomic) ASValuePopUpView *popUpView;
+
+@property (assign, nonatomic) JYShowType showType;
+
 @end
 
 @implementation ASValueTrackingSlider
@@ -22,11 +25,13 @@
 
 #pragma mark - initialization
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithShow:(JYShowType)showType
 {
-    self = [super initWithFrame:frame];
+    self = [super init];
     if (self) {
+        self.showType = showType;
         [self setup];
+        
     }
     return self;
 }
@@ -168,7 +173,7 @@
     [formatter setMinimumFractionDigits:2];
     _numberFormatter = formatter;
 
-    self.popUpView = [[ASValuePopUpView alloc] initWithFrame:CGRectZero];
+    self.popUpView = [[ASValuePopUpView alloc] initWithFrame:CGRectZero show:self.showType];
     self.popUpViewColor = [UIColor colorWithHue:0.6 saturation:0.6 brightness:0.5 alpha:0.65];
 
     self.popUpView.alpha = 0.0;

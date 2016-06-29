@@ -83,6 +83,7 @@ static void *IMAGE_ICONS = &IMAGE_ICONS;
         
 //        _photoBtn.backgroundColor = [UIColor whiteColor];
         [_photoBtn setImage:[UIImage imageNamed:@"camara"] forState:UIControlStateNormal];
+        [_photoBtn setImage:[UIImage imageNamed:@"camara_on"] forState:UIControlStateHighlighted];
         _photoBtn.tag = 22;
         _photoBtn.hidden = ![[NSUserDefaults standardUserDefaults] boolForKey:@"video"];
         [_photoBtn addTarget:self action:@selector(videoViewButtonOnClick:) forControlEvents:UIControlEventTouchUpInside];

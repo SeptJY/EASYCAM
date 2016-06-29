@@ -19,27 +19,27 @@
 - (void)cameraManageTakingPhotoSucuessArray:(NSMutableArray *)images;
 
 - (void)videoCameraDidOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer;
-- (void)videoCameraCompera;
-- (void)videoCameraWillCompera;
+
+- (void)didOutputMetadataObjects:(NSArray *)metadataObjects previewLayer:(AVCaptureVideoPreviewLayer *)previewLayer;
 
 @end
 
-@interface JYVideoCamera : NSObject
-{
-    GPUImageMovieWriter *movieWriter;
-}
+static void * PhotosFocusContext = &PhotosFocusContext;
+static void * PhotosWhiteBalanceGainsContext = &PhotosWhiteBalanceGainsContext;
+static void * PhotosBiasContext = &PhotosBiasContext;
+static void * PhotosISOContext = &PhotosISOContext;
+static void * PhotosDurationContext = &PhotosDurationContext;
+
+@interface JYPhotosCamera : NSObject
 
 @property (copy, nonatomic) NSString *pathToMovie;
 
 @property (weak, nonatomic) id<JYVideoCameraDelegate> delegate;
 
 @property (strong, nonatomic) GPUImageView *scaleView;
+@property (strong, nonatomic) GPUImageView *filteredVideoView;
 
-typedef void(^CanSetSessionPreset)(BOOL isCan);
-
-@property (strong, nonatomic) GPUImageStillCamera *videoCamera;
-
-@property (copy, nonatomic) NSString *sessionPreset;
+@property (strong, nonatomic) GPUImageStillCamera *photosManager;
 
 @property (nonatomic, strong) GPUImageExposureFilter *exposureFilter;
 @property (nonatomic, strong) GPUImageSaturationFilter *saturationFilter;
@@ -47,50 +47,35 @@ typedef void(^CanSetSessionPreset)(BOOL isCan);
 @property (strong, nonatomic) GPUImageLowPassFilter *lowPassFilter;
 @property (strong, nonatomic) GPUImageFilterGroup *filter;
 
-- (instancetype)initWithSessionPreset:(NSString *)sessionPreset superView:(UIView *)superView;
+- (instancetype)initWithSuperView:(UIView *)superView;
 
 @property (nonatomic, copy) void (^onBuffer)(CMSampleBufferRef sampleBuffer);
 @property (nonatomic, assign) BOOL isRecording;
 
-@property (assign, nonatomic) CGSize videoSize;
-
-@property (assign, nonatomic) int32_t frameRate;
-
-- (void)startVideo;
-- (void)stopVideo;
-
 - (void)startCamera;
 - (void)stopCamera;
 
-- (void)cameraManagerChangeFoucus:(CGFloat)value;
+- (void)photosCameraChangeFoucus:(CGFloat)value;
 
-- (void)videoCameraWithExposureTime:(CGFloat)time andIso:(CGFloat)iso;
-
-- (void)cameraManagerEffectqualityWithTag:(NSInteger)tag withBlock:(CanSetSessionPreset)canSetSessionPreset;
-
-@property (assign, nonatomic) CGFloat quality;
+- (void)photosCameraExposureTime:(CGFloat)time andIso:(CGFloat)iso;
 
 - (void)flashModel:(AVCaptureFlashMode)flashModel;
 
-- (void)cameraManagerVideoZoom:(CGFloat)zoom;
+- (void)photosCameraWithZoom:(CGFloat)zoom;
 
-- (void)cameraManagerSetWhiteBalanceGains:(AVCaptureWhiteBalanceGains)gains;
+- (void)photosCameraSetWhiteBalanceGains:(AVCaptureWhiteBalanceGains)gains;
 
 - (AVCaptureWhiteBalanceGains)normalizedGains:(AVCaptureWhiteBalanceGains) gains;
 
 - (void)whiteBalanceMode:(AVCaptureWhiteBalanceMode)whiteBalanceMode;
 
-- (void)cameraManagerBalanceGainsWithTemp:(CGFloat)temp andTint:(CGFloat)tint;
+- (void)photosCameraBalanceGainsWithTemp:(CGFloat)temp andTint:(CGFloat)tint;
 
-- (void)cameraManagerExposureIOS:(CGFloat)iso;
+- (void)photosCameraExposureIOS:(CGFloat)iso;
 
-- (void)setExposureDurationWith:(CGFloat)value;
+- (void)photosCameraExposureDuration:(CGFloat)value;
 
 - (void)exposeMode:(AVCaptureExposureMode)exposureMode;
-
-- (void)resetFormat;
-
-- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
 
 - (void)takePhoto;
 
@@ -98,20 +83,19 @@ typedef void(^CanSetSessionPreset)(BOOL isCan);
 
 - (void)prepareHDRWithIndex:(NSInteger)index;
 
-- (void)takePhotoWithArray;
-
-- (void)resetFormats;
-
-- (void)aswitchFormatWithDesiredFPS:(CGFloat)desiredFPS;
+- (void)takePhotoWithArray;;
 
 @property (strong, nonatomic) NSMutableArray *imgsArray;
 
-- (void)aaaaaaaaa;
+- (void)doubleExposure;
 
-- (void)bbbbbbbbbbb;
+- (void)startPortrait;
 
-@property (assign, nonatomic) NSInteger arrCount;
+// 结束人像模式
+- (void)stopPortrait;
 
-@property (assign, nonatomic) BOOL isLongExposure;
+- (CGFloat) getMaxZoom;
+
+- (AVCaptureWhiteBalanceMode)getWhiteBalanceMode;
 
 @end

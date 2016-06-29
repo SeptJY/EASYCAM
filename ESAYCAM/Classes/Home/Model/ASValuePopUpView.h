@@ -18,6 +18,11 @@
 - (void)animationDidStart;
 @end
 
+typedef NS_ENUM(NSUInteger, JYShowType) {
+    JYShowTypeExposure,
+    JYShowTypeOhters,
+};
+
 @interface ASValuePopUpView : UIView
 
 @property (weak, nonatomic) id <ASValuePopUpViewDelegate> delegate;
@@ -39,5 +44,7 @@
 
 - (void)show;
 - (void)hide;
+
+- (id)initWithFrame:(CGRect)frame show:(JYShowType)showType;
 
 @end

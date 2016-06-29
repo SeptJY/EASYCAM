@@ -1406,6 +1406,18 @@ static const CGFloat SVProgressHUDDefaultAnimationDuration = 0.15;
     [self setDefaultMaskType:maskType];
 }
 
++ (void)showInfoWithStatus:(NSString *)status duration:(NSTimeInterval)displayInterval style:(SVProgressHUDMaskType)maskType
+{
+    [[self sharedView] showImage:[self sharedView].infoImage status:status duration:displayInterval];
+    [self setDefaultMaskType:maskType];
+}
+
++ (void)showWithStatus:(NSString *)status style:(SVProgressHUDMaskType)maskType
+{
+    [[self sharedView] showStatus:status];
+    [self setDefaultMaskType:maskType];
+}
+
 + (void)showErrorWithStatus:(NSString *)status duration:(NSTimeInterval)displayInterval style:(SVProgressHUDMaskType)maskType
 {
     [[self sharedView] showImage:[self sharedView].errorImage status:status duration:displayInterval];

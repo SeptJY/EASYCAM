@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ASValueTrackingSlider.h"
 
 @protocol JYBaisSliderDelegate <NSObject>
 
@@ -15,6 +16,12 @@
 - (void)baisSliderAutoBtnOnClick:(UIButton *)btn;
 
 @end
+
+
+typedef NS_ENUM(NSUInteger, JYButtonType) {
+    JYButtonTypeAutoAndLock,
+    JYButtonTypeReset,
+};
 
 @interface JYBaisSlider : UIView
 
@@ -25,7 +32,7 @@
 
 @property (copy, nonatomic) NSString *title;
 
-- (instancetype)initWithTitle:(NSString *)sizeTitle;
+- (instancetype)initWithTitle:(NSString *)sizeTitle buttonType:(JYButtonType)btnType show:(JYShowType)showType;
 
 @property (weak, nonatomic) id<JYBaisSliderDelegate> delegate;
 

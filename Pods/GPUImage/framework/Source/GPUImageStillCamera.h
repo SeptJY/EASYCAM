@@ -7,6 +7,7 @@ typedef void(^AAPLCompletionWithImage)(UIImage *image);
 
 @interface GPUImageStillCamera : GPUImageVideoCamera
 
+- (id)initWithSessionPreset:(NSString *)sessionPreset cameraPosition:(AVCaptureDevicePosition)cameraPosition;
 
 /** The JPEG compression quality to use when capturing a photo as a JPEG.
  */

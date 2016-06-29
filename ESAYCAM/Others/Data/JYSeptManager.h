@@ -11,7 +11,9 @@
 #import <UIKit/UIKit.h>
 
 #import <AVFoundation/AVFoundation.h>
+#import "JYBlueManager.h"
 @class JYPeripheral;
+
 
 @interface JYSeptManager : NSObject
 
@@ -38,7 +40,18 @@
 
 @property (copy, nonatomic) NSString *perName;     // 蓝牙名称
 
+@property (strong, nonatomic) JYBlueManager *blueManager;
+
+// 判断点击白平衡时是否需要HUD
+@property (assign, nonatomic) BOOL iSHUD;
+
+// 当前相机模型
+@property (assign, nonatomic) BOOL cameraType;
+
 @property (assign, nonatomic) AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTintValues;
+
+// 存储appStore的版本号
+@property (strong, nonatomic) NSDictionary *versionDict;
 
 /** 归档蓝牙数据 */
 - (void)saveCoreBlueWith:(JYPeripheral *)pre;

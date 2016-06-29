@@ -1,4 +1,19 @@
 PODS:
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
+    - AFNetworking/NSURLSession
   - DACircularProgress (2.3.1)
   - GPUImage (0.1.7)
   - MBProgressHUD (0.9.2)
@@ -13,6 +28,7 @@ PODS:
   - SVProgressHUD (2.0.3)
 
 DEPENDENCIES:
+  - AFNetworking (~> 3.1.0)
   - GPUImage (~> 0.1.7)
   - MJExtension (~> 3.0.10)
   - MWPhotoBrowser (~> 2.1.1)
@@ -20,6 +36,7 @@ DEPENDENCIES:
   - SVProgressHUD (~> 2.0.3)
 
 SPEC CHECKSUMS:
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1

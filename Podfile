@@ -5,6 +5,7 @@ target ‘ESAYCAM’ do
    pod 'SVProgressHUD', '~> 2.0.3'
    pod 'GPUImage', '~> 0.1.7'
    pod 'MJExtension', '~> 3.0.10'
+   pod 'AFNetworking', '~> 3.1.0'
 
 end
 

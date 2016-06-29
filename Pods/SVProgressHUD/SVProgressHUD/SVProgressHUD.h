@@ -131,5 +131,9 @@ typedef NS_ENUM(NSUInteger, SVProgressHUDAnimationType) {
 
 + (void)showErrorWithStatus:(NSString *)status duration:(NSTimeInterval)displayInterval style:(SVProgressHUDMaskType)maskType;
 
++ (void)showInfoWithStatus:(NSString *)status duration:(NSTimeInterval)displayInterval style:(SVProgressHUDMaskType)maskType;
+
++ (void)showWithStatus:(NSString *)status style:(SVProgressHUDMaskType)maskType;
+
 @end
 

@@ -10,11 +10,12 @@
 // 注：色彩的范围 （-150 ~ 150）
 
 #import "JYBalanceView.h"
+#import "JYBaisSlider.h"
 
 static void *JYTEMP_AND_TINT_VALUES = &JYTEMP_AND_TINT_VALUES;
 static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
 
-@interface JYBalanceView () <JYCustomSliderViewDelegate>
+@interface JYBalanceView () <JYCustomSliderViewDelegate, JYBaisSliderDelegate>
 
 @property (strong, nonatomic) JYCustomSliderView *tempSlider;
 
@@ -23,6 +24,7 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
 @property (strong, nonatomic) JYCustomSliderView *saturationSlider;
 
 @property (assign, nonatomic) CGFloat widthBtn;
+
 
 @end
 
@@ -37,6 +39,8 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
         
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeCamera) name:@"changeCamera" object:nil];
+        
         [[JYSeptManager sharedManager] addObserver:self forKeyPath:@"temperatureAndTintValues" options:NSKeyValueObservingOptionNew context:JYTEMP_AND_TINT_VALUES];
         
         [self addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:JYSELF_HIDDEN];
@@ -44,6 +48,12 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
         [self createWetherButton];
     }
     return self;
+}
+
+- (void)changeCamera
+{
+    self.saturationSlider.sliderEnabled = [JYSeptManager sharedManager].cameraType;
+    self.saturationSlider.btnEnabled = [JYSeptManager sharedManager].cameraType;
 }
 
 #pragma mark -------------------------> 懒加载tempSlider、tintSlider、saturationSlider
@@ -92,13 +102,21 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
         _saturationSlider.value = 1;
         _saturationSlider.title = [NSString titleChinese:@"饱 和 度" english:@"Saturation"];
         _saturationSlider.sliderTag = 52;
-        _saturationSlider.sliderEnabled = YES;
+        _saturationSlider.sliderEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"video"];
+        _saturationSlider.btnEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"video"];
         _saturationSlider.btnModel = CustomSliderReset;
         
         [self addSubview:_saturationSlider];
     }
     return _saturationSlider;
 }
+
+//- (void)baisSliderValueChange:(UISlider *)slider
+//{
+//    if (self.delegate && [self.delegate respondsToSelector:@selector(whiteBalanceBaisSliderValueChange:)]) {
+//        [self.delegate whiteBalanceBaisSliderValueChange:slider];
+//    }
+//}
 
 - (void)whiteBalanceSetCustomSliderValue:(CGFloat)value andCustomSliderTag:(NSInteger)tag
 {
@@ -117,7 +135,6 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
             break;
     }
 }
-
 
 #pragma mark -------------------------> JYCustomSliderViewDelegate
 - (void)customSliderValueChange:(UISlider *)slider
@@ -197,10 +214,12 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
     btn.alpha = 1.0;
     
     // 3.设置slider的为可用、btn不选中状态
-    self.tempSlider.sliderEnabled = YES;
-    self.tintSlider.sliderEnabled = YES;
+    self.tempSlider.sliderEnabled = NO;
+    self.tintSlider.sliderEnabled = NO;
     self.tintSlider.btnSeleted = NO;
     self.tempSlider.btnSeleted = NO;
+    self.tintSlider.btnEnabled = NO;
+    self.tempSlider.btnEnabled = NO;
     
     switch (btn.tag) {
         case 80:      // 荧光
@@ -224,6 +243,8 @@ static void *JYSELF_HIDDEN = &JYSELF_HIDDEN;
             //            self.tintSlider.value = 52.0;
             break;
         case 85:      // 蓝天
+            self.tintSlider.btnEnabled = YES;
+            self.tempSlider.btnEnabled = YES;
             self.tintSlider.btnSeleted = YES;
             self.tempSlider.btnSeleted = YES;
             self.tintSlider.sliderEnabled = NO;

@@ -8,7 +8,7 @@
 
 #import "JYHomeController.h"
 //#import "JYCameraManager.h"
-#import "JYVideoCamera.h"
+#import "JYPhotosCamera.h"
 #import "JYVideoView.h"
 #import "JYVideoTimeView.h"
 #import "JYShowInfoView.h"
@@ -22,17 +22,22 @@
 #import "JYInfoLogView.h"
 #import "JYCollectionView.h"
 #import <MediaPlayer/MediaPlayer.h>
+#import "JYVideosCamera.h"
+#import "JYFormats.h"
+#import "MBProgressHUD+JYExtension.h"
 
-static const float kExposureMinimumDuration = 1.0/1000;
-static const float kExposureDurationPower = 5;
+//static const float kExposureMinimumDuration = 1.0/1000;
+//static const float kExposureDurationPower = 5;
+CGFloat DegreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;}
 
-@interface JYHomeController () <JYVideoCameraDelegate, JYVideoViewDelegate, JYLeftTopViewDelegate, MWPhotoBrowserDelegate, DWBubbleMenuViewDelegate, JYSliderImageViewDelegate, JYContentViewDelegate, JYBlueManagerDelegate, JYCoreBlueViewDelegate, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, JYCollectionViewDelegate>
+@interface JYHomeController () <JYVideoCameraDelegate, JYVideoViewDelegate, JYLeftTopViewDelegate, MWPhotoBrowserDelegate, DWBubbleMenuViewDelegate, JYSliderImageViewDelegate, JYContentViewDelegate, JYBlueManagerDelegate, JYCoreBlueViewDelegate, UIGestureRecognizerDelegate, JYCollectionViewDelegate, JYCaptureManagerDelegate, UITableViewDelegate, UITableViewDataSource>
 {
     NSTimer *_timer;
 }
 
 @property (strong, nonatomic) UIView *subView;
-@property (strong, nonatomic) JYVideoCamera *videoCamera;
+@property (strong, nonatomic) JYVideosCamera *videoCamera;
+@property (strong, nonatomic) JYPhotosCamera *photoCamera;
 @property (strong, nonatomic) UIView *bottomPreview;
 
 @property (strong, nonatomic) JYVideoView *videoView;
@@ -74,7 +79,7 @@ static const float kExposureDurationPower = 5;
 @property (strong, nonatomic) UIButton *videoBtn;
 @property (strong, nonatomic) UIButton *phtotBtn;
 @property (strong, nonatomic) UIButton *enlargeBtn;
-@property (strong, nonatomic) UIButton *timesBtn;
+//@property (strong, nonatomic) UIButton *timesBtn;
 
 @property (assign, nonatomic) BOOL tempAuto;
 @property (assign, nonatomic) BOOL tintAuto;
@@ -100,6 +105,16 @@ static const float kExposureDurationPower = 5;
 
 @property (strong, nonatomic) JYCollectionView *collectionView;
 @property (strong, nonatomic) UISlider *soundSlider;
+
+@property (copy, nonatomic) NSString *preSession;
+
+@property (strong, nonatomic) UIImageView *exposureView;
+
+@property (strong, nonatomic) NSMutableArray *imgsArray;
+
+@property (strong, nonatomic) CALayer *faceLayer;
+
+@property (assign, nonatomic) CGPoint foucuPoint;
 
 @end
 
@@ -140,23 +155,25 @@ static const float kExposureDurationPower = 5;
     
     [NSTimer scheduledTimerWithTimeInterval:20.0/1000 target:self selector:@selector(ruleImgViewTimer) userInfo:nil repeats:YES];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restoreDefaults) name:@"RestoreDefaults" object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
-    
     _timer = [NSTimer scheduledTimerWithTimeInterval:0.28 target:self selector:@selector(longExposure) userInfo:nil repeats:YES];
     [_timer setFireDate:[NSDate distantFuture]];
     
-    [self addObservers];
+//    [self addObservers];
     
-    [self getFpsAtNowResolution];
+//    [self getFpsAtNowResolution];
     
     self.soundSlider = [self createSlider];
+    
+    self.preSession = [[JYResolutionData sharedManager] resolutionBackSessionPresionWith:[[NSUserDefaults standardUserDefaults] integerForKey:@"imageViewSeleted"]];
+    
+    self.imgsArray = [NSMutableArray array];
+    
+    self.cameraType = [[NSUserDefaults standardUserDefaults] boolForKey:@"video"];
 }
 
 - (void)longExposure
 {
-    [self.videoCamera takePhotoWithArray];
+//    [self.videoCamera takePhotoWithArray];
 }
 
 - (UISlider *)createSlider
@@ -184,11 +201,11 @@ static const float kExposureDurationPower = 5;
 
 - (void)videoCameraCompera
 {
-    [_timer setFireDate:[NSDate distantFuture]];
-    
-    UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.videoCamera.imgsArray], nil, nil, nil);
-    self.videoView.image = [self createLongExposure:self.videoCamera.imgsArray];
-    [self.videoCamera.imgsArray removeAllObjects];
+//    [_timer setFireDate:[NSDate distantFuture]];
+//    
+//    UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.videoCamera.imgsArray], nil, nil, nil);
+//    self.videoView.image = [self createLongExposure:self.videoCamera.imgsArray];
+//    [self.videoCamera.imgsArray removeAllObjects];
 }
 
 - (NSMutableArray *)fpsArray
@@ -228,12 +245,12 @@ static const float kExposureDurationPower = 5;
     self.videoView.layer.opacity = 1;
     
     // 分辨率恢复1920x1080
-    [self.videoCamera cameraManagerEffectqualityWithTag:62 withBlock:nil];
-    
-    // 编码质量恢复到标准
-    self.videoCamera.quality = 5.0f;
-    [[NSUserDefaults standardUserDefaults] setFloat:self.videoCamera.quality forKey:@"CodingQuality"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [self.videoCamera cameraManagerEffectqualityWithTag:62 withBlock:nil];
+//    
+//    // 编码质量恢复到标准
+//    self.videoCamera.quality = 5.0f;
+//    [[NSUserDefaults standardUserDefaults] setFloat:self.videoCamera.quality forKey:@"CodingQuality"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
     
     // 手轮方向
     self.blueManager.derection = CoreBlueDerectionClockwise;
@@ -246,7 +263,7 @@ static const float kExposureDurationPower = 5;
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     // 闪关灯
-    [self.videoCamera flashModel:AVCaptureFlashModeAuto];
+//    [self.videoCamera flashModel:AVCaptureFlashModeAuto];
     
     // 前置录像灯
     self.blueManager.isFalsh = NO;
@@ -277,36 +294,159 @@ static const float kExposureDurationPower = 5;
 #pragma mark -------------------------> 相机操作
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.videoCamera startCamera];
+    [self addObservers];
+    switch (self.cameraType) {
+        case JYCameraTypePhoto:
+            [self.photoCamera startCamera];
+            break;
+        case JYCameraTypeVideo:
+            [self.videoCamera startSession];
+            break;
+    }
     [self.subView addSubview:self.menuBtn];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    [self.videoCamera stopCamera];
+    [self removeObservers];
+    switch (self.cameraType) {
+        case JYCameraTypePhoto:
+            [self.photoCamera stopCamera];
+            break;
+        case JYCameraTypeVideo:
+            [self.videoCamera stopSession];
+            break;
+    }
 }
 
-- (JYVideoCamera *)videoCamera {
+#pragma mark ---> 视频管理
+- (JYVideosCamera *)videoCamera {
     if (!_videoCamera) {
-        _videoCamera = [[JYVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1920x1080 superView:self.view];
-        [_videoCamera flashModel:AVCaptureFlashModeAuto];
+        _videoCamera = [[JYVideosCamera alloc] initWithPreviewView:self.view withSub:self.bottomPreview];
+//        [_videoCamera flashModel:AVCaptureFlashModeAuto];
         _videoCamera.delegate = self;
     }
     return _videoCamera;
 }
 
-- (void)cameraManagerRecodingSuccess:(NSURL *)url
+#pragma mark ---> JYVideosCameraDelegate
+- (void)didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL error:(NSError *)error
 {
-//    [SVProgressHUD dismiss];
-    [SVProgressHUD showSuccessWithStatus:self.nowSace duration:1.0f style:SVProgressHUDMaskTypeBlack];
-    self.videoView.imgUrl = url;
+    if (!error) {   // 保存成功
+        self.videoView.imgUrl = outputFileURL;
+        [SVProgressHUD showSuccessWithStatus:self.nowSace duration:2.0f style:SVProgressHUDMaskTypeNone];
+    } else {
+        [SVProgressHUD showErrorWithStatus:@"保存失败" duration:2.0f style:SVProgressHUDMaskTypeNone];
+    }
+}
+
+// 设置分辨率失败
+- (void)videoCameraSetQuatilyError
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self alertController];
+    });
+}
+
+- (void)videoCameraSaveImageAtData:(NSData *)data error:(NSError *)error
+{
+    if (!error) {
+        self.videoView.imageData = data;
+    } else {
+        [SVProgressHUD showErrorWithStatus:@"拍照失败" duration:1.0f style:SVProgressHUDMaskTypeBlack];
+    }
+}
+
+- (void)videoCameraChangePrivacySettings
+{
+    NSString *message = NSLocalizedString( @"AVCam doesn't have permission to use the camera, please change privacy settings", @"Alert message when the user has denied access to the camera" );
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"AVCam" message:message preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"OK", @"Alert OK button" ) style:UIAlertActionStyleCancel handler:nil];
+    [alertController addAction:cancelAction];
+    // Provide quick access to Settings.
+    UIAlertAction *settingsAction = [UIAlertAction actionWithTitle:NSLocalizedString( @"Settings", @"Alert button to open Settings" ) style:UIAlertActionStyleDefault handler:^( UIAlertAction *action ) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+    }];
+    [alertController addAction:settingsAction];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+#pragma mark ---> 拍照管理
+- (JYPhotosCamera *)photoCamera {
+    if (!_photoCamera) {
+        _photoCamera = [[JYPhotosCamera alloc] initWithSuperView:self.view];
+        _photoCamera.delegate = self;
+        [self.bottomPreview addSubview:_photoCamera.scaleView];
+    }
+    return _photoCamera;
 }
 
 - (void)cameraManageTakingPhotoSucuess:(UIImage *)image
 {
-    self.videoView.image = image;
-    [_timer setFireDate:[NSDate distantFuture]];
+    
+//    self.videoView.image = image;
+//    [_timer setFireDate:[NSDate distantFuture]];
+    
+    
+    switch (self.takeType) {
+        case JYTakePhotosTypeResetExposure:
+            [self.imgsArray addObject:image];
+            if (self.imgsArray.count == 1) {
+                [SVProgressHUD showInfoWithStatus:@"再拍一张" duration:2.0f style:SVProgressHUDMaskTypeNone];
+                self.exposureView.hidden = NO;
+                self.exposureView.image = image;
+            } else if (self.imgsArray.count == 2) {
+                self.exposureView.hidden = YES;
+                self.videoView.image = [self createLongExposure:self.imgsArray];
+                UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.imgsArray], nil, nil, nil);
+                [self.imgsArray removeAllObjects];
+            }
+            break;
+        default:
+            self.videoView.image = image;
+            break;
+    }
 }
+
+//- (void)didOutputMetadataObjects:(NSArray *)metadataObjects previewLayer:(AVCaptureVideoPreviewLayer *)previewLayer
+//{
+//    if (metadataObjects.count != 0)
+//    {
+//        //在这里执行检测到人脸后要执行的代码
+//        /*人脸数据存在metadataObjects这个数组里，数组中每一个元素对应一个metadataObject对象，该对象的各种属性对应人脸各种信息，具体可以查看API*/
+//        //        NSLog(@"%@", metadataObjects);
+//        AVMetadataFaceObject *faceObject = metadataObjects.firstObject;
+//        
+//        [CATransaction begin];
+//        [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+//        
+//        if (self.faceLayer == nil) {
+//            self.faceLayer = [CALayer layer];
+//            self.faceLayer.borderColor = [UIColor redColor].CGColor;
+//            self.faceLayer.borderWidth = 1;
+//            [self.subView.layer addSublayer:self.faceLayer];
+//        }
+//        
+//        
+//        AVMetadataFaceObject * adjusted = (AVMetadataFaceObject*)[previewLayer transformedMetadataObjectForMetadataObject:faceObject];
+//        
+//        self.foucuPoint = adjusted.bounds.origin;
+////        NSLog(@"%@", NSStringFromCGRect(adjusted.bounds));
+////        [self.videoCamera videoCameraFoucusPoint:self.foucuPoint];
+//        
+//        CATransform3D transform = CATransform3DIdentity;
+//        [self.faceLayer setTransform:transform]; // reset identity before setting frame
+//        [self.faceLayer setFrame:adjusted.bounds];
+//        transform = CATransform3DRotate(transform, DegreesToRadians(adjusted.rollAngle), 0, 0, 1);
+//        [self.faceLayer setTransform:transform];
+//        
+//        [CATransaction commit];
+//    } else {
+//        self.faceLayer = nil;
+//    }
+//}
 
 #pragma mark ------------------------->JYBlueManagerDelegate 蓝牙管理者和蓝牙界面显示
 - (void)blueManagerToTableViewReloadData
@@ -345,14 +485,14 @@ static const float kExposureDurationPower = 5;
 {
     [self.menuBtn menuButtonSeleted:NO andTag:101];
     self.videoView.isVideo = NO;
-    [self.videoCamera startVideo];
+    [self.videoCamera startRecoding];
     [self.videoTimeView startTimer];
 }
 
 - (void)stopVideoing
 {
     [self.videoTimeView stopTimer];
-    [self.videoCamera stopVideo];
+    [self.videoCamera stopRecodeing];
 //    [SVProgressHUD showWithStatus:self.nowSace];
 //    [SVProgressHUD showSuccessWithStatus:self.connectSucces duration:2.0f style:SVProgressHUDMaskTypeBlack];
 }
@@ -362,24 +502,27 @@ static const float kExposureDurationPower = 5;
 {
     switch (num) {
         case 201:   // 拍照
-//            [self startPhoto];
-            [self.videoCamera takePhotoWithArray];
+            [self startPhoto];
+//            [self.videoCamera takePhotoWithArray];
             break;
         case 301:   // 录像开始
-            
-            [self takeVideoing];
-            if (self.useModel == CoreBlueUseModelRepeatRecording) {
-                [self.videoView startResetVideoing];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self takeVideoing];
+                if (self.useModel == CoreBlueUseModelRepeatRecording) {
+                    [self.videoView startResetVideoing];
+                }
+                self.videoView.btnSeleted = YES;
             }
-            self.videoView.btnSeleted = YES;
             break;
         case 302:   // 录像停止
-            [self stopVideoing];
-            if (self.useModel == CoreBlueUseModelRepeatRecording) {
-                [self.videoView stopResetVideoing];
-            }
-            self.videoView.btnSeleted = NO;
             
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self stopVideoing];
+                if (self.useModel == CoreBlueUseModelRepeatRecording) {
+                    [self.videoView stopResetVideoing];
+                }
+                self.videoView.btnSeleted = NO;
+            }
             break;
         case 501:   // 查询当前对焦值
             [self.blueManager blueToolWriteValue:[NSString stringWithFormat:@"a050%db", (int)(10000 + ((1- (-self.focusNum + SHOW_Y) / (screenH - 30)) - 0.5) * 1000)]];
@@ -610,39 +753,33 @@ static const float kExposureDurationPower = 5;
     }
 }
 
-/** 获取当前分辨率下所支持的fps */
+#pragma mark ---> 获取当前分辨率下所支持的fps 
 - (NSMutableArray *)getFpsAtNowResolution
 {
     NSMutableArray *fpsArr = [NSMutableArray array];
-    for (AVCaptureDeviceFormat *format in [self.videoCamera.videoCamera.inputCamera formats]) {
+    // 创建一个临时变量，防止数据重复添加到数组中
+    Float64 maxWidth = 0.0;
+    
+    for (AVCaptureDeviceFormat *format in [self.videoCamera.videoDevice formats]) {
         for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
         
             CMFormatDescriptionRef desc = format.formatDescription;
             CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
             int32_t width = dimensions.width;
-//            NSLog(@"width = %d", width);
-            if (width == (int)self.videoCamera.videoSize.width && range.maxFrameRate <= 241.0f) {
+//            NSLog(@"width = %d", dimensions.width);
+            if (width == self.videoCamera.videoWidth && range.maxFrameRate > maxWidth) {
 //                NSLog(@"%f", range.maxFrameRate);
-                [fpsArr addObject:[NSString stringWithFormat:@"%.f", range.maxFrameRate]];
+                
+                JYFormats *seleFormat = [[JYFormats alloc] init];
+                seleFormat.fpsStr = [NSString stringWithFormat:@"%.f", range.maxFrameRate];
+                seleFormat.format = format;
+                
+                [fpsArr addObject:seleFormat];
+                maxWidth = range.maxFrameRate;
             }
         }
     }
-    
-    // 1.去掉重复的元素
-    NSArray *mArray = [[NSMutableSet setWithArray:fpsArr] allObjects];
-    // 2.通过不可变数组转换成可变数据
-    NSMutableArray *mArr = [NSMutableArray arrayWithArray:mArray];
-    // 3.冒泡排序（从小到大）
-    for (int i = 0; i < mArr.count - 1; i ++) {
-        for (int j = 0; j < mArr.count -1 - i; j ++) {
-            if ([mArr[j] intValue] > [mArr[j + 1] intValue]) {
-                NSString *temp = mArr[j];
-                mArr[j] = mArr[j + 1];
-                mArr[j + 1] = temp;
-            }
-        }
-    }
-    return mArr;
+    return fpsArr;
 }
 
 /** 九宫格 */
@@ -667,7 +804,7 @@ static const float kExposureDurationPower = 5;
         _bottomPreview.hidden = YES;
         _bottomPreview.clipsToBounds = YES;
         _bottomPreview.backgroundColor = [UIColor yellowColor];
-        [_bottomPreview addSubview:self.videoCamera.scaleView];
+//        [_bottomPreview addSubview:self.videoCamera.scaleView];
         
         [self.view addSubview:_bottomPreview];
     }
@@ -894,7 +1031,7 @@ static const float kExposureDurationPower = 5;
 //                });
                 [self animationWith:self.focusNum layer:self.focusView];
                 // 30是showView的高度   -- 调节微距
-                [self.videoCamera cameraManagerChangeFoucus:(1 - (-self.focusNum + SHOW_Y) / (screenH - 30))];
+                [self.videoCamera videCameraChangeFoucus:(1 - (-self.focusNum + SHOW_Y) / (screenH - 30))];
                 // 3.保存最后一次的移动距离
                 self.saveFocusNum = self.blueManager.moveDistance;
             }
@@ -909,7 +1046,12 @@ static const float kExposureDurationPower = 5;
 //                        self.zoomView.transform = CGAffineTransformMakeTranslation(0, self.zoomNum);
 //                    }];
 //                });
-                [self.videoCamera cameraManagerVideoZoom:(-self.zoomNum + SHOW_Y) / (screenH - 30)];
+                
+                if (self.cameraType == JYCameraTypeVideo) {
+//                    [self.videoCamera vi:(-self.zoomNum + SHOW_Y) / (screenH - 30)];
+                } else {
+//                    [self.captureManager cameraManagerVideoZoom:(-self.zoomNum + SHOW_Y) / (screenH - 30)];
+                }
                 self.saveVideoZoom = self.blueManager.videoZoom;
             }
         }
@@ -936,6 +1078,17 @@ static const float kExposureDurationPower = 5;
     
 }
 
+- (CGFloat) getZoomSliderValue:(CGFloat)value {
+    // slightly fancy math to provide a linear feel to the slider
+    return pow( [self.videoCamera getMaxZoom], value );
+}
+
+//- (void) setZoomSliderValue:(CGFloat)value {
+//    // inverse of above: log base max of value
+//    self.subSlider.value = log(value) / log([self.videoCamera getMaxZoom]);
+//    NSLog(@"%f", self.subSlider.value);
+//}
+
 - (void)timerClickView:(CALayer *)clickView type:(NSInteger)type translation:(CGFloat)y
 {
     if (self.saveNum != y) {
@@ -944,7 +1097,12 @@ static const float kExposureDurationPower = 5;
         
         if (type == 0) {
             dispatch_async(self.sessionQueue, ^{
-                [self.videoCamera cameraManagerVideoZoom:(-y + SHOW_Y) / (screenH - 30)];
+                if (self.cameraType == JYCameraTypeVideo) {
+                    
+                    [self.videoCamera videoZoomWithValue:[self getZoomSliderValue:0.5 - (-y + SHOW_Y) / (screenH - 30)]];
+                } else {
+                    [self.photoCamera photosCameraWithZoom:[self getZoomSliderValue:0.5 - (-y + SHOW_Y) / (screenH - 30)]];
+                }
             });
             
         }else
@@ -953,7 +1111,14 @@ static const float kExposureDurationPower = 5;
 //                self.logView.myText.text = [NSString stringWithFormat:@"%f", (0.5 - (-y + SHOW_Y) / (screenH - 30))];
                 // 2.1 30是showView的高度   -- 调节微距
                 
-                    [self.videoCamera cameraManagerChangeFoucus:(1 - (-y + SHOW_Y) / (screenH - 30))];
+            
+            dispatch_async(self.sessionQueue, ^{
+                if (self.cameraType == JYCameraTypeVideo) {
+                    [self.videoCamera videCameraChangeFoucus:(0.5 - (-y + SHOW_Y) / (screenH - 30))];
+                } else {
+                    [self.photoCamera photosCameraChangeFoucus:(1 - (-y + SHOW_Y) / (screenH - 30))];
+                }
+            });
                 
                 // 2.2显示放大的View和sliderView
                 if (self.enlargeBtn.selected == YES) {
@@ -1028,6 +1193,8 @@ static const float kExposureDurationPower = 5;
             }
             break;
         case 58:   // fps
+            self.fpsArray = [self getFpsAtNowResolution];
+            [self.fpsView reloadData];
             self.myContentView.scrollView.hidden = YES;
             self.fpsView.hidden = NO;
             break;
@@ -1074,36 +1241,7 @@ static const float kExposureDurationPower = 5;
 /** JYResolutionViewDelegate  相机质量选择 */
 - (void)contentViewDirectionCellBtnOnClick:(UIButton *)btn
 {
-    //     提示用户仅支持iphone6及其以上设备
-    if (screenW != 480) {
-        [self.videoCamera cameraManagerEffectqualityWithTag:btn.tag withBlock:^(BOOL isCan) {
-            if(!isCan)
-            {
-                self.isCan = YES;
-            }
-        }];
-    }
-    switch (btn.tag) {
-        case 60:
-            self.videoCamera.videoSize = CGSizeMake(640.0, 480.0);
-            break;
-        case 61:
-            self.videoCamera.videoSize = CGSizeMake(1280.0, 720.0);
-            break;
-        case 62:
-            self.videoCamera.videoSize = CGSizeMake(1920.0, 1080.0);
-            break;
-        case 63:
-            if (screenW != 480 && self.isCan == NO) {    // iPhone6 及以上设备
-                
-                self.videoCamera.videoSize = CGSizeMake(3840.0, 2160.0);
-            } else {
-                [self alertController];
-            }
-            break;
-        default:
-            break;
-    }
+    [self.videoCamera videoCameraQualityWithTag:btn.tag];
 }
 
 /** 设置对比度 */
@@ -1129,7 +1267,11 @@ static const float kExposureDurationPower = 5;
                 .temperature = self.temp,
                 .tint = self.tint,
             };
-            [self.videoCamera cameraManagerSetWhiteBalanceGains:[self.videoCamera.videoCamera.inputCamera deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraSetWhiteBalanceGains:[self.videoCamera.videoDevice deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
+            } else {
+                [self.photoCamera photosCameraSetWhiteBalanceGains:[self.photoCamera.photosManager.inputCamera deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
+            }
         }
             break;
         case 51:     // 色调
@@ -1140,11 +1282,18 @@ static const float kExposureDurationPower = 5;
                 .temperature = self.temp,
                 .tint = self.tint,
             };
-            [self.videoCamera cameraManagerSetWhiteBalanceGains:[self.videoCamera.videoCamera.inputCamera deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraSetWhiteBalanceGains:[self.videoCamera.videoDevice deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
+            } else {
+                [self.photoCamera photosCameraSetWhiteBalanceGains:[self.photoCamera.photosManager.inputCamera deviceWhiteBalanceGainsForTemperatureAndTintValues:temperatureAndTint]];
+            }
         }
             break;
         case 52:     // 饱和度
-            [self.videoCamera.saturationFilter setSaturation:[(UISlider *)slider value]];
+            
+//            [self mainVideoCamera];
+            
+            [self.photoCamera.saturationFilter setSaturation:[(UISlider *)slider value]];
             
             break;
             
@@ -1160,25 +1309,48 @@ static const float kExposureDurationPower = 5;
     switch (btn.tag) {
         case 30:    // 色温
             self.tempAuto = !btn.selected;
-            if (self.tintAuto == 0 && self.tempAuto == 0) {   // 如果色调当前处于手动状态
-                [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+            if (self.tintAuto == 0 && self.tempAuto == 0) {   // 如果色调当前处于自动状态
+                if (self.cameraType == JYCameraTypeVideo) {
+                    [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+                } else {
+                    [self.photoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+                }
+                [JYSeptManager sharedManager].iSHUD = NO;
             } else
             {
-                [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeLocked];
+                if (self.cameraType == JYCameraTypeVideo) {
+                    [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeLocked];
+                } else {
+                    [self.photoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeLocked];
+                }
+                [JYSeptManager sharedManager].iSHUD = YES;
             }
             
             break;
         case 31:    // 色调
             self.tintAuto = !btn.selected;
             if (self.tintAuto == 0 && self.tempAuto == 0) {   // 如果色调当前处于手动状态
-                [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+                
+                if (self.cameraType == JYCameraTypeVideo) {
+                    [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+                } else {
+                    [self.photoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+                }
+                [JYSeptManager sharedManager].iSHUD = NO;
             } else
             {
-                [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeLocked];
+                
+                if (self.cameraType == JYCameraTypeVideo) {
+                    [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeLocked];
+                } else {
+                    [self.photoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeLocked];
+                }
+                [JYSeptManager sharedManager].iSHUD = YES;
             }
             break;
-        case 32:    // 色调
-            [self.videoCamera.saturationFilter setSaturation:1.0];
+        case 32:    // 饱和度
+//            [self mainVideoCamera];
+            [self.photoCamera.saturationFilter setSaturation:1.0];
             break;
             
         default:
@@ -1189,34 +1361,80 @@ static const float kExposureDurationPower = 5;
 /** 天气滤镜 */
 - (void)contentViewWetherButtonOnClick:(UIButton *)btn
 {
+    if ([JYSeptManager sharedManager].iSHUD == YES) {
+        
+        [SVProgressHUD show];
+        
+        if (self.cameraType == JYCameraTypeVideo) {
+            [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+        } else {
+            [self.photoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+        }
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [SVProgressHUD dismiss];
+            
+            [self setWeatherFilterWithtag:btn.tag];
+        });
+    } else {
+        [self setWeatherFilterWithtag:btn.tag];
+    }
+    [JYSeptManager sharedManager].iSHUD = NO;
+}
+
+- (void)setWeatherFilterWithtag:(NSInteger)tag
+{
     self.tintAuto = YES;
     self.tempAuto = YES;
     
     [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeLocked];
-    
-    switch (btn.tag) {
+    switch (tag) {
         case 80:      // 日光灯
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 500 andTint:self.tint];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraBalanceGainsWithTemp:self.temp + 500 andTint:self.tint];
+            } else {
+                [self.photoCamera photosCameraBalanceGainsWithTemp:self.temp + 500 andTint:self.tint];
+            }
             self.myContentView.whiteSize = CGSizeMake(self.temp + 500, self.tint);
             break;
         case 81:      // 钨丝灯
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 2700 andTint:self.tint];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraBalanceGainsWithTemp:self.temp + 2700 andTint:self.tint];
+            } else {
+                [self.photoCamera photosCameraBalanceGainsWithTemp:self.temp + 2700 andTint:self.tint];
+            }
             self.myContentView.whiteSize = CGSizeMake(self.temp + 2700, self.tint);
             break;
         case 82:      // 烛光
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp + 7000 andTint:self.tint];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraBalanceGainsWithTemp:self.temp + 7000 andTint:self.tint];
+            } else {
+                [self.photoCamera photosCameraBalanceGainsWithTemp:self.temp + 7000 andTint:self.tint];
+            }
             self.myContentView.whiteSize = CGSizeMake(self.temp + 7000, self.tint);
             break;
         case 83:      // 阴天
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 500 andTint:self.tint];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraBalanceGainsWithTemp:self.temp - 500 andTint:self.tint];
+            } else {
+                [self.photoCamera photosCameraBalanceGainsWithTemp:self.temp - 500 andTint:self.tint];
+            }
             self.myContentView.whiteSize = CGSizeMake(self.temp - 500, self.tint);
             break;
         case 84:      // 晴天
-            [self.videoCamera cameraManagerBalanceGainsWithTemp:self.temp - 1000 andTint:self.tint];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraBalanceGainsWithTemp:self.temp - 1000 andTint:self.tint];
+            } else {
+                [self.photoCamera photosCameraBalanceGainsWithTemp:self.temp - 1000 andTint:self.tint];
+            }
             self.myContentView.whiteSize = CGSizeMake(self.temp - 1000, self.tint);
             break;
         case 85:      // 蓝天
-            [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+            } else {
+                [self.photoCamera whiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+            }
             break;
         default:
             break;
@@ -1227,11 +1445,11 @@ static const float kExposureDurationPower = 5;
 {
     switch (slider.tag) {
         case 61:     // 感光度
-            [self.videoCamera cameraManagerExposureIOS:slider.value];
+            [self.videoCamera videoCameraExposureIOS:slider.value];
             break;
         case 62:     // 曝光时间
         {
-            [self.videoCamera setExposureDurationWith:slider.value];
+            [self.videoCamera videoCameraExposureDurationWith:slider.value];
         }
             break;
     }
@@ -1285,28 +1503,6 @@ static const float kExposureDurationPower = 5;
     JYWebViewController *webCtl = [[JYWebViewController alloc] init];
     
     [self.navigationController pushViewController:webCtl animated:YES];
-}
-
-- (void)contentViewQualityBtnOnClick:(UIButton *)btn
-{
-    switch (btn.tag) {
-        case 80:
-            self.videoCamera.quality = 3.0f;
-            break;
-        case 81:
-            self.videoCamera.quality = 5.0f;
-            break;
-        case 82:
-            self.videoCamera.quality = 7.0f;
-            break;
-        case 83:
-            self.videoCamera.quality = 10.0f;
-            break;
-    }
-    
-    // 2.偏好设置保存编码质量
-    [[NSUserDefaults standardUserDefaults] setFloat:self.videoCamera.quality forKey:@"CodingQuality"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)contentViewCameraLensViewCellBtnOnClick:(UIButton *)btn
@@ -1404,6 +1600,55 @@ static const float kExposureDurationPower = 5;
     }
 }
 
+- (void)exposureFiveXiaoGuoButtonOnClick:(UIButton *)btn
+{
+    switch (self.takeType) {
+        case JYTakePhotosTypeSights:
+            [self.photoCamera.saturationFilter setSaturation:1.5];
+            break;
+        case JYTakePhotosTypePeople:
+//            [self mainVideoCamera];
+            [self.photoCamera stopPortrait];
+            break;
+        case JYTakePhotosTypeNight:
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera exposeMode:AVCaptureExposureModeLocked];
+            } else {
+                [self.photoCamera exposeMode:AVCaptureExposureModeLocked];
+            }
+            break;
+        default:
+            break;
+    }
+    
+    switch (btn.tag) {
+        case 70:      // 风景模式
+            self.takeType = JYTakePhotosTypeSights;
+            [self.photoCamera.saturationFilter setSaturation:1.5];
+            break;
+        case 71:      // 人像模式
+            self.takeType = JYTakePhotosTypePeople;
+            [self.photoCamera startPortrait];
+            break;
+        case 72:      // 夜景模式
+            self.takeType = JYTakePhotosTypeNight;
+            [self.photoCamera exposeMode:AVCaptureExposureModeLocked];
+            [self.photoCamera photosCameraExposureDuration:1.0];
+            
+            [SVProgressHUD showInfoWithStatus:@"拍摄时保持手机稳定" duration:1.0f style:SVProgressHUDMaskTypeBlack];
+            break;
+        case 73:      // HDR
+            self.takeType = JYTakePhotosTypeHDR;
+            break;
+        case 74:      // 双重曝光
+            self.takeType = JYTakePhotosTypeResetExposure;
+            break;
+        case 75:      // 正常
+            self.takeType = JYTakePhotosTypeNonal;
+            break;
+    }
+}
+
 - (void)threeViewButtonOnClick:(UIButton *)sender
 {
     self.coreBlueView.hidden = YES;
@@ -1424,10 +1669,25 @@ static const float kExposureDurationPower = 5;
 {
     switch (slider.tag) {
         case 10:
-            [self.videoCamera.exposureFilter setExposure:slider.value];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraWithExposure:slider.value / 300];
+            } else {
+                [self.photoCamera.exposureFilter setExposure:slider.value / 300];
+            }
             break;
         case 11:
-            [self.videoCamera setExposureDurationWith :slider.value];
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraExposureDurationWith:slider.value];
+            } else {
+                [self.photoCamera photosCameraExposureDuration:slider.value];
+            }
+            break;
+        case 12:
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraExposureIOS:slider.value];
+            } else {
+                [self.photoCamera photosCameraExposureIOS:slider.value];
+            }
             break;
             
         default:
@@ -1437,7 +1697,57 @@ static const float kExposureDurationPower = 5;
 
 - (void)contentViewBaisSliderAutoBtnOnClick:(UIButton *)btn
 {
-    [self.videoCamera.exposureFilter setExposure:0];
+    switch (btn.tag) {
+        case 30:
+            
+            if (self.cameraType == JYCameraTypeVideo) {
+                [self.videoCamera videoCameraWithExposure:0];
+            } else {
+                [self.photoCamera.exposureFilter setExposure:0];
+            }
+            break;
+        case 31:
+            self.timeAuto = !btn.selected;
+            if (btn.selected) {
+                if (self.isoAuto == 0) {
+                    if (self.cameraType == JYCameraTypeVideo) {
+                        [self.videoCamera exposeMode:AVCaptureExposureModeContinuousAutoExposure];
+                    } else {
+                        [self.photoCamera exposeMode:AVCaptureExposureModeContinuousAutoExposure];
+                    }
+                }
+            } else {
+                
+                if (self.cameraType == JYCameraTypeVideo) {
+                    [self.videoCamera exposeMode:AVCaptureExposureModeLocked];
+                } else {
+                    [self.photoCamera exposeMode:AVCaptureExposureModeLocked];
+                }
+            }
+            break;
+        case 32:
+            self.isoAuto = !btn.selected;
+            if (btn.selected) {
+                if (self.timeAuto == 0) {
+                    if (self.cameraType == JYCameraTypeVideo) {
+                        [self.videoCamera exposeMode:AVCaptureExposureModeContinuousAutoExposure];
+                    } else {
+                        [self.photoCamera exposeMode:AVCaptureExposureModeContinuousAutoExposure];
+                    }
+                }
+            } else {
+                
+                if (self.cameraType == JYCameraTypeVideo) {
+                    [self.videoCamera exposeMode:AVCaptureExposureModeLocked];
+                } else {
+                    [self.photoCamera exposeMode:AVCaptureExposureModeLocked];
+                }
+            }
+            break;
+            
+        default:
+            break;
+    }
 }
 
 /** 设置的内容视图 */
@@ -1462,11 +1772,8 @@ static const float kExposureDurationPower = 5;
     switch (btn.tag) {
         case 21:    // 录像
             btn.selected = !btn.selected;
-            
-            if (btn.selected) {
-//                [self takeVideoing];
-//                [_timer setFireDate:[NSDate date]];
-                [self.videoCamera aaaaaaaaa];
+            if (btn.selected == 1) {
+                [self takeVideoing];
             } else
             {
 //                [self stopVideoing];
@@ -1474,13 +1781,31 @@ static const float kExposureDurationPower = 5;
 //                //                NSLog(@"%@", self.videoCamera.imgsArray);
 //                UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.videoCamera.imgsArray], nil, nil, nil);
 //                [self.videoCamera.imgsArray removeAllObjects];
-                [self.videoCamera bbbbbbbbbbb];
+                
+//                if (self.fpsType == JYfpsType30Or60) {
+                    [self stopVideoing];
+                [SVProgressHUD showWithStatus:@"正在保存" style:SVProgressHUDMaskTypeBlack];
+//                } else {
+//                    [self.captureManager testStop];
+//                    [self.videoTimeView stopTimer];
+//                }
             }
             
             break;
         case 22:    // 拍照
-//            [self startPhoto];
-            [_timer setFireDate:[NSDate date]];
+//            [self mainVideoCamera];
+//            [_timer setFireDate:[NSDate date]];
+            switch (self.takeType) {
+                case JYTakePhotosTypeHDR:
+                    [self.photoCamera takePhotosWithHDR];
+                    break;
+                case JYTakePhotosTypeResetExposure:
+                    [self.photoCamera doubleExposure];
+                    break;
+                default:
+                    [self startPhoto];
+                    break;
+            }
             break;
         case 23:    // 图片选择
         {
@@ -1498,9 +1823,9 @@ static const float kExposureDurationPower = 5;
         case 24:
 //            self.logView.hidden = !self.logView.hidden;
 //            NSLog(@"%@", self.videoCamera.imgsArray);
-            UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.videoCamera.imgsArray], nil, nil, nil);
-            self.videoView.image = [self createLongExposure:self.videoCamera.imgsArray];
-            [self.videoCamera.imgsArray removeAllObjects];
+//            UIImageWriteToSavedPhotosAlbum([self createLongExposure:self.videoCamera.imgsArray], nil, nil, nil);
+//            self.videoView.image = [self createLongExposure:self.videoCamera.imgsArray];
+//            [self.videoCamera.imgsArray removeAllObjects];
             
             break;
     }
@@ -1544,7 +1869,11 @@ static const float kExposureDurationPower = 5;
     //    [cameraShutter setBounds:CGRectMake(0.0, 0.0, 320.0, 425.0)];
     [self.view.layer addSublayer:cameraShutter];
     [self.view.layer addAnimation:shutterAnimation forKey:@"cameraIris"];
-    [self.videoCamera takePhoto];
+    if (self.cameraType == JYCameraTypeVideo) {
+        [self.videoCamera videoTakeingPhotos];
+    } else {
+        [self.photoCamera takePhoto];
+    }
 }
 
 /** 录像、拍照按钮的背景 */
@@ -1585,13 +1914,14 @@ static const float kExposureDurationPower = 5;
             if (self.coreBlueView.hidden == NO) {
                 self.coreBlueView.hidden = YES;
                 self.myContentView.isHidden = NO;
-            } else if (self.fpsView.hidden == NO) {
+            }
+            else if (self.fpsView.hidden == NO) {
                 self.myContentView.isHidden = NO;
                 self.fpsView.hidden = YES;
-            } else {
+            }
+            else {
                 self.myContentView.hidden = !btn.selected;
             }
-            
             break;
             
         default:
@@ -1658,11 +1988,41 @@ static const float kExposureDurationPower = 5;
             break;
         case 101:   // video <---> photo
         {
-            self.videoView.isVideo = btn.selected;
-            [[NSUserDefaults standardUserDefaults] setBool:btn.selected forKey:@"video"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            
-            [self.myContentView contentViewSwitchHidden:YES andTag:42];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.videoView.isVideo = btn.selected;
+                [[NSUserDefaults standardUserDefaults] setBool:btn.selected forKey:@"video"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                if (btn.selected == YES) {    // 拍照
+                    // 1.停止视频录制会话
+                    [self.videoCamera stopSession];
+                    // 2.掩藏AVCaptureVideoPreviewLayer
+                    self.videoCamera.previewLayer.hidden = YES;
+                    
+                    // 2.显示GPUImageView
+                    self.photoCamera.filteredVideoView.hidden = NO;
+                    
+                    // 开启拍照会话
+                    [self.photoCamera startCamera];
+                    self.cameraType = JYCameraTypePhoto;
+                } else {
+                    [self.videoCamera startSession];
+                    
+                    // 掩藏GPUImageView
+                    self.photoCamera.filteredVideoView.hidden = YES;
+                    
+                    // 显示AVCaptureVideoPreviewLayer
+                    self.videoCamera.previewLayer.hidden = NO;
+                    
+                    [self.photoCamera stopCamera];
+                    self.cameraType = JYCameraTypeVideo;
+                }
+                [self.myContentView contentViewSwitchHidden:YES andTag:42];
+                
+                [JYSeptManager sharedManager].cameraType = self.cameraType;
+                //改变完成之后发送通知，告诉其他页面切换模型
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"changeCamera" object:nil];
+                
+            });
         }
             break;
         case 102:
@@ -1724,16 +2084,16 @@ static const float kExposureDurationPower = 5;
     return _phtotBtn;
 }
 
-- (UIButton *)timesBtn
-{
-    if (!_timesBtn) {
-        
-        _timesBtn = [self createBtnWithImg:@"Zoom_in_on" seletedImg:@"Zoom_in_off" size:CGSizeMake(35.0f, 60.0f)];
-        _timesBtn.tag = 102;
-        _timesBtn.imageEdgeInsets = UIEdgeInsetsMake(12.5, 0, 12.5, 0);
-    }
-    return _timesBtn;
-}
+//- (UIButton *)timesBtn
+//{
+//    if (!_timesBtn) {
+//        
+//        _timesBtn = [self createBtnWithImg:@"Zoom_in_on" seletedImg:@"Zoom_in_off" size:CGSizeMake(35.0f, 60.0f)];
+//        _timesBtn.tag = 102;
+//        _timesBtn.imageEdgeInsets = UIEdgeInsetsMake(12.5, 0, 12.5, 0);
+//    }
+//    return _timesBtn;
+//}
 
 - (UIButton *)enlargeBtn
 {
@@ -1770,7 +2130,7 @@ static const float kExposureDurationPower = 5;
     [buttonsMutable addObject:self.videoBtn];
     [buttonsMutable addObject:self.phtotBtn];
     [buttonsMutable addObject:self.enlargeBtn];
-    [buttonsMutable addObject:self.timesBtn];
+//    [buttonsMutable addObject:self.timesBtn];
     
     return [buttonsMutable copy];
 }
@@ -1792,19 +2152,19 @@ static const float kExposureDurationPower = 5;
 
 - (void)collectionViewDidSelectIndex:(CGFloat)time
 {
-    if (time <= 1.0) {   // 这些值大于1.0,则直接复制给快门时间
-        self.videoCamera.isLongExposure = NO;
-//        [self.soundSlider setValue:0.8f animated:NO];
+//    if (time <= 1.0) {   // 这些值大于1.0,则直接复制给快门时间
+////        self.videoCamera.isLongExposure = NO;
+////        [self.soundSlider setValue:0.8f animated:NO];
+////        [self.soundSlider sendActionsForControlEvents:UIControlEventTouchUpInside];
+//        [self.videoCamera setExposureDurationWith:time];
+//    } else {
+////        self.videoCamera.isLongExposure = YES;
+//        [self.soundSlider setValue:0.0f animated:NO];
 //        [self.soundSlider sendActionsForControlEvents:UIControlEventTouchUpInside];
-        [self.videoCamera setExposureDurationWith:time];
-    } else {
-        self.videoCamera.isLongExposure = YES;
-        [self.soundSlider setValue:0.0f animated:NO];
-        [self.soundSlider sendActionsForControlEvents:UIControlEventTouchUpInside];
-        [self.videoCamera cameraManagerExposureIOS:46];
-        [self.videoCamera setExposureDurationWith:0.932];
-        self.videoCamera.arrCount = (NSInteger)time;
-    }
+//        [self.videoCamera cameraManagerExposureIOS:46];
+//        [self.videoCamera setExposureDurationWith:0.932];
+////        self.videoCamera.arrCount = (NSInteger)time;
+//    }
 }
 
 /** 蓝牙显示的View */
@@ -1872,10 +2232,9 @@ static const float kExposureDurationPower = 5;
     return _zoomView;
 }
 
-#pragma mark -------------------------> UITableViewDelegate
+#pragma mark -------------------------> UITableViewDelegate、UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    //    NSLog(@"%@", self.perArrays);
     return self.fpsArray.count;
 }
 
@@ -1892,25 +2251,19 @@ static const float kExposureDurationPower = 5;
         cell.textLabel.font = [UIFont systemFontOfSize:15];
         cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
     }
-    cell.textLabel.text = self.fpsArray[indexPath.row];
+    JYFormats *format = self.fpsArray[indexPath.row];
+    cell.textLabel.text = format.fpsStr;
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat desiredFps = [self.fpsArray[indexPath.row] floatValue];
-    [self.myContentView contenViewSetDirectionBtnTitle:self.fpsArray[indexPath.row] andTag:88];
+    JYFormats *format = self.fpsArray[indexPath.row];
+    [self.myContentView contenViewSetDirectionBtnTitle:format.fpsStr andTag:88];
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^{
-        
-        if (desiredFps > 0.0) {
-            [self.videoCamera switchFormatWithDesiredFPS:desiredFps];
-//            self.videoCamera.frameRate = 240;
-        }
-        else {
-            [self.videoCamera resetFormat];
-        }
+        [self.videoCamera videoCameraFormatWithDesiredFPS:self.fpsArray[indexPath.row]];
     });
     
     self.fpsView.hidden = YES;
@@ -1973,6 +2326,8 @@ static const float kExposureDurationPower = 5;
     self.bottomPreview.layer.cornerRadius = bottomWH * 0.5;
     
     self.collectionView.frame = CGRectMake(self.myContentView.x, screenH - 50, self.myContentView.width, 40);
+    
+    self.exposureView.frame = self.subView.frame;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -2040,24 +2395,43 @@ static const float kExposureDurationPower = 5;
 #pragma mark KVO and Notifications
 - (void)addObservers
 {
-    // 1.监听会话是否开启
-    [self.videoCamera.videoCamera.captureSession addObserver:self forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:SessionRunningContext];
+//    // 1.监听会话是否开启
+//    [self.videoCamera.videoCamera.captureSession addObserver:self forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:SessionRunningContext];
+//    
+//    // 实时监听白平衡的变化
+//    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"deviceWhiteBalanceGains" options:NSKeyValueObservingOptionNew context:DeviceWhiteBalanceGains];
+//    
+//    // 实时监听曝光偏移的变化exposureTargetOffset
+//    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureTargetOffset" options:NSKeyValueObservingOptionNew context:DeviceExposureOffset];
+//    
+//    // 实时监听感光度的变化
+//    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"ISO" options:NSKeyValueObservingOptionNew context:DeviceExposureISO];
+//    
+//    // 实时监听曝光时间的变化
+//    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureDuration" options:NSKeyValueObservingOptionNew context:DeviceExposureDuration];
+//    
+//    [self.videoCamera addObserver:self forKeyPath:@"videoSize" options:NSKeyValueObservingOptionNew context:VideoSize];
+//    
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.videoCamera.videoCamera.captureSession];
+//    
+//    [self.videoCamera addObserver:self forKeyPath:@"zoomVideo" options:NSKeyValueObservingOptionNew context:zoomVideo];
     
-    // 实时监听白平衡的变化
-    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"deviceWhiteBalanceGains" options:NSKeyValueObservingOptionNew context:DeviceWhiteBalanceGains];
+    [[JYSeptManager sharedManager] addObserver:self forKeyPath:@"temperatureAndTintValues" options:NSKeyValueObservingOptionNew context:DeviceWhiteBalanceGains];
     
-    // 实时监听曝光偏移的变化exposureTargetOffset
-    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureTargetOffset" options:NSKeyValueObservingOptionNew context:DeviceExposureOffset];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restoreDefaults) name:@"RestoreDefaults" object:nil];
     
-    // 实时监听感光度的变化
-    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"ISO" options:NSKeyValueObservingOptionNew context:DeviceExposureISO];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
     
-    // 实时监听曝光时间的变化
-    [self.videoCamera.videoCamera.inputCamera addObserver:self forKeyPath:@"exposureDuration" options:NSKeyValueObservingOptionNew context:DeviceExposureDuration];
+    [[JYSeptManager sharedManager] addObserver:self forKeyPath:@"versionDict" options:NSKeyValueObservingOptionNew context:AppStoreVersion];
+}
+
+- (void)removeObservers
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [self.videoCamera.videoCamera addObserver:self forKeyPath:@"videoSize" options:NSKeyValueObservingOptionNew context:VideoSize];
+    [[JYSeptManager sharedManager] removeObserver:self forKeyPath:@"temperatureAndTintValues" context:DeviceWhiteBalanceGains];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.videoCamera.videoCamera.captureSession];
+    [[JYSeptManager sharedManager] removeObserver:self forKeyPath:@"versionDict" context:AppStoreVersion];
 }
 
 - (void)sessionRuntimeError:(NSNotification *)notification
@@ -2081,56 +2455,94 @@ static const float kExposureDurationPower = 5;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     //    id oldValue = change[NSKeyValueChangeOldKey];
-    id newValue = change[NSKeyValueChangeNewKey];
-    
-    if (context == DeviceWhiteBalanceGains) {  // 白平衡
-        if (self.tempAuto == 0 && self.tintAuto == 0) {
-            AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTintValues = [self.videoCamera.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:self.videoCamera.videoCamera.inputCamera.deviceWhiteBalanceGains];
-            self.tint = temperatureAndTintValues.tint;
-            self.temp = temperatureAndTintValues.temperature;
-            [self.myContentView contentViewSetCustomSliderValue:temperatureAndTintValues.temperature andCustomSliderTag:50 classType:1];
-            [self.myContentView contentViewSetCustomSliderValue:temperatureAndTintValues.tint andCustomSliderTag:51 classType:1];
-        }
-        else if ( newValue && newValue != [NSNull null] ) {
-            AVCaptureWhiteBalanceGains newGains;
-            [newValue getValue:&newGains];
-            AVCaptureWhiteBalanceTemperatureAndTintValues newTemperatureAndTint = [self.videoCamera.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:newGains];
-            
-            if (self.videoCamera.videoCamera.inputCamera.whiteBalanceMode != AVCaptureExposureModeLocked ) {
-                [self.myContentView contentViewSetCustomSliderValue:newTemperatureAndTint.temperature andCustomSliderTag:50 classType:1];
-                [self.myContentView contentViewSetCustomSliderValue:newTemperatureAndTint.tint andCustomSliderTag:51 classType:1];
-            }
-        }
-    }
-    else if (context == DeviceExposureISO) {   // 感光度
-        if (self.isoAuto == 0) {
-            //            self.f_iso = videoCamera.inputCamera.ISO;
-            [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.videoCamera.inputCamera.ISO andCustomSliderTag:61 classType:0];
-        }
-    }
-    else if (context == DeviceExposureOffset) {   // 曝光偏移
-        [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.videoCamera.inputCamera.exposureTargetOffset andCustomSliderTag:60 classType:0];
-    }
-    else if (context == DeviceExposureDuration) {   // 曝光时间
-        
-        if ( newValue && newValue != [NSNull null] ) {
-            double newDurationSeconds = CMTimeGetSeconds( [newValue CMTimeValue] );
-            if (self.videoCamera.videoCamera.inputCamera.exposureMode != AVCaptureExposureModeCustom ) {
-                double minDurationSeconds = MAX( CMTimeGetSeconds(self.videoCamera.videoCamera.inputCamera.activeFormat.minExposureDuration ), kExposureMinimumDuration );
-                double maxDurationSeconds = CMTimeGetSeconds(self.videoCamera.videoCamera.inputCamera.activeFormat.maxExposureDuration );
-                // Map from duration to non-linear UI range 0-1
-                double p = ( newDurationSeconds - minDurationSeconds ) / ( maxDurationSeconds - minDurationSeconds ); // Scale to 0-1
-                [self.myContentView contentViewSetCustomSliderValue:pow( p, 1 / kExposureDurationPower ) andCustomSliderTag:62 classType:0];
-            }
-        }
-    } else if (context == VideoSize) {
+//    id newValue = change[NSKeyValueChangeNewKey];
+//    
+//    if (context == DeviceWhiteBalanceGains) {  // 白平衡
+//        if (self.tempAuto == 0 && self.tintAuto == 0) {
+//            AVCaptureWhiteBalanceTemperatureAndTintValues temperatureAndTintValues = [self.videoCamera.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:self.videoCamera.videoCamera.inputCamera.deviceWhiteBalanceGains];
+//            self.tint = temperatureAndTintValues.tint;
+//            self.temp = temperatureAndTintValues.temperature;
+//            [self.myContentView contentViewSetCustomSliderValue:temperatureAndTintValues.temperature andCustomSliderTag:50 classType:1];
+//            [self.myContentView contentViewSetCustomSliderValue:temperatureAndTintValues.tint andCustomSliderTag:51 classType:1];
+//        }
+//        else if ( newValue && newValue != [NSNull null] ) {
+//            AVCaptureWhiteBalanceGains newGains;
+//            [newValue getValue:&newGains];
+//            AVCaptureWhiteBalanceTemperatureAndTintValues newTemperatureAndTint = [self.videoCamera.videoCamera.inputCamera temperatureAndTintValuesForDeviceWhiteBalanceGains:newGains];
+//            
+//            if (self.videoCamera.videoCamera.inputCamera.whiteBalanceMode != AVCaptureExposureModeLocked ) {
+//                [self.myContentView contentViewSetCustomSliderValue:newTemperatureAndTint.temperature andCustomSliderTag:50 classType:1];
+//                [self.myContentView contentViewSetCustomSliderValue:newTemperatureAndTint.tint andCustomSliderTag:51 classType:1];
+//            }
+//        }
+//    }
+//    else if (context == DeviceExposureISO) {   // 感光度
+//        if (self.isoAuto == 0) {
+//            //            self.f_iso = videoCamera.inputCamera.ISO;
+//            [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.videoCamera.inputCamera.ISO andCustomSliderTag:61 classType:0];
+//        }
+//    }
+//    else if (context == DeviceExposureOffset) {   // 曝光偏移
+//        [self.myContentView contentViewSetCustomSliderValue:self.videoCamera.videoCamera.inputCamera.exposureTargetOffset andCustomSliderTag:60 classType:0];
+//    }
+//    else if (context == DeviceExposureDuration) {   // 曝光时间
+//        
+//        if ( newValue && newValue != [NSNull null] ) {
+//            double newDurationSeconds = CMTimeGetSeconds( [newValue CMTimeValue] );
+//            if (self.videoCamera.videoCamera.inputCamera.exposureMode != AVCaptureExposureModeCustom ) {
+//                double minDurationSeconds = MAX( CMTimeGetSeconds(self.videoCamera.videoCamera.inputCamera.activeFormat.minExposureDuration ), kExposureMinimumDuration );
+//                double maxDurationSeconds = CMTimeGetSeconds(self.videoCamera.videoCamera.inputCamera.activeFormat.maxExposureDuration );
+//                // Map from duration to non-linear UI range 0-1
+//                double p = ( newDurationSeconds - minDurationSeconds ) / ( maxDurationSeconds - minDurationSeconds ); // Scale to 0-1
+//                [self.myContentView contentViewSetCustomSliderValue:pow( p, 1 / kExposureDurationPower ) andCustomSliderTag:62 classType:0];
+//            }
+//        }
+//    } else if (context == VideoSize) {
+//        self.fpsArray = [self getFpsAtNowResolution];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self.fpsView reloadData];
+//        });
+////        NSLog(@"self.fpsArray = %@", self.fpsArray);
+//    } else if (context == zoomVideo) {
+////        CGFloat value  = log(self.videoCamera.zoomVideo) / log([self.videoCamera getMaxZoom]);
+////        NSLog(@"%f", SHOW_Y - (0.5 - value) * (screenH - 30));
+////        [self animationWith:(0.5 - value) * (screenH - 30) layer:self.zoomView];
+//    } else if (context == SessionRunningContext) {
+//        //        NSLog(@"%f", self.videoCamera.zoomVideo);
+//    }
+    if (context == DeviceWhiteBalanceGains) {
+        self.tint = [JYSeptManager sharedManager].temperatureAndTintValues.tint;
+        self.temp = [JYSeptManager sharedManager].temperatureAndTintValues.temperature;
+    } else if (context == VideoCameraWidth)
+    {
         self.fpsArray = [self getFpsAtNowResolution];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.fpsView reloadData];
         });
-//        NSLog(@"self.fpsArray = %@", self.fpsArray);
-    } else if (context == SessionRunningContext) {
+    } else if (context == AppStoreVersion)
+    {
+        // app版本
+        //此获取的版本号对应version，打印出来对应为1.2.3.4.5这样的字符串
+        NSString *string = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        //    [NSString stringWithFormat:@"v%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey]]
         
+        if ([string isEqualToString:[JYSeptManager sharedManager].versionDict[@"version"]]) {
+            NSLog(@"xiangtong");
+        } else {
+            UIAlertController *alertCtl = [UIAlertController alertControllerWithTitle:@"发现新版本" message:@"内容更丰富，体验效果更美好，还不快去更新！" preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *cancle = [UIAlertAction actionWithTitle:@"稍后再说" style:UIAlertActionStyleCancel handler:nil];
+            
+            UIAlertAction *update = [UIAlertAction actionWithTitle:@"立即更新" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                NSURL *url = [NSURL URLWithString:@"https://appsto.re/us/mNeHcb.i"];
+                [[UIApplication sharedApplication]openURL:url];
+            }];
+            
+            [alertCtl addAction:cancle];
+            [alertCtl addAction:update];
+            
+            [self presentViewController:alertCtl animated:YES completion:nil];
+        }
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -2147,6 +2559,19 @@ static const float kExposureDurationPower = 5;
         [self.subView addSubview:_logView];
     }
     return _logView;
+}
+
+- (UIImageView *)exposureView
+{
+    if (!_exposureView) {
+        
+        _exposureView = [[UIImageView alloc] init];
+        _exposureView.hidden = YES;
+        _exposureView.alpha = 0.5;
+        
+        [self.subView insertSubview:_exposureView aboveSubview:self.grladView];
+    }
+    return _exposureView;
 }
 
 @end

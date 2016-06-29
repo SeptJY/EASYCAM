@@ -7,7 +7,7 @@
 //
 
 #import "JYBaisSlider.h"
-#import "ASValueTrackingSlider.h"
+
 
 // 控件高度
 #define HEIGHT_SUBVIEWS 20
@@ -26,21 +26,27 @@
 
 @property (strong, nonatomic) NSString *sizeTitle;
 
+@property (assign, nonatomic) JYButtonType btnType;
+
+@property (assign, nonatomic) JYShowType showType;
+
 @end
 
 @implementation JYBaisSlider
 
-+ (instancetype)customSliderViewWithTitle:(NSString *)sizeTitle
++ (instancetype)customSliderViewWithTitle:(NSString *)sizeTitle buttonType:(JYButtonType)btnType show:(JYShowType)showType
 {
-    return [[self alloc] initWithTitle:sizeTitle];
+    return [[self alloc] initWithTitle:sizeTitle buttonType:btnType show:showType];
 }
 
-- (instancetype)initWithTitle:(NSString *)sizeTitle
+- (instancetype)initWithTitle:(NSString *)sizeTitle buttonType:(JYButtonType)btnType show:(JYShowType)showType
 {
     self = [super init];
     if (self) {
         
+        self.showType = showType;
         self.sizeTitle = sizeTitle;
+        self.btnType = btnType;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
     }
@@ -92,7 +98,14 @@
         [_btn setTitleColor:setColor(127, 127, 127) forState:UIControlStateSelected];
         [_btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-        [_btn setTitle:[NSString titleChinese:@"重置" english:@"Reset"] forState:UIControlStateNormal];
+        
+        if (self.btnType == JYButtonTypeAutoAndLock) {
+            [_btn setTitle:[NSString titleChinese:@"手动" english:@"MT"] forState:UIControlStateNormal];
+            [_btn setTitle:[NSString titleChinese:@"自动" english:@"Auto"] forState:UIControlStateSelected];
+        } else if (self.btnType == JYButtonTypeReset) {
+            [_btn setTitle:[NSString titleChinese:@"重置" english:@"Reset"] forState:UIControlStateNormal];
+        }
+        
         [_btn addTarget:self action:@selector(customSliderAutoBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
         _btn.selected = YES;
         
@@ -103,30 +116,37 @@
 
 - (void)customSliderAutoBtnOnClick:(UIButton *)btn
 {
+    if (self.btnType == JYButtonTypeReset) {
+        self.slider.value = 0.0;
+    } else {
+        btn.selected = !btn.selected;
+        self.slider.enabled = !btn.selected;
+    }
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(baisSliderAutoBtnOnClick:)]) {
         [self.delegate baisSliderAutoBtnOnClick:btn];
     }
-    
-    self.slider.value = 0.0;
 }
 
 - (void)setSliderTag:(NSInteger)sliderTag
 {
     _sliderTag = sliderTag;
     self.slider.tag = sliderTag;
+    self.btn.tag = sliderTag + 20;
 }
 
 - (ASValueTrackingSlider *)slider
 {
     if (!_slider) {
         
-        _slider = [[ASValueTrackingSlider alloc] init];
+        _slider = [[ASValueTrackingSlider alloc] initWithShow:self.showType];
         
         [_slider setThumbImage:[UIImage imageWithImage:[UIImage imageNamed:@"home_slider_thump_icon"] scaledToWidth:15] forState:UIControlStateNormal];
         
         [_slider setThumbImage:[UIImage imageWithImage:[UIImage imageNamed:@"home_slider_thump_icon"] scaledToWidth:15] forState:UIControlStateHighlighted];
 //        _slider.tintColor = [UIColor yellowColor];
         [_slider addTarget:self action:@selector(customSliderValueChange:) forControlEvents:UIControlEventValueChanged];
+        _slider.enabled = self.btnType;
         
         _slider.popUpViewColor = [UIColor yellowColor];
         _slider.font = [UIFont fontWithName:@"Menlo-Bold" size:15];

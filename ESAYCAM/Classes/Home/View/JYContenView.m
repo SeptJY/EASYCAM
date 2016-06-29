@@ -22,7 +22,7 @@
 #import "JYFlashView.h"
 #import "JYQualityView.h"
 
-#define scrollView_contentSize 700
+#define scrollView_contentSize 650
 
 static NSString *ID = @"fenbinalv";
 
@@ -135,7 +135,7 @@ static NSString *ID = @"fenbinalv";
 {
     if (_expsureView == nil) {
         
-        _expsureView = [[JYExpsureView alloc] init];
+        _expsureView = [[JYExpsureView alloc] initWithWidth:self.scrollView.width];
         _expsureView.delegate = self;
         _expsureView.hidden = YES;
         
@@ -528,6 +528,14 @@ static NSString *ID = @"fenbinalv";
     }
 }
 
+- (void)whiteBalanceBaisSliderValueChange:(UISlider *)slider
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(whiteBalanceBaisSliderValueChange:)]) {
+        [self.delegate whiteBalanceBaisSliderValueChange:slider];
+    }
+}
+
+#pragma mark -------------------------> JYExposureViewDelegate
 - (void)expsureViewCustomSliderValueChange:(UISlider *)slider
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(contentViewExpsureCustomSliderValueChange:)]) {
@@ -541,6 +549,14 @@ static NSString *ID = @"fenbinalv";
         [self.delegate contentViewExpsureAutoBtnOnClick:btn];
     }
 }
+
+- (void)exposureFiveXiaoGuoButtonOnClick:(UIButton *)btn
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(exposureFiveXiaoGuoButtonOnClick:)]) {
+        [self.delegate exposureFiveXiaoGuoButtonOnClick:btn];
+    }
+}
+
 
 - (void)baisSliderValueChange:(UISlider *)slider
 {

@@ -168,7 +168,7 @@
     
     self.btn.enabled = btnEnabled;
     
-    [self.btn setTitle:NSLocalizedString(@"", nil) forState:UIControlStateNormal];
+//    [self.btn setTitle:NSLocalizedString(@"", nil) forState:UIControlStateNormal];
 }
 
 - (void)setSliderEnabled:(BOOL)sliderEnabled

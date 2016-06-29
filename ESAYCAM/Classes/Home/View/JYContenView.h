@@ -59,6 +59,10 @@
 
 - (void)contentViewBaisSliderAutoBtnOnClick:(UIButton *)btn;
 
+- (void)exposureFiveXiaoGuoButtonOnClick:(UIButton *)btn;
+
+- (void)whiteBalanceBaisSliderValueChange:(UISlider *)slider;
+
 @end
 
 @interface JYContenView : UIView

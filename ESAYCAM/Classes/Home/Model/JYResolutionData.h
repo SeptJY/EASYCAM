@@ -26,4 +26,6 @@
 // 设置相机的视频保存size
 - (CGSize)resolutionBackVideoSizeWith:(NSInteger)tag;
 
+- (CGSize)sessionPresionBackSizeWith:(NSString *)sessionPresion;
+
 @end

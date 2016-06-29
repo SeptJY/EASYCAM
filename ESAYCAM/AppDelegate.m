@@ -11,8 +11,11 @@
 #import "JYHomeController.h"
 #import "JYNewFetureViewCtl.h"
 #import "JYNavigationController.h"
+#import "AFNetworking.h"
 
 @interface AppDelegate ()
+
+@property (nonatomic,strong) NSMutableDictionary *versionDcit;
 
 @end
 
@@ -20,6 +23,8 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+//    [self getAppStoreVersion];
     
     [UIApplication sharedApplication].idleTimerDisabled =YES;
     
@@ -53,6 +58,25 @@
     return YES;
 }
 
+- (void)getAppStoreVersion
+{
+    NSMutableDictionary *versionDcit = [NSMutableDictionary dictionary];
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager POST:@"http://itunes.apple.com/lookup?id=1115965900" parameters:nil progress:^(NSProgress * _Nonnull uploadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if ([[responseObject valueForKey:@"resultCount"] intValue]>0) {
+            
+            [versionDcit setValue:@"1" forKey:@"status"];
+            [versionDcit setValue:[[[responseObject valueForKey:@"results"] objectAtIndex:0] valueForKey:@"version"]   forKey:@"version"];
+        }
+        [JYSeptManager sharedManager].versionDict = versionDcit;
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"%@", error);
+    }];
+}
+
 - (BOOL)application:(UIApplication *)application
 
 shouldAllowExtensionPointIdentifier:(NSString *)extensionPointIdentifier
@@ -72,14 +96,22 @@ void fun(NSString *str)
     [JYSeptManager sharedManager].version = [versionStr integerValue];
 }
 
+//应用程序将要退出，通常用于保存书架和一些推出前的清理工作，
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+    
+}
+
+//应用程序已经进入后台运行
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    // 断开蓝牙连接
+//    [[JYSeptManager sharedManager].blueManager disconnect:[JYSeptManager sharedManager].blueManager.connectPeripheral];
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-}
-
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -88,10 +120,7 @@ void fun(NSString *str)
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    
 }
 
 @end

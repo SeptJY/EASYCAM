@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "ASValuePopUpView.h"
+
 @interface ASValueTrackingSlider : UISlider
 @property (strong, nonatomic) UIColor *textColor;
 @property (strong, nonatomic) UIFont *font;
@@ -31,5 +33,7 @@
 
 // take full control of the format dispayed with a custom NSNumberFormatter
 - (void)setNumberFormatter:(NSNumberFormatter *)numberFormatter;
+
+- (instancetype)initWithShow:(JYShowType)showType;
 
 @end

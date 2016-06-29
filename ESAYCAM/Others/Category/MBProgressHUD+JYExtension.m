@@ -56,6 +56,11 @@
     [self show:success icon:@"success.png" view:view];
 }
 
++ (void)showHUD:(UIView *)view
+{
+    [self showHUDAddedTo:view animated:YES];
+}
+
 /**
  *  显示错误信息
  *
@@ -106,6 +111,7 @@
     hud.dimBackground = YES;
     return hud;
 }
+
 
 /**
  *  手动关闭MBProgressHUD

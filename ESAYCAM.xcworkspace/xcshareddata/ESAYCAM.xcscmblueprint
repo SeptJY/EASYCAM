@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "8F02237B5C3F678B6D818597F7FA9493AD8BAE27",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "8F02237B5C3F678B6D818597F7FA9493AD8BAE27" : 0,
+    "AC997D6F491C4327C9FAEA03CA583BDB37942499" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "4AF1A97D-8271-48C8-8894-61343123735E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "8F02237B5C3F678B6D818597F7FA9493AD8BAE27" : "EASYCAM\/",
+    "AC997D6F491C4327C9FAEA03CA583BDB37942499" : "%E4%BB%A3%E7%A0%81\/2016\/0418\/SeptCamera\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ESAYCAM",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ESAYCAM.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/SeptJY\/EASYCAM.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "8F02237B5C3F678B6D818597F7FA9493AD8BAE27"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/SeptJY\/SeptCamera.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "AC997D6F491C4327C9FAEA03CA583BDB37942499"
+    }
+  ]
+}

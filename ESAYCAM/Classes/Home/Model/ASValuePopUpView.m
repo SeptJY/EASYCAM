@@ -21,6 +21,12 @@
 NSString *const AnimationLayer = @"animationLayer";
 NSString *const FillColorAnimation = @"fillColor";
 
+@interface ASValuePopUpView ()
+
+@property (assign, nonatomic) JYShowType showType;
+
+@end
+
 @implementation ASValuePopUpView
 {
     NSMutableAttributedString *_attributedString;
@@ -32,11 +38,13 @@ NSString *const FillColorAnimation = @"fillColor";
 
 #pragma mark - public
 
-- (id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame show:(JYShowType)showType
 {
     self = [super initWithFrame:frame];
     if (self) {
         self.layer.anchorPoint = CGPointMake(0.5, 1);
+        
+        self.showType = showType;
         
         self.userInteractionEnabled = NO;
         _backgroundLayer = [CAShapeLayer layer];
@@ -89,8 +97,14 @@ NSString *const FillColorAnimation = @"fillColor";
 
 - (void)setString:(NSString *)string
 {
-    [[_attributedString mutableString] setString:string];
-    _textLayer.string = _attributedString;
+    if (self.showType == JYShowTypeOhters) {
+        [[_attributedString mutableString] setString:string];
+        _textLayer.string = _attributedString;
+    } else{
+        int value = [string intValue];
+        [[_attributedString mutableString] setString:[NSString stringWithFormat:@"%d/3", value/100]];
+        _textLayer.string = _attributedString;
+    }
 }
 
 // set up an animation, but prevent it from running automatically
